@@ -1,13 +1,17 @@
 body {
-  background-color: #444;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  background-color: #092A50;
   overflow: hidden;
 }
 
 #container {
   transform-origin: 50% 0;
+  background: rgb(0,0,0);
+  border: 10px solid #08213d;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 27%, rgba(9,42,80,1) 100%);
 }
