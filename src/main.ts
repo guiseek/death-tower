@@ -1,25 +1,25 @@
 import { drawPlatforms } from './map/platforms/draw-platforms'
+import { DeathTowerState } from './state/death-tower-state'
 import { keyboardState } from './state/keyboard-state'
 import { drawShadows } from './map/tower/draw-shadows'
 import { drawBricks } from './map/bricks/draw-bricks'
 import { Platform } from './map/platforms/platform'
+import { Arch, GameState } from './interfaces/arch'
 import { playerState } from './state/player-state'
 import { drawDoors } from './map/doors/draw-doors'
 import { keyDown } from './map/utilities/key-down'
+import { keyUp } from './map/utilities/key-up'
 import { drawTitles } from './map/draw-titles'
 import { drawPlayer } from './map/draw-player'
 import { loadImage } from './map/load-image'
 import { OffScreen } from './map/offscreen'
-import { keyUp } from './map/utilities/key-up'
-import { Position } from './map/position'
 import { drawSky } from './map/draw-sky'
-import { Arch } from './interfaces/arch'
 import { Door } from './map/doors/door'
 import { resize } from './map/resize'
 
 const fallbackCanvas = new OffScreen(10, 10).canvas
-
-const pos = new Position(1600, 600)
+const form = document.querySelector('form')
+const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 
 const $: Arch = {
   container: null,
@@ -27,31 +27,34 @@ const $: Arch = {
   ctx: null,
   rect: null,
   platforms: [
-    new Platform(pos.x, pos.y),
-    new Platform(pos.dec.x(15), pos.y),
-    new Platform(pos.dec.x(15), pos.y),
-    new Platform(pos.dec.x(45), pos.dec.y(100)),
-    new Platform(pos.dec.x(40), pos.y),
-    new Platform(pos.dec.x(20), pos.y),
-    new Platform(pos.dec.x(50), pos.dec.y(100)),
-    new Platform(pos.x, pos.dec.y(130)),
-    new Platform(pos.inc.x(20), pos.dec.y(135)),
-    new Platform(pos.inc.x(45), pos.dec.y(95)),
-    new Platform(pos.inc.x(20), pos.dec.y(120)),
-    new Platform(pos.inc.x(20), pos.dec.y(120)),
-    new Platform(pos.x, pos.dec.y(115)),
-    new Platform(pos.dec.x(30), pos.dec.y(125)),
-    new Platform(pos.inc.x(30), pos.dec.y(115)),
-    new Platform(pos.dec.x(45), pos.dec.y(125)),
-    new Platform(pos.dec.x(25), pos.y),
-    new Platform(pos.dec.x(55), pos.y),
-    new Platform(pos.dec.x(40), pos.y),
-    new Platform(pos.dec.x(25), pos.dec.y(30)),
-    new Platform(pos.dec.x(30), pos.dec.y(100)),
-    new Platform(pos.dec.x(20), pos.dec.y(100)),
-    new Platform(pos.dec.x(15), pos.y),
-    new Platform(pos.dec.x(45), pos.y),
-    new Platform(pos.dec.x(15), pos.y),
+    new Platform(1600, 600),
+    new Platform(1585, 600),
+    new Platform(1570, 600),
+    new Platform(1540, 500),
+    new Platform(1525, 500),
+    new Platform(1480, 500),
+    new Platform(1465, 500),
+    new Platform(1435, 400),
+    new Platform(1415, 270),
+    new Platform(1435, 135),
+    new Platform(1465, 40),
+    new Platform(1480, 40),
+    new Platform(1500, -80),
+    new Platform(1520, -200),
+    new Platform(1520, -335),
+    new Platform(1490, -460),
+    new Platform(1460, -535),
+    new Platform(1430, -610),
+    new Platform(1415, -610),
+    new Platform(1370, -610),
+    new Platform(1355, -610),
+    new Platform(1355, -610),
+    new Platform(1330, -710),
+    new Platform(1305, -810),
+    new Platform(1280, -910),
+    new Platform(1265, -910),
+    new Platform(1220, -910),
+    new Platform(1205, -910)
   ],
   openings: [new Door(1600, 350), new Door(1205, -1160)],
   brick: {
@@ -131,6 +134,8 @@ const $: Arch = {
   savedState: null,
   state: {
     paused: false,
+    points: 0,
+    lastPlatform: null,
     titles: {
       opacity: 0,
       ready: false,
@@ -166,6 +171,8 @@ const $: Arch = {
     },
   },
 }
+
+const state = new DeathTowerState($.state)
 
 $.container = document.querySelector('#container') as HTMLElement
 $.canvas = document.querySelector('canvas')
@@ -246,6 +253,7 @@ function doCalculations() {
       $.state.player.speed > 0 ? $.settings.maxSpeed : -1 * $.settings.maxSpeed
   } else if (Math.abs($.state.player.speed) < $.settings.minSpeed) {
     playerState.idle()
+    state.player({ speed: 0 })
 
     $.state.player.speed = 0
   }
@@ -265,6 +273,7 @@ function doCalculations() {
         : Math.floor(currentSpeed * ($.state.dt as number))
 
     $.state.player.dir = currentSpeed > 0 ? 0 : 1
+    state.player($.state.player)
   }
 
   if (!$.state.climbstarted && $.input.jump) {
@@ -320,7 +329,10 @@ function doCalculations() {
 
     $.state.paused = true
   }
+
+  state.setState($.state)
 }
+
 
 function collisionDetection() {
   if ($.state.jump.isJumping && $.state.jump.speed < 0) {
@@ -328,8 +340,10 @@ function collisionDetection() {
       const platform = $.state.activePlatforms[i]
 
       if (Math.abs(platform.x - ($.state.pos.x + 90)) < 10) {
+
         const playerFloor = $.state.player.y + 250
         const playerFloorPrev = $.state.player.prevY + 250
+
 
         if (playerFloor > platform.y && playerFloorPrev < platform.y) {
           playerState.jumpDown()
@@ -348,10 +362,18 @@ function collisionDetection() {
 
     for (let i = 0; i < $.state.activePlatforms.length; i++) {
       let platform = $.state.activePlatforms[i]
-
+      
       if (Math.abs(platform.x - ($.state.pos.x + 90)) < 10) {
+        
+        /**
+         * Parou em uma plataforma posterior a última
+         * em que seus pontos foram calculados
+         */
+        checkPoint($.state, platform)
+
         if (platform.y - ($.state.player.y + 250) === 0) {
           groundToStandOnFound = true
+
           break
         }
       }
@@ -360,11 +382,27 @@ function collisionDetection() {
     if (!groundToStandOnFound) {
       playerState.jumpUp()
 
+
       $.state.jump.isGrounded = false
       $.state.jump.isJumping = true
       $.state.jump.isBoosting = true
       $.state.jump.speed = $.settings.jump.fallStartSpeed
     }
+  }
+}
+
+function checkPoint(state: GameState, platform: Platform) {
+  if (state.lastPlatform && platform.n > state.lastPlatform.n) {
+    if (platform.n === state.lastPlatform.n + 1) {
+      state.points += platform.n * 10
+
+    } else {
+      state.points += (platform.n * 10) * (state.player.speed * 10)
+    }
+
+    pointsElement.value = (state.points | 0).toString()
+
+    state.lastPlatform = platform
   }
 }
 
@@ -378,6 +416,10 @@ if (!$.savedState) {
 
 loadAssets()
 draw()
+
+if (!$.state.lastPlatform) {
+  $.state.lastPlatform = $.platforms[0]
+}
 
 window.addEventListener('keydown', (e) => keyDown($, e), false)
 window.addEventListener('keyup', (e) => keyUp($, e), false)
@@ -406,6 +448,10 @@ audio.running.loop = true
 keyboardState.initialize()
 
 let initialized = false
+
+state.jump$.subscribe((jump) => {
+  console.log(jump);
+})
 
 playerState.jumping$.subscribe((jumping: boolean) => {
   if (!jumping) {

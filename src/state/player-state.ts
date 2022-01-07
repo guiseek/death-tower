@@ -25,11 +25,22 @@ export class PlayerState extends State<Player> {
     this.setState({ jumping: false })
   }
 
+  setSpeed(speed: number) {
+    this.setState({ speed })
+  }
+  
   run() {
     this.setState({ running: true })
   }
   idle() {
     this.setState({ running: false })
+  }
+
+  pause() {
+    this.setState({ paused: true })
+  }
+  resume() {
+    this.setState({ paused: false })
   }
 }
 

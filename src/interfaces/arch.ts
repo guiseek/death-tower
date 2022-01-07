@@ -1,6 +1,54 @@
 import { Platform } from '../map/platforms/platform'
 import { Door } from '../map/doors/door'
 
+interface Titles {
+  opacity: number
+  ready: boolean
+  text: string
+}
+
+interface ClimpSpeed {
+  normal: number
+  fast: number
+}
+
+interface Pos {
+  x: number
+  y: number
+}
+
+interface Jump {
+  isGrounded: boolean
+  isJumping: boolean
+  isBoosting: boolean
+  speed: number
+  nextY: number
+}
+
+interface Player {
+  dir: number
+  x: number
+  y: number
+  prevY: number
+  speed: number
+  animationFrame: number
+  animationFrameCount: number
+}
+
+export interface GameState {
+  points: number
+  lastPlatform: Platform | null
+  paused: boolean
+  titles: Titles
+  climbstarted: boolean
+  time: number | null
+  dt: number | null
+  climbspeed: ClimpSpeed
+  pos: Pos
+  activePlatforms: Platform[]
+  jump: Jump
+  player: Player
+}
 export interface Arch {
   container: HTMLElement | null
   canvas: HTMLCanvasElement | null
@@ -73,40 +121,5 @@ export interface Arch {
     runningRight: HTMLCanvasElement[]
   }
   savedState: null
-  state: {
-    paused: boolean
-    titles: {
-      opacity: number
-      ready: boolean
-      text: string
-    }
-    climbstarted: boolean
-    time: number | null
-    dt: number | null
-    climbspeed: {
-      normal: number
-      fast: number
-    }
-    pos: {
-      x: number
-      y: number
-    }
-    activePlatforms: Platform[]
-    jump: {
-      isGrounded: boolean
-      isJumping: boolean
-      isBoosting: boolean
-      speed: number
-      nextY: number
-    }
-    player: {
-      dir: number
-      x: number
-      y: number
-      prevY: number
-      speed: number
-      animationFrame: number
-      animationFrameCount: number
-    }
-  }
+  state: GameState
 }

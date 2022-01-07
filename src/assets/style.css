@@ -5,6 +5,9 @@ body {
   justify-content: center;
   min-height: 100vh;
   background-color: #092A50;
+  /* font-family: 'Grenze Gotisch', cursive; */
+  font-family: 'UnifrakturCook', cursive;
+  font-size: 100%;
   overflow: hidden;
 }
 
@@ -14,4 +17,24 @@ body {
   border: 10px solid #08213d;
   border-radius: 10px;
   background: linear-gradient(180deg, rgba(0,0,0,0) 27%, rgba(9,42,80,1) 100%);
+}
+
+body > form {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+body > form label {
+  font-size: 160%;
+  color: rgba(255,255,255,.9);
+}
+
+body > form input {
+  font-family: 'UnifrakturCook', cursive;
+  background-color: transparent;
+  border-color: transparent;
+  text-align: right;
+  font-size: 32px;
+  color: white;
 }
