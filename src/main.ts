@@ -23,7 +23,7 @@ const fallbackCanvas = new OffScreen(10, 10).canvas
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 
-const $: Arch = {
+const config: Arch = {
   container: null,
   canvas: null,
   ctx: null,
@@ -148,11 +148,11 @@ const $: Arch = {
   },
 }
 
-const state = new DeathTowerState($.state)
+const state = new DeathTowerState(config.state)
 
-$.container = document.querySelector('#container') as HTMLElement
-$.canvas = document.querySelector('canvas')
-$.ctx = $.canvas!.getContext('2d')
+config.container = document.querySelector('#container') as HTMLElement
+config.canvas = document.querySelector('canvas')
+config.ctx = config.canvas!.getContext('2d')
 
 function loadAssets() {
   const standing = new URL('assets/player/zumbi/state=standing.svg', import.meta.url)
@@ -164,51 +164,49 @@ function loadAssets() {
   const running = new URL('assets/player/zumbi/state=running.svg', import.meta.url)
   const walking = new URL('assets/player/zumbi/state=walking.svg', import.meta.url)
 
-  loadImage($, standing.pathname, 'standing', 0, false)
-  loadImage($, standing.pathname, 'standing', 1, true)
-  loadImage($, jumping.pathname, 'jumpingUp', 0, false)
-  loadImage($, jumping.pathname, 'jumpingUp', 1, true)
-  loadImage($, jumpingdown.pathname, 'jumpingDown', 0, false)
-  loadImage($, jumpingdown.pathname, 'jumpingDown', 1, true)
-  loadImage($, running.pathname, 'runningLeft', 0, false)
-  loadImage($, running.pathname, 'runningLeft', 1, false)
-  loadImage($, walking.pathname, 'runningLeft', 2, false)
-  loadImage($, walking.pathname, 'runningLeft', 3, false)
-  loadImage($, running.pathname, 'runningRight', 0, true)
-  loadImage($, running.pathname, 'runningRight', 1, true)
-  loadImage($, walking.pathname, 'runningRight', 2, true)
-  loadImage($, walking.pathname, 'runningRight', 3, true)
+  loadImage(config, standing.pathname, 'standing', 0, false)
+  loadImage(config, standing.pathname, 'standing', 1, true)
+  loadImage(config, jumping.pathname, 'jumpingUp', 0, false)
+  loadImage(config, jumping.pathname, 'jumpingUp', 1, true)
+  loadImage(config, jumpingdown.pathname, 'jumpingDown', 0, false)
+  loadImage(config, jumpingdown.pathname, 'jumpingDown', 1, true)
+  loadImage(config, running.pathname, 'runningLeft', 0, false)
+  loadImage(config, running.pathname, 'runningLeft', 1, false)
+  loadImage(config, walking.pathname, 'runningLeft', 2, false)
+  loadImage(config, walking.pathname, 'runningLeft', 3, false)
+  loadImage(config, running.pathname, 'runningRight', 0, true)
+  loadImage(config, running.pathname, 'runningRight', 1, true)
+  loadImage(config, walking.pathname, 'runningRight', 2, true)
+  loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
 let dead = false
 function draw() {
-  let now = document.timeline.currentTime ?? 0
-  $.state.dt = now - ($.state.time || now)
-  $.state.time = now
+  const now = document.timeline.currentTime ?? 0
+  config.state.dt = now - (config.state.time || now)
+  config.state.time = now
 
-  if (!$.state.paused) {
+  if (!config.state.paused) {
     doCalculations()
   }
 
-  if (!$.state.lastPlatform) {
-    $.state.lastPlatform = $.platforms[0]
+  if (!config.state.lastPlatform) {
+    config.state.lastPlatform = config.platforms[0]
     dead = false
   }
 
-  if (!$.state.paused && $.state.titles.opacity !== 100) {
-    drawSky($)
-    drawPlatforms($, false)
-    drawBricks($)
-    drawDoors($)
-    drawShadows($)
-    drawPlatforms($, true)
-    drawPlayer($)
-
+  if (!config.state.paused && config.state.titles.opacity !== 100) {
+    drawSky(config)
+    drawPlatforms(config, false)
+    drawBricks(config)
+    drawDoors(config)
+    drawShadows(config)
+    drawPlatforms(config, true)
+    drawPlayer(config)
   }
 
-
-  if ($.state.paused) {
-    drawTitles($)
+  if (config.state.paused) {
+    drawTitles(config)
     if (!dead) {
       audio.scream.play()
       setTimeout(() => {
@@ -222,141 +220,148 @@ function draw() {
 }
 
 function doCalculations() {
-  if ($.input.left) {
-    $.state.player.speed += $.settings.acceleration
-  } else if ($.input.right) {
-    $.state.player.speed -= $.settings.acceleration
-  } else if ($.state.player.speed !== 0) {
-    $.state.player.speed *= $.state.jump.isJumping
-      ? $.settings.jump.friction
-      : $.settings.friction
+  if (config.input.left) {
+    config.state.player.speed += config.settings.acceleration
+  } else if (config.input.right) {
+    config.state.player.speed -= config.settings.acceleration
+  } else if (config.state.player.speed !== 0) {
+    config.state.player.speed *= config.state.jump.isJumping
+      ? config.settings.jump.friction
+      : config.settings.friction
   }
 
-  if (Math.abs($.state.player.speed) > $.settings.maxSpeed) {
-    $.state.player.speed =
-      $.state.player.speed > 0 ? $.settings.maxSpeed : -1 * $.settings.maxSpeed
-  } else if (Math.abs($.state.player.speed) < $.settings.minSpeed) {
+  if (Math.abs(config.state.player.speed) > config.settings.maxSpeed) {
+    config.state.player.speed =
+      config.state.player.speed > 0 ? config.settings.maxSpeed : -1 * config.settings.maxSpeed
+  } else if (Math.abs(config.state.player.speed) < config.settings.minSpeed) {
     playerState.idle()
     state.player({ speed: 0 })
 
-    $.state.player.speed = 0
+    config.state.player.speed = 0
   }
 
-  if ($.state.player.speed !== 0) {
-    if (!$.state.jump.isJumping) {
+  if (config.state.player.speed !== 0) {
+    if (!config.state.jump.isJumping) {
       playerState.run()
     }
 
-    const currentSpeed = $.state.jump.isJumping
-      ? $.state.player.speed * 0.7
-      : $.state.player.speed
+    const currentSpeed = config.state.jump.isJumping
+      ? config.state.player.speed * 0.7
+      : config.state.player.speed
 
-    $.state.pos.x +=
-      $.state.player.speed < 0
-        ? Math.ceil(currentSpeed * ($.state.dt as number))
-        : Math.floor(currentSpeed * ($.state.dt as number))
+    config.state.pos.x +=
+      config.state.player.speed < 0
+        ? Math.ceil(currentSpeed * (config.state.dt as number))
+        : Math.floor(currentSpeed * (config.state.dt as number))
 
-    $.state.player.dir = currentSpeed > 0 ? 0 : 1
-    state.player($.state.player)
+    config.state.player.dir = currentSpeed > 0 ? 0 : 1
+    state.player(config.state.player)
   }
 
-  if (!$.state.climbstarted && $.input.jump) {
-    $.state.climbstarted = true
+  if (!config.state.climbstarted && config.input.jump) {
+    config.state.climbstarted = true
   }
 
-  if ($.input.jump || $.state.jump.isJumping) {
-    if ($.state.jump.isGrounded) {
+  if (config.input.jump || config.state.jump.isJumping) {
+    if (config.state.jump.isGrounded) {
       playerState.jumpUp()
       playerState.idle()
 
-      $.state.jump.isGrounded = false
-      $.state.jump.isJumping = true
-      $.state.jump.isBoosting = true
-      $.state.jump.speed = $.settings.jump.maxSpeed
+      config.state.jump.isGrounded = false
+      config.state.jump.isJumping = true
+      config.state.jump.isBoosting = true
+      config.state.jump.speed = config.settings.jump.maxSpeed
     }
 
-    if ($.state.jump.isJumping) {
-      const upwards = $.state.jump.speed > 0
+    if (config.state.jump.isJumping) {
+      const upwards = config.state.jump.speed > 0
       const adjust =
-        ($.state.dt as number) < 30 ? 30 - ($.state.dt as number) : 0 // .·´¯`(>▂<)´¯`·.
+        (config.state.dt as number) < 30 ? 30 - (config.state.dt as number) : 0 // .·´¯`(>▂<)´¯`·.
 
-      if (!upwards && $.state.jump.isBoosting) {
-        $.state.jump.isBoosting = false
+      if (!upwards && config.state.jump.isBoosting) {
+        config.state.jump.isBoosting = false
       }
 
-      $.state.player.prevY = $.state.player.y
-      $.state.player.y -= $.state.jump.speed * ($.state.dt as number)
-      $.state.jump.speed -=
-        ($.settings.jump.gravity[
-          upwards ? ($.state.jump.isBoosting ? 'boost' : 'normal') : 'down'
+      config.state.player.prevY = config.state.player.y
+      config.state.player.y -= config.state.jump.speed * (config.state.dt as number)
+      config.state.jump.speed -=
+        (config.settings.jump.gravity[
+          upwards ? (config.state.jump.isBoosting ? 'boost' : 'normal') : 'down'
         ] -
           adjust * 0.00002) *
-        ($.state.dt as number)
+        (config.state.dt as number)
     }
   }
 
-  if ($.state.jump.isBoosting && !$.input.jump) {
-    $.state.jump.isBoosting = false
+  if (config.state.jump.isBoosting && !config.input.jump) {
+    config.state.jump.isBoosting = false
   }
 
-  if ($.state.climbstarted && $.state.pos.y < 1440) {
-    $.state.pos.y +=
-      ($.state.player.y + $.state.pos.y < 250
-        ? $.state.climbspeed.fast
-        : $.state.climbspeed.normal) * ($.state.dt as number)
+  if (config.state.climbstarted && config.state.pos.y < 1440) {
+    config.state.pos.y +=
+      (config.state.player.y + config.state.pos.y < 250
+        ? config.state.climbspeed.fast
+        : config.state.climbspeed.normal) * (config.state.dt as number)
   }
 
   collisionDetection()
 
-  if ($.state.player.y + $.state.pos.y > 900) {
+  if (config.state.player.y + config.state.pos.y > 900) {
     playerState.idle()
 
-    $.state.paused = true
+    config.state.paused = true
   }
 
-  state.setState($.state)
+  state.setState(config.state)
 }
 
 
 function collisionDetection() {
-  if ($.state.jump.isJumping && $.state.jump.speed < 0) {
-    for (let i = 0; i < $.state.activePlatforms.length; i++) {
-      const platform = $.state.activePlatforms[i]
+  if (config.state.jump.isJumping && config.state.jump.speed < 0) {
+    for (let i = 0; i < config.state.activePlatforms.length; i++) {
+      const platform = config.state.activePlatforms[i]
 
-      if (Math.abs(platform.x - ($.state.pos.x + 90)) < 10) {
+      if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
 
-        const playerFloor = $.state.player.y + 250
-        const playerFloorPrev = $.state.player.prevY + 250
+        const playerFloor = config.state.player.y + 250
+        const playerFloorPrev = config.state.player.prevY + 250
 
 
         if (playerFloor > platform.y && playerFloorPrev < platform.y) {
           playerState.jumpDown()
           playerState.idle()
 
-          $.state.player.y = platform.y - 250
-          $.state.jump.isGrounded = true
-          $.state.jump.isJumping = false
-          $.state.jump.isBoosting = false
-          $.state.jump.speed = 0
+          state.jump({
+            isGrounded: true,
+            isJumping: false,
+            isBoosting: false,
+            speed: 0
+          })
+          state.player({ y: platform.y - 250 })
+
+          config.state.player.y = platform.y - 250
+          config.state.jump.isGrounded = true
+          config.state.jump.isJumping = false
+          config.state.jump.isBoosting = false
+          config.state.jump.speed = 0
         }
       }
     }
-  } else if ($.state.jump.isGrounded) {
+  } else if (config.state.jump.isGrounded) {
     let groundToStandOnFound = false
 
-    for (let i = 0; i < $.state.activePlatforms.length; i++) {
-      let platform = $.state.activePlatforms[i]
+    for (let i = 0; i < config.state.activePlatforms.length; i++) {
+      let platform = config.state.activePlatforms[i]
 
-      if (Math.abs(platform.x - ($.state.pos.x + 90)) < 10) {
+      if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
 
         /**
          * Parou em uma plataforma posterior a última
          * em que seus pontos foram calculados
          */
-        checkPoint($.state, platform)
+        checkPoint(config.state, platform)
 
-
-        if (platform.y - ($.state.player.y + 250) === 0) {
+        if (platform.y - (config.state.player.y + 250) === 0) {
           groundToStandOnFound = true
 
           break
@@ -364,26 +369,24 @@ function collisionDetection() {
       }
     }
 
-
-
     if (!groundToStandOnFound) {
       playerState.jumpUp()
 
-      $.state.jump.isGrounded = false
-      $.state.jump.isJumping = true
-      $.state.jump.isBoosting = true
-      $.state.jump.speed = $.settings.jump.fallStartSpeed
+      config.state.jump.isGrounded = false
+      config.state.jump.isJumping = true
+      config.state.jump.isBoosting = true
+      config.state.jump.speed = config.settings.jump.fallStartSpeed
     }
   } else {
-    $.openings.forEach(door => checkDoor($, door))
+    config.openings.forEach(door => checkDoor(config, door))
   }
 }
 
-function checkDoor($: Arch, door: Door) {
-  if (Math.abs(door.x - ($.state.pos.x + 40)) < 10) {
-    if (!$.state.finished) {
+function checkDoor(config: Arch, door: Door) {
+  if (Math.abs(door.x - (config.state.pos.x + 40)) < 10) {
+    if (!config.state.finished) {
       audio.yeaah.play();
-      $.state.finished = true
+      config.state.finished = true
     }
   }
 }
@@ -403,12 +406,12 @@ function checkPoint(state: GameState, platform: Platform) {
   }
 }
 
-resize($)
+resize(config)
 
-window.addEventListener('resize', () => resize($))
+window.addEventListener('resize', () => resize(config))
 
-if (!$.savedState) {
-  $.savedState = JSON.parse(JSON.stringify($.state))
+if (!config.savedState) {
+  config.savedState = JSON.parse(JSON.stringify(config.state))
 }
 
 
@@ -418,7 +421,7 @@ loadAssets()
 
 function loadLevelPositions(positions: Record<'x' | 'y', number>[]) {
   const platforms = positions.map(({ x, y }) => new Platform(x, y))
-  $.platforms.push(...platforms)
+  config.platforms.push(...platforms)
 }
 
 loadLevelPositions(positions)
@@ -426,8 +429,8 @@ loadLevelPositions(positions)
 draw()
 
 
-window.addEventListener('keydown', (e) => keyDown($, e), false)
-window.addEventListener('keyup', (e) => keyUp($, e), false)
+window.addEventListener('keydown', (e) => keyDown(config, e), false)
+window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
 const audio = {
   thunder: new Audio(
