@@ -12,7 +12,7 @@ export function drawShadows($: Arch) {
       0,
       $.tower.shadowWidth + 80,
       $.canvas!.height,
-      '#727C80',
+      '#666666',
       'transparent'
     )
     drawTowerShadow(
@@ -20,7 +20,7 @@ export function drawShadows($: Arch) {
       0,
       $.tower.shadowWidth,
       $.canvas!.height,
-      '#00011F',
+      'rgb(10, 10, 10)',
       'transparent'
     )
     drawTowerShadow(
@@ -29,7 +29,7 @@ export function drawShadows($: Arch) {
       $.tower.shadowWidth + 80,
       $.canvas!.height,
       'transparent',
-      '#727C80'
+      '#666666'
     )
     drawTowerShadow(
       temp.ctx,
@@ -37,7 +37,7 @@ export function drawShadows($: Arch) {
       $.tower.shadowWidth,
       $.canvas!.height,
       'transparent',
-      '#00011F'
+      'rgb(10, 10, 10)'
     )
     $.storage.shadows = temp.canvas
   }

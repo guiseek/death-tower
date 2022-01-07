@@ -8,6 +8,7 @@ import { Arch, GameState } from './interfaces/arch'
 import { playerState } from './state/player-state'
 import { drawDoors } from './map/doors/draw-doors'
 import { keyDown } from './map/utilities/key-down'
+import positions from './assets/levels/level1.json'
 import { keyUp } from './map/utilities/key-up'
 import { drawTitles } from './map/draw-titles'
 import { drawPlayer } from './map/draw-player'
@@ -16,6 +17,7 @@ import { OffScreen } from './map/offscreen'
 import { drawSky } from './map/draw-sky'
 import { Door } from './map/doors/door'
 import { resize } from './map/resize'
+
 
 const fallbackCanvas = new OffScreen(10, 10).canvas
 const form = document.querySelector('form')
@@ -27,40 +29,13 @@ const $: Arch = {
   ctx: null,
   rect: null,
   platforms: [
-    new Platform(1600, 600),
-    new Platform(1585, 600),
-    new Platform(1570, 600),
-    new Platform(1540, 500),
-    new Platform(1525, 500),
-    new Platform(1480, 500),
-    new Platform(1465, 500),
-    new Platform(1435, 400),
-    new Platform(1415, 270),
-    new Platform(1435, 135),
-    new Platform(1465, 40),
-    new Platform(1480, 40),
-    new Platform(1500, -80),
-    new Platform(1520, -200),
-    new Platform(1520, -335),
-    new Platform(1490, -460),
-    new Platform(1460, -535),
-    new Platform(1430, -610),
-    new Platform(1415, -610),
-    new Platform(1370, -610),
-    new Platform(1355, -610),
-    new Platform(1355, -610),
-    new Platform(1330, -710),
-    new Platform(1305, -810),
-    new Platform(1280, -910),
-    new Platform(1265, -910),
-    new Platform(1220, -910),
-    new Platform(1205, -910)
+
   ],
   openings: [new Door(1600, 350), new Door(1205, -1160)],
   brick: {
     shine: '',
     shade: 'rgba(256, 256, 256, 0.8)',
-    color: 'rgba(143, 153, 163, 1)',
+    color: '#7C747D',
     width: 16,
     height: 48,
     padding: 4,
@@ -76,7 +51,7 @@ const $: Arch = {
     skyWidth: 200,
   },
   sky: {
-    bg: '#092A50',
+    bg: 'rgb(10, 10, 10)',
     starSizes: [2, 3, 4, 5],
     starColors: ['#1E728C', '#98ECFF', '#7AEFFF', '#FFF385'],
   },
@@ -140,7 +115,7 @@ const $: Arch = {
     titles: {
       opacity: 0,
       ready: false,
-      text: 'Tente outra vez : )',
+      text: 'Não foi desta vez',
     },
     climbstarted: false,
     time: null,
@@ -180,14 +155,14 @@ $.canvas = document.querySelector('canvas')
 $.ctx = $.canvas!.getContext('2d')
 
 function loadAssets() {
-  const standing = new URL('assets/player/state=standing.svg', import.meta.url)
-  const jumping = new URL('assets/player/state=jumping.svg', import.meta.url)
+  const standing = new URL('assets/player/zumbi/state=standing.svg', import.meta.url)
+  const jumping = new URL('assets/player/zumbi/state=jumping.svg', import.meta.url)
   const jumpingdown = new URL(
-    'assets/player/state=jumpingdown.svg',
+    'assets/player/zumbi/state=jumpingdown.svg',
     import.meta.url
   )
-  const running = new URL('assets/player/state=running.svg', import.meta.url)
-  const walking = new URL('assets/player/state=walking.svg', import.meta.url)
+  const running = new URL('assets/player/zumbi/state=running.svg', import.meta.url)
+  const walking = new URL('assets/player/zumbi/state=walking.svg', import.meta.url)
 
   loadImage($, standing.pathname, 'standing', 0, false)
   loadImage($, standing.pathname, 'standing', 1, true)
@@ -206,7 +181,6 @@ function loadAssets() {
 }
 
 let dead = false
-
 function draw() {
   let now = document.timeline.currentTime ?? 0
   $.state.dt = now - ($.state.time || now)
@@ -214,6 +188,11 @@ function draw() {
 
   if (!$.state.paused) {
     doCalculations()
+  }
+
+  if (!$.state.lastPlatform) {
+    $.state.lastPlatform = $.platforms[0]
+    dead = false
   }
 
   if (!$.state.paused && $.state.titles.opacity !== 100) {
@@ -224,20 +203,21 @@ function draw() {
     drawShadows($)
     drawPlatforms($, true)
     drawPlayer($)
+
   }
+
 
   if ($.state.paused) {
     drawTitles($)
-
     if (!dead) {
       audio.scream.play()
-      dead = true
       setTimeout(() => {
-        dead = false
+        audio.blood.play()
+        audio.devoured.play()
+        dead = true
       }, 1000)
     }
   }
-
   requestAnimationFrame(draw)
 }
 
@@ -366,26 +346,26 @@ function collisionDetection() {
 
     for (let i = 0; i < $.state.activePlatforms.length; i++) {
       let platform = $.state.activePlatforms[i]
-      
+
       if (Math.abs(platform.x - ($.state.pos.x + 90)) < 10) {
-        
+
         /**
          * Parou em uma plataforma posterior a última
          * em que seus pontos foram calculados
          */
         checkPoint($.state, platform)
 
-        
+
         if (platform.y - ($.state.player.y + 250) === 0) {
           groundToStandOnFound = true
-          
+
           break
         }
       }
     }
-    
-    
-    
+
+
+
     if (!groundToStandOnFound) {
       playerState.jumpUp()
 
@@ -400,7 +380,7 @@ function collisionDetection() {
 }
 
 function checkDoor($: Arch, door: Door) {
-  if (Math.abs(door.x - ($.state.pos.x + 40)) < 10) {    
+  if (Math.abs(door.x - ($.state.pos.x + 40)) < 10) {
     if (!$.state.finished) {
       audio.yeaah.play();
       $.state.finished = true
@@ -431,12 +411,20 @@ if (!$.savedState) {
   $.savedState = JSON.parse(JSON.stringify($.state))
 }
 
+
+
+
 loadAssets()
+
+function loadLevelPositions(positions: Record<'x' | 'y', number>[]) {
+  const platforms = positions.map(({ x, y }) => new Platform(x, y))
+  $.platforms.push(...platforms)
+}
+
+loadLevelPositions(positions)
+
 draw()
 
-if (!$.state.lastPlatform) {
-  $.state.lastPlatform = $.platforms[0]
-}
 
 window.addEventListener('keydown', (e) => keyDown($, e), false)
 window.addEventListener('keyup', (e) => keyUp($, e), false)
@@ -446,7 +434,7 @@ const audio = {
     new URL('assets/sound/thunder-rumble.mp3', import.meta.url).pathname
   ),
   yeaah: new Audio(
-    new URL('assets/sound/yeaah.mp3', import.meta.url).pathname
+    new URL('assets/sound/zumbi/yeaah.mp3', import.meta.url).pathname
   ),
   running: new Audio(
     new URL('assets/sound/running.mp3', import.meta.url).pathname
@@ -457,8 +445,17 @@ const audio = {
   jumpDown: new Audio(
     new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
   ),
+  tiger: new Audio(
+    new URL('assets/sound/zumbi/tiger.mp3', import.meta.url).pathname
+  ),
+  blood: new Audio(
+    new URL('assets/sound/zumbi/blood.mp3', import.meta.url).pathname
+  ),
   scream: new Audio(
-    new URL('assets/sound/scream-falling.mp3', import.meta.url).pathname
+    new URL('assets/sound/zumbi/scream.mp3', import.meta.url).pathname
+  ),
+  devoured: new Audio(
+    new URL('assets/sound/zumbi/devoured.mp3', import.meta.url).pathname
   ),
 }
 

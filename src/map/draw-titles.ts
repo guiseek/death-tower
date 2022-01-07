@@ -8,12 +8,12 @@ export function drawTitles($: Arch) {
 
   if ($.state.titles.opacity > 100) $.state.titles.opacity = 100
 
-  $.ctx!.fillStyle = 'rgba(0, 0, 0, ' + $.state.titles.opacity / 100 + ')'
+  $.ctx!.fillStyle = 'rgba(10, 10, 10, ' + $.state.titles.opacity / 100 + ')'
   $.ctx!.rect(0, 0, $.canvas!.width, $.canvas!.height)
   $.ctx!.fill()
 
-  $.ctx!.fillStyle = 'rgba(245, 245, 245, ' + $.state.titles.opacity / 100 + ')'
-  $.ctx!.font = "48px 'Germania One', cursive"
+  $.ctx!.fillStyle = 'rgba(201, 9, 21, ' + $.state.titles.opacity / 100 + ')'
+  $.ctx!.font = "64px 'UnifrakturCook', cursive"
   $.ctx!.fillText(
     $.state.titles.text,
     600,
@@ -26,5 +26,6 @@ export function drawTitles($: Arch) {
 
   if ($.state.titles.ready && $.input.jump) {
     $.state = JSON.parse(JSON.stringify($.savedState))
+    $.state.lastPlatform = null
   }
 }

@@ -4,7 +4,7 @@ html, body {
 
 body {
   margin: 0;
-  background-color: #092a50;
+  background-color: rgb(10, 10, 10);
   font-family: "UnifrakturCook", cursive;
   font-size: 100%;
   /* overflow: hidden; */
@@ -18,7 +18,7 @@ body {
 
   transform-origin: 50% 0;
   background: rgb(0, 0, 0);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(9, 42, 80, 1) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(10, 10, 10, 1) 100%);
 }
 
 body > form {

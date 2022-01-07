@@ -5,8 +5,7 @@
   "description": "",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build --public-url ./",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel build --public-url ./"
   },
   "keywords": [],
   "author": "",
