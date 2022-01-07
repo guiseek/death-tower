@@ -39,6 +39,7 @@ export interface GameState {
   points: number
   lastPlatform: Platform | null
   paused: boolean
+  finished?: boolean
   titles: Titles
   climbstarted: boolean
   time: number | null

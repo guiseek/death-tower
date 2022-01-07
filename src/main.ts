@@ -134,6 +134,7 @@ const $: Arch = {
   savedState: null,
   state: {
     paused: false,
+    finished: false,
     points: 0,
     lastPlatform: null,
     titles: {
@@ -233,7 +234,7 @@ function draw() {
       dead = true
       setTimeout(() => {
         dead = false
-      }, 3 * 1000)
+      }, 1000)
     }
   }
 
@@ -374,22 +375,35 @@ function collisionDetection() {
          */
         checkPoint($.state, platform)
 
+        
         if (platform.y - ($.state.player.y + 250) === 0) {
           groundToStandOnFound = true
-
+          
           break
         }
       }
     }
-
+    
+    
+    
     if (!groundToStandOnFound) {
       playerState.jumpUp()
-
 
       $.state.jump.isGrounded = false
       $.state.jump.isJumping = true
       $.state.jump.isBoosting = true
       $.state.jump.speed = $.settings.jump.fallStartSpeed
+    }
+  } else {
+    $.openings.forEach(door => checkDoor($, door))
+  }
+}
+
+function checkDoor($: Arch, door: Door) {
+  if (Math.abs(door.x - ($.state.pos.x + 40)) < 10) {    
+    if (!$.state.finished) {
+      audio.yeaah.play();
+      $.state.finished = true
     }
   }
 }
@@ -431,6 +445,9 @@ const audio = {
   thunder: new Audio(
     new URL('assets/sound/thunder-rumble.mp3', import.meta.url).pathname
   ),
+  yeaah: new Audio(
+    new URL('assets/sound/yeaah.mp3', import.meta.url).pathname
+  ),
   running: new Audio(
     new URL('assets/sound/running.mp3', import.meta.url).pathname
   ),
@@ -451,10 +468,6 @@ audio.running.loop = true
 keyboardState.initialize()
 
 let initialized = false
-
-state.jump$.subscribe((jump) => {
-  console.log(jump);
-})
 
 playerState.jumping$.subscribe((jumping: boolean) => {
   if (!jumping) {
