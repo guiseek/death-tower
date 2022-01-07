@@ -231,6 +231,9 @@ function draw() {
     if (!dead) {
       audio.scream.play()
       dead = true
+      setTimeout(() => {
+        dead = false
+      }, 3 * 1000)
     }
   }
 

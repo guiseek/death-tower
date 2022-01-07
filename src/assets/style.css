@@ -1,22 +1,24 @@
+html, body {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #092A50;
-  /* font-family: 'Grenze Gotisch', cursive; */
-  font-family: 'UnifrakturCook', cursive;
+  background-color: #092a50;
+  font-family: "UnifrakturCook", cursive;
   font-size: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 #container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   transform-origin: 50% 0;
-  background: rgb(0,0,0);
-  border: 10px solid #08213d;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 27%, rgba(9,42,80,1) 100%);
+  background: rgb(0, 0, 0);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(9, 42, 80, 1) 100%);
 }
 
 body > form {
@@ -27,14 +29,45 @@ body > form {
 
 body > form label {
   font-size: 160%;
-  color: rgba(255,255,255,.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 body > form input {
-  font-family: 'UnifrakturCook', cursive;
+  font-family: "UnifrakturCook", cursive;
   background-color: transparent;
   border-color: transparent;
   text-align: right;
   font-size: 32px;
   color: white;
+}
+
+nav {
+  z-index: 100;
+  position: fixed;
+  bottom: 0px;
+  width: calc(100% - 20px);
+  display: none;
+  justify-content: space-between;
+}
+
+nav button {
+  border-radius: 50%;
+  border-width: 0;
+  width: 64px;
+  height: 64px;
+}
+
+canvas {
+  z-index: 80;
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  canvas {
+    width: 100%;
+  }
+  nav {
+    padding: 10px;
+    display: flex;
+  }
 }
