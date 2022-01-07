@@ -438,7 +438,7 @@ const audio = {
     new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
   ),
   scream: new Audio(
-    new URL('assets/sound/dead-scream.mp3', import.meta.url).pathname
+    new URL('assets/sound/scream-falling.mp3', import.meta.url).pathname
   ),
 }
 
