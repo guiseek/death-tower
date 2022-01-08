@@ -208,6 +208,12 @@ function loadAudios() {
   const jumpUp = new Audio(
     new URL('assets/sound/jump-up.mp3', import.meta.url).pathname
   )
+  const jumpSpring = new Audio(
+    new URL('assets/sound/jump-spring.mp3', import.meta.url).pathname
+  )
+  const jumpSpringDown = new Audio(
+    new URL('assets/sound/jump-spring-down.mp3', import.meta.url).pathname
+  )
   const jumpDown = new Audio(
     new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
   )
@@ -233,6 +239,8 @@ function loadAudios() {
     running,
     jumpUp,
     jumpDown,
+    jumpSpring,
+    jumpSpringDown,
     tiger,
     blood,
     scream,
@@ -471,13 +479,17 @@ let initialized = false
 
 playerState.jumping$.subscribe((jumping: boolean) => {
   if (!jumping) {
-    audio.jumpDown.play()
-    audio.jumpUp.pause()
+    // audio.jumpDown.play()
+    audio.jumpSpringDown.play()
+    // audio.jumpUp.pause()
+    audio.jumpSpring.pause()
   }
 
   if (jumping) {
-    audio.jumpUp.play()
-    audio.jumpDown.pause()
+    // audio.jumpUp.play()
+    audio.jumpSpring.play()
+    audio.jumpSpringDown.pause()
+    // audio.jumpDown.pause()
   }
 })
 
