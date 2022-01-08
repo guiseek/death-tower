@@ -1,6 +1,6 @@
 import { Config } from '../../interfaces/config'
 import { move } from './move'
 
-export function keyUp($: Config, e: KeyboardEvent) {
-  move($, e, false)
+export function keyUp(config: Config, e: KeyboardEvent) {
+  move(config, e, false)
 }

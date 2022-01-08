@@ -1,21 +1,21 @@
 import { brickFactory } from './brick-factory'
 import { Config } from '../../interfaces/config'
 
-export function drawBricks($: Config) {
-  const brickRowHeight = $.brick.height * 2 + $.brick.padding * 2
+export function drawBricks(config: Config) {
+  const brickRowHeight = config.brick.height * 2 + config.brick.padding * 2
 
-  if (!$.storage.bricks) {
-    $.storage.bricks = {}
+  if (!config.storage.bricks) {
+    config.storage.bricks = {}
     for (let i = 0; i < 16; i++) {
-      $.storage.bricks['brick' + i] = brickFactory($, brickRowHeight, i)
+      config.storage.bricks['brick' + i] = brickFactory(config, brickRowHeight, i)
     }
   }
 
   for (let row = -1; row < 12; row++) {
-    $.ctx!.drawImage(
-      $.storage.bricks['brick' + ($.state.pos.x % $.brick.width)],
-      $.tower.skyWidth,
-      brickRowHeight * row + ($.state.pos.y % brickRowHeight)
+    config.ctx!.drawImage(
+      config.storage.bricks['brick' + (config.state.pos.x % config.brick.width)],
+      config.tower.skyWidth,
+      brickRowHeight * row + (config.state.pos.y % brickRowHeight)
     )
   }
 }

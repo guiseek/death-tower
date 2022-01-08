@@ -2,29 +2,29 @@ import { Config } from '../../interfaces/config'
 import { Platform } from './platform'
 
 export function drawPlatforms(
-  $: Config,
+  config: Config,
   drawInfrontPlatforms: Platform[] | boolean
 ) {
   if (drawInfrontPlatforms) {
-    $.state.activePlatforms = []
+    config.state.activePlatforms = []
   }
 
-  $.platforms.forEach((platform) => {
-    if (platform.x < $.state.pos.x - 40) return
+  config.platforms.forEach((platform) => {
+    if (platform.x < config.state.pos.x - 40) return
 
-    if (platform.x > $.state.pos.x + 220) return
+    if (platform.x > config.state.pos.x + 220) return
 
     if (drawInfrontPlatforms) {
-      if (platform.isInFront($)) {
-        platform.draw($)
-        $.state.activePlatforms.push(platform)
+      if (platform.isInFront(config)) {
+        platform.draw(config)
+        config.state.activePlatforms.push(platform)
       }
-    } else if (!platform.isInFront($)) {
-      platform.draw($)
+    } else if (!platform.isInFront(config)) {
+      platform.draw(config)
     }
   })
 
-  for (let i = 0; i < $.state.activePlatforms.length; i++) {
-    $.state.activePlatforms[i].drawFront($)
+  for (let i = 0; i < config.state.activePlatforms.length; i++) {
+    config.state.activePlatforms[i].drawFront(config)
   }
 }

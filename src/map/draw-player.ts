@@ -1,55 +1,55 @@
 import { Config } from '../interfaces/config'
 
-export function drawPlayer($: Config) {
-  const drawY = $.state.player.y + $.state.pos.y - 48
-  const drawX = $.state.player.x - ($.state.player.dir ? 120 : 80)
+export function drawPlayer(config: Config) {
+  const drawY = config.state.player.y + config.state.pos.y - 48
+  const drawX = config.state.player.x - (config.state.player.dir ? 120 : 80)
 
-  if ($.state.jump.isJumping) {
-    if ($.state.jump.speed > 0) {
-      $.ctx!.drawImage(
-        $.animationFrames.jumpingUp[$.state.player.dir],
+  if (config.state.jump.isJumping) {
+    if (config.state.jump.speed > 0) {
+      config.ctx!.drawImage(
+        config.animationFrames.jumpingUp[config.state.player.dir],
         drawX,
         drawY
       )
     } else {
-      $.ctx!.drawImage(
-        $.animationFrames.jumpingDown[$.state.player.dir],
+      config.ctx!.drawImage(
+        config.animationFrames.jumpingDown[config.state.player.dir],
         drawX,
         drawY
       )
     }
-  } else if ($.state.player.speed !== 0) {
-    if ($.state.player.dir) {
-      $.ctx!.drawImage(
-        $.animationFrames.runningRight[$.state.player.animationFrame],
+  } else if (config.state.player.speed !== 0) {
+    if (config.state.player.dir) {
+      config.ctx!.drawImage(
+        config.animationFrames.runningRight[config.state.player.animationFrame],
         drawX,
         drawY
       )
     } else {
-      $.ctx!.drawImage(
-        $.animationFrames.runningLeft[$.state.player.animationFrame],
+      config.ctx!.drawImage(
+        config.animationFrames.runningLeft[config.state.player.animationFrame],
         drawX,
         drawY
       )
     }
   } else {
-    $.ctx!.drawImage(
-      $.animationFrames.standing[$.state.player.dir],
+    config.ctx!.drawImage(
+      config.animationFrames.standing[config.state.player.dir],
       drawX,
       drawY
     )
   }
 
-  // $.ctx!.fillRect($.state.player.x, $.state.player.y + $.state.pos.y, 150, 250);
+  // config.ctx!.fillRect(config.state.player.x, config.state.player.y + config.state.pos.y, 150, 250);
 
-  $.state.player.animationFrameCount += $.state.dt as number
+  config.state.player.animationFrameCount += config.state.dt as number
 
-  if ($.state.player.animationFrameCount > 50) {
-    $.state.player.animationFrame += 1
-    $.state.player.animationFrameCount = 0
+  if (config.state.player.animationFrameCount > 50) {
+    config.state.player.animationFrame += 1
+    config.state.player.animationFrameCount = 0
   }
 
-  if ($.state.player.animationFrame > 3) {
-    $.state.player.animationFrame = 0
+  if (config.state.player.animationFrame > 3) {
+    config.state.player.animationFrame = 0
   }
 }

@@ -1,11 +1,11 @@
 import { Config } from '../interfaces/config'
 
-export function resize($: Config) {
-  $.rect = $.container!.getBoundingClientRect()
+export function resize(config: Config) {
+  config.rect = config.container!.getBoundingClientRect()
 
-  if ($.canvas!.height > window.innerHeight) {
-    // $.container!.style.transform = `scale(${
-    //   window.innerHeight / $.canvas!.height
+  if (config.canvas!.height > window.innerHeight) {
+    // config.container!.style.transform = `scale(${
+    //   window.innerHeight / config.canvas!.height
     // })`
   }
 }

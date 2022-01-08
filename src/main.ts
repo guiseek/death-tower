@@ -454,7 +454,7 @@ function checkDoor(config: Config, door: Door) {
     if (!config.state.finished) {
       audio.yeaah.play()
       config.state.finished = true
-    }
+  }
   }
 }
 

@@ -9,23 +9,23 @@ export class Door {
     this.y = y
   }
 
-  draw($: Config) {
-    const center = this.x - $.state.pos.x
-    const l = getCirclePoint(600, 800, center - $.platform.width / 2)
-    const r = getCirclePoint(600, 800, center + $.platform.width / 2)
+  draw(config: Config) {
+    const center = this.x - config.state.pos.x
+    const l = getCirclePoint(600, 800, center - config.platform.width / 2)
+    const r = getCirclePoint(600, 800, center + config.platform.width / 2)
 
     if (l > r) {
-      const sl = getCirclePoint(560, 800, center - $.platform.width / 2)
-      const sr = getCirclePoint(560, 800, center + $.platform.width / 2)
+      const sl = getCirclePoint(560, 800, center - config.platform.width / 2)
+      const sr = getCirclePoint(560, 800, center + config.platform.width / 2)
       const c = new OffScreen(1600, 250)
       const sc = new OffScreen(1600, 250)
       
       const smallDoor = drawDoor(sc, '#2A3849', sr, sl - sr, 250, '#262525')
       
-      const p = $.ctx!.createPattern(smallDoor, 'no-repeat') as CanvasPattern
+      const p = config.ctx!.createPattern(smallDoor, 'no-repeat') as CanvasPattern
       const bigDoor = drawDoor(c, p, r, l - r, 250)
 
-      $.ctx!.drawImage(bigDoor, 0, this.y + $.state.pos.y)
+      config.ctx!.drawImage(bigDoor, 0, this.y + config.state.pos.y)
     }
   }
 }

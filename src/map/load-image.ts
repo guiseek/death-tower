@@ -3,7 +3,7 @@ import { Config } from '../interfaces/config'
 import { OffScreen } from './offscreen'
 
 export function loadImage(
-  $: Config,
+  config: Config,
   src: string,
   type: TypeCanvas,
   index: number,
@@ -24,7 +24,7 @@ export function loadImage(
       temp.ctx.restore()
     }
 
-    $.animationFrames[type][index] = temp.canvas
+    config.animationFrames[type][index] = temp.canvas
   }
 
   image.src = src
