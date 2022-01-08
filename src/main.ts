@@ -19,7 +19,7 @@ import {
   resize,
 } from './map'
 
-import positions from './assets/levels/level1.json'
+import positions from './assets/levels/level2.json'
 
 const fallbackCanvas = new OffScreen(10, 10).canvas
 const form = document.querySelector('form')
@@ -29,14 +29,15 @@ const container = document.querySelector('#container') as HTMLElement
 const canvas = document.querySelector('canvas')
 const ctx = canvas!.getContext('2d')
 
-const platforms = getPlatformsByPoints(positions)
+// const platforms = getPlatformsByPoints(positions)
+// let platforms = []
 
 const config: Config = {
   container,
   canvas,
   ctx,
   rect: null,
-  platforms,
+  platforms: [],
   openings: [new Door(1600, 350), new Door(1205, -1160)],
   brick: {
     shine: '',
@@ -119,7 +120,7 @@ const config: Config = {
     finished: false,
     points: 0,
     lastPlatform: null,
-    platformReached: platforms[0],
+    platformReached: null,
     titles: {
       opacity: 0,
       ready: false,
@@ -143,7 +144,7 @@ const config: Config = {
       nextY: 0,
     },
     player: {
-      dir: 1,
+      dir: 0,
       x: 725,
       y: 350,
       prevY: 350,
@@ -193,7 +194,6 @@ function loadAssets() {
   loadImage(config, walking.pathname, 'runningRight', 2, true)
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
-
 
 function loadAudios() {
   const thunder = new Audio(
@@ -454,26 +454,45 @@ function checkDoor(config: Config, door: Door) {
     if (!config.state.finished) {
       audio.yeaah.play()
       config.state.finished = true
-  }
+    }
   }
 }
 
-resize(config)
+function init() {
+  resize(config)
 
-window.addEventListener('resize', () => resize(config))
+  window.addEventListener('resize', () => resize(config))
 
-if (!config.savedState) {
-  config.savedState = JSON.parse(JSON.stringify(config.state))
+  if (!config.savedState) {
+    config.savedState = JSON.parse(JSON.stringify(config.state))
+  }
+
+  window.addEventListener('keydown', (e) => keyDown(config, e), false)
+  window.addEventListener('keyup', (e) => keyUp(config, e), false)
+
+  keyboardState.initialize()
+
+  draw()
+  loadAssets()
 }
 
-loadAssets()
-
-draw()
-
-window.addEventListener('keydown', (e) => keyDown(config, e), false)
-window.addEventListener('keyup', (e) => keyUp(config, e), false)
-
-keyboardState.initialize()
+switch (location.hash) {
+  default:
+  case '#level1': {
+    import('./assets/levels/level1.json').then((positions) => {
+      config.platforms.push(...getPlatformsByPoints(positions))
+      init()
+    })
+    break
+  }
+  case '#level2': {
+    import('./assets/levels/level2.json').then((positions) => {
+      config.platforms.push(...getPlatformsByPoints(positions))
+      init()
+    })
+    break
+  }
+}
 
 let initialized = false
 
