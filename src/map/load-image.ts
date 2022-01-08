@@ -1,9 +1,9 @@
 import { TypeCanvas } from '../interfaces/type-canvas'
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 import { OffScreen } from './offscreen'
 
 export function loadImage(
-  $: Arch,
+  $: Config,
   src: string,
   type: TypeCanvas,
   index: number,

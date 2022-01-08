@@ -1,7 +1,7 @@
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 import { OffScreen } from './offscreen'
 
-export function drawSky($: Arch) {
+export function drawSky($: Config) {
   if ($.storage.sky == null) {
     const height = $.canvas!.height
     const temp = new OffScreen($.canvas!.width, height)

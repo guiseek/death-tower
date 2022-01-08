@@ -1,6 +1,6 @@
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 
-export function resize($: Arch) {
+export function resize($: Config) {
   $.rect = $.container!.getBoundingClientRect()
 
   if ($.canvas!.height > window.innerHeight) {

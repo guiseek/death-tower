@@ -1,7 +1,7 @@
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 import { Point } from './point'
 
-export function drawPolygon($: Arch, color: string, ...points: Point[]) {
+export function drawPolygon($: Config, color: string, ...points: Point[]) {
   $.ctx!.fillStyle = color
   $.ctx!.beginPath()
   $.ctx!.moveTo(points[0].x, points[0].y)

@@ -1,5 +1,5 @@
 import { getCirclePoint } from '../utilities/get-circle-point'
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 import { OffScreen } from '../offscreen'
 import { drawDoor } from './draw-door'
 
@@ -9,7 +9,7 @@ export class Door {
     this.y = y
   }
 
-  draw($: Arch) {
+  draw($: Config) {
     const center = this.x - $.state.pos.x
     const l = getCirclePoint(600, 800, center - $.platform.width / 2)
     const r = getCirclePoint(600, 800, center + $.platform.width / 2)

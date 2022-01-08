@@ -1,6 +1,6 @@
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 
-export function drawDoors($: Arch) {
+export function drawDoors($: Config) {
   $.openings.forEach((opening) => {
     if (opening.x < $.state.pos.x - 40) return
 

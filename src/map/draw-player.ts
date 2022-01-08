@@ -1,6 +1,6 @@
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 
-export function drawPlayer($: Arch) {
+export function drawPlayer($: Config) {
   const drawY = $.state.player.y + $.state.pos.y - 48
   const drawX = $.state.player.x - ($.state.player.dir ? 120 : 80)
 

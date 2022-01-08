@@ -1,7 +1,7 @@
 import { brickFactory } from './brick-factory'
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 
-export function drawBricks($: Arch) {
+export function drawBricks($: Config) {
   const brickRowHeight = $.brick.height * 2 + $.brick.padding * 2
 
   if (!$.storage.bricks) {

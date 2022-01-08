@@ -1,8 +1,8 @@
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 import { Platform } from './platform'
 
 export function drawPlatforms(
-  $: Arch,
+  $: Config,
   drawInfrontPlatforms: Platform[] | boolean
 ) {
   if (drawInfrontPlatforms) {

@@ -1,5 +1,5 @@
+import { Config } from '../../interfaces/config'
 import { drawPolygon } from '../draw-polygon'
-import { Arch } from '../../interfaces/arch'
 import { getBox } from '../get-box'
 import { Point } from '../point'
 
@@ -23,34 +23,34 @@ export class Platform {
     this.outerBox = null
   }
 
-  getY($: Arch) {
-    return this.y + $.state.pos.y
+  private getY(config: Config) {
+    return this.y + config.state.pos.y
   }
 
-  isInFront($: Arch) {
-    let center = this.x - $.state.pos.x,
-      innerBox = getBox($, 600, center),
-      outerBox = getBox($, 680, center)
+  isInFront(config: Config) {
+    const center = this.x - config.state.pos.x
+    const innerBox = getBox(config, 600, center)
+    const outerBox = getBox(config, 680, center)
 
     this.infront = outerBox.left > outerBox.right
     return this.infront
   }
 
-  drawFront($: Arch) {
-    $.ctx!.fillStyle = $.colors.wood2
-    $.ctx!.fillRect(
+  drawFront(config: Config) {
+    config.ctx!.fillStyle = config.colors.wood2
+    config.ctx!.fillRect(
       this.outerBox!.left,
-      this.getY($),
+      this.getY(config),
       this.outerBox!.width,
-      $.platform.height
+      config.platform.height
     )
   }
 
-  draw($: Arch) {
-    let center = this.x - $.state.pos.x,
-      innerBox = getBox($, 600, center),
-      outerBox = getBox($, 680, center),
-      isLeftSide = innerBox.left > outerBox.left
+  draw(config: Config) {
+    const center = this.x - config.state.pos.x
+    const innerBox = getBox(config, 600, center)
+    const outerBox = getBox(config, 680, center)
+    const isLeftSide = innerBox.left > outerBox.left
 
     this.infront = outerBox.left > outerBox.right
 
@@ -60,18 +60,18 @@ export class Platform {
           top: {
             left: new Point(
               outerBox.left + adjust,
-              this.getY($) + $.platform.height
+              this.getY(config) + config.platform.height
             ),
             right: new Point(
               outerBox.left + outerBox.unit + adjust,
-              this.getY($) + $.platform.height
+              this.getY(config) + config.platform.height
             ),
           },
           bottom: {
-            left: new Point(innerBox.left + adjust, this.getY($) + 70),
+            left: new Point(innerBox.left + adjust, this.getY(config) + 70),
             right: new Point(
               innerBox.left + innerBox.unit + adjust,
-              this.getY($) + 70
+              this.getY(config) + 70
             ),
           },
         },
@@ -79,33 +79,33 @@ export class Platform {
           top: {
             left: new Point(
               outerBox.left + adjust,
-              this.getY($) + ($.platform.height - 10)
+              this.getY(config) + (config.platform.height - 10)
             ),
             right: new Point(
               outerBox.left + outerBox.unit + adjust,
-              this.getY($) + ($.platform.height - 10)
+              this.getY(config) + (config.platform.height - 10)
             ),
           },
           bottom: {
-            left: new Point(innerBox.left + adjust, this.getY($) + 60),
+            left: new Point(innerBox.left + adjust, this.getY(config) + 60),
             right: new Point(
               innerBox.left + innerBox.unit + adjust,
-              this.getY($) + 60
+              this.getY(config) + 60
             ),
           },
         }
 
       drawPolygon(
-        $,
-        $.colors.wood3,
+        config,
+        config.colors.wood3,
         inner.top.left,
         inner.bottom.left,
         inner.bottom.right,
         inner.top.right
       )
       drawPolygon(
-        $,
-        $.colors.wood4,
+        config,
+        config.colors.wood4,
         outer.top.left,
         outer.bottom.left,
         outer.bottom.right,
@@ -114,8 +114,8 @@ export class Platform {
 
       if (!isLeftSide) {
         drawPolygon(
-          $,
-          $.colors.wood5,
+          config,
+          config.colors.wood5,
           inner.top.right,
           outer.top.right,
           outer.bottom.right,
@@ -123,8 +123,8 @@ export class Platform {
         )
       } else {
         drawPolygon(
-          $,
-          $.colors.wood5,
+          config,
+          config.colors.wood5,
           inner.top.left,
           outer.top.left,
           outer.bottom.left,
@@ -133,20 +133,20 @@ export class Platform {
       }
     }
 
-    $.ctx!.fillStyle = $.colors.wood1
+    config.ctx!.fillStyle = config.colors.wood1
     if (isLeftSide) {
-      $.ctx!.fillRect(
+      config.ctx!.fillRect(
         innerBox.left,
-        this.getY($),
+        this.getY(config),
         outerBox.left - innerBox.left,
-        $.platform.height
+        config.platform.height
       )
     } else {
-      $.ctx!.fillRect(
+      config.ctx!.fillRect(
         outerBox.right,
-        this.getY($),
+        this.getY(config),
         innerBox.left - outerBox.left,
-        $.platform.height
+        config.platform.height
       )
     }
 

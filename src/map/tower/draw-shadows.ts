@@ -1,8 +1,8 @@
 import { drawTowerShadow } from './draw-tower-shadow'
 import { OffScreen } from '../../map/offscreen'
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 
-export function drawShadows($: Arch) {
+export function drawShadows($: Config) {
   if ($.storage.shadows) {
     $.ctx!.drawImage($.storage.shadows, $.tower.skyWidth, 0)
   } else {

@@ -1,6 +1,6 @@
-import { Arch } from '../../interfaces/arch'
+import { Config } from '../../interfaces/config'
 import { move } from './move'
 
-export function keyUp($: Arch, e: KeyboardEvent) {
+export function keyUp($: Config, e: KeyboardEvent) {
   move($, e, false)
 }

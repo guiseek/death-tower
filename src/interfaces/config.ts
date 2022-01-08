@@ -1,7 +1,9 @@
 import { Platform } from '../map/platforms/platform'
+import { Vector2 } from '../geometry/vector2'
 import { Door } from '../map/doors/door'
+import { Point } from '../map'
 
-interface Titles {
+interface InfoMessage {
   opacity: number
   ready: boolean
   text: string
@@ -10,11 +12,6 @@ interface Titles {
 interface ClimpSpeed {
   normal: number
   fast: number
-}
-
-interface Pos {
-  x: number
-  y: number
 }
 
 interface Jump {
@@ -35,22 +32,25 @@ interface Player {
   animationFrameCount: number
 }
 
-export interface GameState {
+export interface StateValue {
   points: number
   lastPlatform: Platform | null
+  platformReached: Platform | null
   paused: boolean
   finished?: boolean
-  titles: Titles
+  titles: InfoMessage
   climbstarted: boolean
   time: number | null
   dt: number | null
   climbspeed: ClimpSpeed
-  pos: Pos
+  pos: Point
+  lastPos: Vector2;
   activePlatforms: Platform[]
   jump: Jump
   player: Player
 }
-export interface Arch {
+
+export interface Config {
   container: HTMLElement | null
   canvas: HTMLCanvasElement | null
   ctx: CanvasRenderingContext2D | null
@@ -122,5 +122,5 @@ export interface Arch {
     runningRight: HTMLCanvasElement[]
   }
   savedState: null
-  state: GameState
+  state: StateValue
 }

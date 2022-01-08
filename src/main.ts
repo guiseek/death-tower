@@ -1,36 +1,42 @@
-import { drawPlatforms } from './map/platforms/draw-platforms'
-import { DeathTowerState } from './state/death-tower-state'
-import { keyboardState } from './state/keyboard-state'
-import { drawShadows } from './map/tower/draw-shadows'
-import { drawBricks } from './map/bricks/draw-bricks'
-import { Platform } from './map/platforms/platform'
-import { Arch, GameState } from './interfaces/arch'
-import { playerState } from './state/player-state'
-import { drawDoors } from './map/doors/draw-doors'
-import { keyDown } from './map/utilities/key-down'
-import positions from './assets/levels/level1.json'
-import { keyUp } from './map/utilities/key-up'
-import { drawTitles } from './map/draw-titles'
-import { drawPlayer } from './map/draw-player'
-import { loadImage } from './map/load-image'
-import { OffScreen } from './map/offscreen'
-import { drawSky } from './map/draw-sky'
-import { Door } from './map/doors/door'
-import { resize } from './map/resize'
+import { DeathTowerState, keyboardState, playerState } from './state'
+import { Config } from './interfaces'
+import { Vector2 } from './geometry'
+import {
+  getPlatformsByPoints,
+  drawPlatforms,
+  drawShadows,
+  drawBricks,
+  drawDoors,
+  drawTitles,
+  drawPlayer,
+  loadImage,
+  OffScreen,
+  checkPoint,
+  drawSky,
+  keyDown,
+  keyUp,
+  Door,
+  resize,
+} from './map'
 
+import positions from './assets/levels/level1.json'
 
 const fallbackCanvas = new OffScreen(10, 10).canvas
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 
-const config: Arch = {
-  container: null,
-  canvas: null,
-  ctx: null,
-  rect: null,
-  platforms: [
+const container = document.querySelector('#container') as HTMLElement
+const canvas = document.querySelector('canvas')
+const ctx = canvas!.getContext('2d')
 
-  ],
+const platforms = getPlatformsByPoints(positions)
+
+const config: Config = {
+  container,
+  canvas,
+  ctx,
+  rect: null,
+  platforms,
   openings: [new Door(1600, 350), new Door(1205, -1160)],
   brick: {
     shine: '',
@@ -42,7 +48,8 @@ const config: Arch = {
   },
   platform: {
     height: 22,
-    width: 13 /* Degrees */,
+    /* Degrees */
+    width: 13,
     color: '#5A4142',
   },
   tower: {
@@ -61,7 +68,7 @@ const config: Arch = {
     wood2: '#CB946D',
     wood3: '#4B3937',
     wood4: '#EB9A67',
-    wood5: '#B46736', // side support
+    wood5: '#B46736',
   },
   settings: {
     maxSpeed: 0.09,
@@ -112,6 +119,7 @@ const config: Arch = {
     finished: false,
     points: 0,
     lastPlatform: null,
+    platformReached: platforms[0],
     titles: {
       opacity: 0,
       ready: false,
@@ -124,10 +132,8 @@ const config: Arch = {
       normal: 0.05,
       fast: 0.12,
     },
-    pos: {
-      x: 1510,
-      y: 0,
-    },
+    pos: new Vector2(1510, 0),
+    lastPos: new Vector2(1510, 0),
     activePlatforms: [],
     jump: {
       isGrounded: true,
@@ -150,19 +156,27 @@ const config: Arch = {
 
 const state = new DeathTowerState(config.state)
 
-config.container = document.querySelector('#container') as HTMLElement
-config.canvas = document.querySelector('canvas')
-config.ctx = config.canvas!.getContext('2d')
-
 function loadAssets() {
-  const standing = new URL('assets/player/zumbi/state=standing.svg', import.meta.url)
-  const jumping = new URL('assets/player/zumbi/state=jumping.svg', import.meta.url)
+  const standing = new URL(
+    'assets/player/zumbi/state=standing.svg',
+    import.meta.url
+  )
+  const jumping = new URL(
+    'assets/player/zumbi/state=jumping.svg',
+    import.meta.url
+  )
   const jumpingdown = new URL(
     'assets/player/zumbi/state=jumpingdown.svg',
     import.meta.url
   )
-  const running = new URL('assets/player/zumbi/state=running.svg', import.meta.url)
-  const walking = new URL('assets/player/zumbi/state=walking.svg', import.meta.url)
+  const running = new URL(
+    'assets/player/zumbi/state=running.svg',
+    import.meta.url
+  )
+  const walking = new URL(
+    'assets/player/zumbi/state=walking.svg',
+    import.meta.url
+  )
 
   loadImage(config, standing.pathname, 'standing', 0, false)
   loadImage(config, standing.pathname, 'standing', 1, true)
@@ -179,6 +193,54 @@ function loadAssets() {
   loadImage(config, walking.pathname, 'runningRight', 2, true)
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
+
+
+function loadAudios() {
+  const thunder = new Audio(
+    new URL('assets/sound/thunder-rumble.mp3', import.meta.url).pathname
+  )
+  const yeaah = new Audio(
+    new URL('assets/sound/zumbi/yeaah.mp3', import.meta.url).pathname
+  )
+  const running = new Audio(
+    new URL('assets/sound/running.mp3', import.meta.url).pathname
+  )
+  const jumpUp = new Audio(
+    new URL('assets/sound/jump-up.mp3', import.meta.url).pathname
+  )
+  const jumpDown = new Audio(
+    new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
+  )
+  const tiger = new Audio(
+    new URL('assets/sound/zumbi/tiger.mp3', import.meta.url).pathname
+  )
+  const blood = new Audio(
+    new URL('assets/sound/zumbi/blood.mp3', import.meta.url).pathname
+  )
+  const scream = new Audio(
+    new URL('assets/sound/zumbi/scream.mp3', import.meta.url).pathname
+  )
+  const devoured = new Audio(
+    new URL('assets/sound/zumbi/devoured.mp3', import.meta.url).pathname
+  )
+
+  thunder.loop = true
+  running.loop = true
+
+  return {
+    thunder,
+    yeaah,
+    running,
+    jumpUp,
+    jumpDown,
+    tiger,
+    blood,
+    scream,
+    devoured,
+  }
+}
+
+const audio = loadAudios()
 
 let dead = false
 function draw() {
@@ -209,11 +271,7 @@ function draw() {
     drawTitles(config)
     if (!dead) {
       audio.scream.play()
-      setTimeout(() => {
-        audio.blood.play()
-        audio.devoured.play()
-        dead = true
-      }, 1000)
+      dead = true
     }
   }
   requestAnimationFrame(draw)
@@ -232,7 +290,9 @@ function doCalculations() {
 
   if (Math.abs(config.state.player.speed) > config.settings.maxSpeed) {
     config.state.player.speed =
-      config.state.player.speed > 0 ? config.settings.maxSpeed : -1 * config.settings.maxSpeed
+      config.state.player.speed > 0
+        ? config.settings.maxSpeed
+        : -1 * config.settings.maxSpeed
   } else if (Math.abs(config.state.player.speed) < config.settings.minSpeed) {
     playerState.idle()
     state.player({ speed: 0 })
@@ -283,7 +343,8 @@ function doCalculations() {
       }
 
       config.state.player.prevY = config.state.player.y
-      config.state.player.y -= config.state.jump.speed * (config.state.dt as number)
+      config.state.player.y -=
+        config.state.jump.speed * (config.state.dt as number)
       config.state.jump.speed -=
         (config.settings.jump.gravity[
           upwards ? (config.state.jump.isBoosting ? 'boost' : 'normal') : 'down'
@@ -315,17 +376,14 @@ function doCalculations() {
   state.setState(config.state)
 }
 
-
 function collisionDetection() {
   if (config.state.jump.isJumping && config.state.jump.speed < 0) {
     for (let i = 0; i < config.state.activePlatforms.length; i++) {
       const platform = config.state.activePlatforms[i]
 
       if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
-
         const playerFloor = config.state.player.y + 250
         const playerFloorPrev = config.state.player.prevY + 250
-
 
         if (playerFloor > platform.y && playerFloorPrev < platform.y) {
           playerState.jumpDown()
@@ -335,7 +393,7 @@ function collisionDetection() {
             isGrounded: true,
             isJumping: false,
             isBoosting: false,
-            speed: 0
+            speed: 0,
           })
           state.player({ y: platform.y - 250 })
 
@@ -354,12 +412,13 @@ function collisionDetection() {
       let platform = config.state.activePlatforms[i]
 
       if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
-
         /**
          * Parou em uma plataforma posterior a última
          * em que seus pontos foram calculados
          */
         checkPoint(config.state, platform)
+
+        pointsElement.value = (config.state.points | 0).toString()
 
         if (platform.y - (config.state.player.y + 250) === 0) {
           groundToStandOnFound = true
@@ -378,31 +437,16 @@ function collisionDetection() {
       config.state.jump.speed = config.settings.jump.fallStartSpeed
     }
   } else {
-    config.openings.forEach(door => checkDoor(config, door))
+    config.openings.forEach((door) => checkDoor(config, door))
   }
 }
 
-function checkDoor(config: Arch, door: Door) {
+function checkDoor(config: Config, door: Door) {
   if (Math.abs(door.x - (config.state.pos.x + 40)) < 10) {
     if (!config.state.finished) {
-      audio.yeaah.play();
+      audio.yeaah.play()
       config.state.finished = true
     }
-  }
-}
-
-function checkPoint(state: GameState, platform: Platform) {
-  if (state.lastPlatform && platform.n > state.lastPlatform.n) {
-    if (platform.n === state.lastPlatform.n + 1) {
-      state.points += platform.n * 10
-
-    } else {
-      state.points += (platform.n * 10) * (state.player.speed * 10)
-    }
-
-    pointsElement.value = (state.points | 0).toString()
-
-    state.lastPlatform = platform
   }
 }
 
@@ -414,56 +458,12 @@ if (!config.savedState) {
   config.savedState = JSON.parse(JSON.stringify(config.state))
 }
 
-
-
-
 loadAssets()
-
-function loadLevelPositions(positions: Record<'x' | 'y', number>[]) {
-  const platforms = positions.map(({ x, y }) => new Platform(x, y))
-  config.platforms.push(...platforms)
-}
-
-loadLevelPositions(positions)
 
 draw()
 
-
 window.addEventListener('keydown', (e) => keyDown(config, e), false)
 window.addEventListener('keyup', (e) => keyUp(config, e), false)
-
-const audio = {
-  thunder: new Audio(
-    new URL('assets/sound/thunder-rumble.mp3', import.meta.url).pathname
-  ),
-  yeaah: new Audio(
-    new URL('assets/sound/zumbi/yeaah.mp3', import.meta.url).pathname
-  ),
-  running: new Audio(
-    new URL('assets/sound/running.mp3', import.meta.url).pathname
-  ),
-  jumpUp: new Audio(
-    new URL('assets/sound/jump-up.mp3', import.meta.url).pathname
-  ),
-  jumpDown: new Audio(
-    new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
-  ),
-  tiger: new Audio(
-    new URL('assets/sound/zumbi/tiger.mp3', import.meta.url).pathname
-  ),
-  blood: new Audio(
-    new URL('assets/sound/zumbi/blood.mp3', import.meta.url).pathname
-  ),
-  scream: new Audio(
-    new URL('assets/sound/zumbi/scream.mp3', import.meta.url).pathname
-  ),
-  devoured: new Audio(
-    new URL('assets/sound/zumbi/devoured.mp3', import.meta.url).pathname
-  ),
-}
-
-audio.thunder.loop = true
-audio.running.loop = true
 
 keyboardState.initialize()
 

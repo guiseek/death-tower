@@ -1,9 +1,9 @@
 import { getCirclePoint } from '../utilities/get-circle-point';
-import { Arch } from '../../interfaces/arch';
+import { Config } from '../../interfaces/config';
 import { OffScreen } from './../offscreen';
 import { Point } from '../../map/point';
 
-export function brickFactory($: Arch, height: number, pos: number) {
+export function brickFactory($: Config, height: number, pos: number) {
   const temp = new OffScreen($.tower.width, height)
   let x = $.brick.padding
   let y = $.brick.padding

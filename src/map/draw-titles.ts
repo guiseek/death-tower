@@ -1,7 +1,7 @@
 import { easing } from './utilities/easing'
-import { Arch } from '../interfaces/arch'
+import { Config } from '../interfaces/config'
 
-export function drawTitles($: Arch) {
+export function drawTitles($: Config) {
   if ($.state.dt && $.state.titles.opacity < 100) {
     $.state.titles.opacity += Math.floor($.state.dt * 0.2)
   }
