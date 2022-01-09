@@ -302,7 +302,7 @@ function getRandomPositions() {
 }
 
 const init = async () => {
-  
+
   const positions = getRandomPositions()
   const platforms = getPlatformsByPoints(positions)
   config.platforms.push(...platforms)
@@ -324,37 +324,39 @@ const init = async () => {
   draw()
 }
 
-init()
+init().then((res) => {
 
-let initialized = false
+  let initialized = false
 
-playerState.jumping$.subscribe((jumping: boolean) => {
-  if (!jumping) {
-    audio.get('jumpSpringDown')?.play()
-    audio.get('jumpSpringUp')?.pause()
-  }
+  playerState.jumping$.subscribe((jumping: boolean) => {
+    if (!jumping) {
+      audio.get('jumpSpringDown')?.play()
+      audio.get('jumpSpringUp')?.pause()
+    }
 
-  if (jumping) {
-    audio.get('jumpSpringUp')?.play()
-    audio.get('jumpSpringDown')?.pause()
-  }
+    if (jumping) {
+      audio.get('jumpSpringUp')?.play()
+      audio.get('jumpSpringDown')?.pause()
+    }
+  })
+
+  playerState.running$.subscribe((running: boolean) => {
+    if (!initialized && running) {
+      audio.get('thunder')?.play()
+      initialized = true
+    }
+
+    if (!running) {
+      audio.get('running')?.pause()
+    }
+
+    if (running) {
+      audio.get('running')?.play()
+    }
+  })
+
+
 })
-
-playerState.running$.subscribe((running: boolean) => {
-  if (!initialized && running) {
-    audio.get('thunder')?.play()
-    initialized = true
-  }
-
-  if (!running) {
-    audio.get('running')?.pause()
-  }
-
-  if (running) {
-    audio.get('running')?.play()
-  }
-})
-
 
 
 /**
@@ -362,7 +364,7 @@ playerState.running$.subscribe((running: boolean) => {
  * @example localhost:1234/#1
  * @deprecated use `getRandomPositions()`
  */
- const getPositions = async () => {
+const getPositions = async () => {
   switch (location.hash) {
     default:
     case '#1': return import('./assets/levels/1.json')
