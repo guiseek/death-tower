@@ -224,6 +224,10 @@ function collisionDetection() {
           playerState.jumpDown()
           playerState.idle()
 
+          checkPoint(config.state, platform)
+
+          pointsElement.value = (config.state.points | 0).toString()
+
           state.jump({
             isGrounded: true,
             isJumping: false,
@@ -247,13 +251,6 @@ function collisionDetection() {
       let platform = config.state.activePlatforms[i]
 
       if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
-        /**
-         * Parou em uma plataforma posterior a última
-         * em que seus pontos foram calculados
-         */
-        checkPoint(config.state, platform)
-
-        pointsElement.value = (config.state.points | 0).toString()
 
         if (platform.y - (config.state.player.y + 250) === 0) {
           groundToStandOnFound = true
@@ -285,7 +282,6 @@ function checkDoor(config: Config, door: Door) {
   }
 }
 
-
 function getRandomPositions() {
   let x = 0
   let y = 0
@@ -294,15 +290,27 @@ function getRandomPositions() {
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
-  return new Array(30).fill(0).map(() => {
-    x = !!x ? between(x + 20, x + 60) : 1600
-    y = !!y ? between(y - 20, y - 60) : 600
+  return new Array(50).fill(0).map(() => {
+    x = !!x ? between(x - 25, x - 50) : 1600
+    y = !!y ? between(y - 25, y - 50) : 600
+    return ({ x, y })
+  })
+}
+
+function getEqualsPositions() {
+  let x = 0
+  let y = 0
+
+  return new Array(50).fill(0).map(() => {
+    x = !!x ? x + 48 : 1600
+    y = !!y ? y - 48 : 600
     return ({ x, y })
   })
 }
 
 const init = async () => {
 
+  // const positions = getEqualsPositions()
   const positions = getRandomPositions()
   const platforms = getPlatformsByPoints(positions)
   config.platforms.push(...platforms)
