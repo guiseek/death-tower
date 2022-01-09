@@ -28,6 +28,7 @@ const defaultConfig = loadDefaultConfig()
 const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
 const customConfig = loadCustomConfig()
 
+
 const config: Config = {
   ...defaultConfig,
   ...domConfig,
@@ -332,37 +333,42 @@ const init = async () => {
   draw()
 }
 
-init().then((res) => {
+init().then(async () => {
 
   let initialized = false
 
-  playerState.jumping$.subscribe((jumping: boolean) => {
-    if (!jumping) {
-      audio.get('jumpSpringDown')?.play()
-      audio.get('jumpSpringUp')?.pause()
-    }
+  const jumpSpringUp = audio.get('jumpSpringUp')
+  const jumpSpringDown = audio.get('jumpSpringDown')
 
-    if (jumping) {
-      audio.get('jumpSpringUp')?.play()
-      audio.get('jumpSpringDown')?.pause()
-    }
-  })
+  if (jumpSpringUp && jumpSpringDown) {
 
-  playerState.running$.subscribe((running: boolean) => {
-    if (!initialized && running) {
-      audio.get('thunder')?.play()
-      initialized = true
-    }
+    playerState.jumping$.subscribe(async (jumping: boolean) => {
+      if (!jumping) {
+        await jumpSpringDown.play()
+        jumpSpringUp.pause()
+      }
 
-    if (!running) {
-      audio.get('running')?.pause()
-    }
+      if (jumping) {
+        await jumpSpringUp.play()
+        audio.get('jumpSpringDown')?.pause()
+      }
+    })
 
-    if (running) {
-      audio.get('running')?.play()
-    }
-  })
+    playerState.running$.subscribe((running: boolean) => {
+      if (!initialized && running) {
+        audio.get('thunder')?.play()
+        initialized = true
+      }
 
+      if (!running) {
+        audio.get('running')?.pause()
+      }
+
+      if (running) {
+        audio.get('running')?.play()
+      }
+    })
+  }
 
 })
 
