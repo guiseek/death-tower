@@ -4,6 +4,7 @@ import { audio } from './providers/audio'
 import { Config } from './interfaces'
 import {
   getPlatformsByPoints,
+  getRandomPositions,
   drawPlatforms,
   drawShadows,
   drawBricks,
@@ -13,6 +14,7 @@ import {
   loadImage,
   OffScreen,
   checkPoint,
+  getLevel,
   drawSky,
   keyDown,
   keyUp,
@@ -20,20 +22,36 @@ import {
   resize,
 } from './map'
 
+
 const container = document.querySelector('#container') as HTMLElement
 const canvas = document.querySelector('canvas') as HTMLCanvasElement
 const fallbackCanvas = new OffScreen(10, 10).canvas
 
 const defaultConfig = loadDefaultConfig()
 const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
-const customConfig = loadCustomConfig()
 
+const level = getLevel(location.hash.substring(1))
+
+const positions = getRandomPositions(level, 40)
+const platforms = getPlatformsByPoints(positions)
+
+const doors = [new Door(1600, 350)]
+
+const lastPos = positions[positions.length - 1]
+
+if (lastPos) {
+  doors.push(new Door(lastPos!.x, lastPos!.y - 250))
+}
+
+const customConfig = loadCustomConfig({ doors })
 
 const config: Config = {
   ...defaultConfig,
   ...domConfig,
   ...customConfig,
 }
+
+config.platforms.push(...platforms)
 
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
@@ -252,7 +270,6 @@ function collisionDetection() {
       let platform = config.state.activePlatforms[i]
 
       if (Math.abs(platform.x - (config.state.pos.x + 90)) < 10) {
-
         if (platform.y - (config.state.player.y + 250) === 0) {
           groundToStandOnFound = true
 
@@ -283,39 +300,7 @@ function checkDoor(config: Config, door: Door) {
   }
 }
 
-function getRandomPositions() {
-  let x = 0
-  let y = 0
-
-  const between = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min
-  }
-
-  return new Array(50).fill(0).map(() => {
-    x = !!x ? between(x - 25, x - 50) : 1600
-    y = !!y ? between(y - 25, y - 50) : 600
-    return ({ x, y })
-  })
-}
-
-function getEqualsPositions() {
-  let x = 0
-  let y = 0
-
-  return new Array(50).fill(0).map(() => {
-    x = !!x ? x + 48 : 1600
-    y = !!y ? y - 48 : 600
-    return ({ x, y })
-  })
-}
-
 const init = async () => {
-
-  // const positions = getEqualsPositions()
-  const positions = getRandomPositions()
-  const platforms = getPlatformsByPoints(positions)
-  config.platforms.push(...platforms)
-
   if (!config.savedState) {
     config.savedState = JSON.parse(JSON.stringify(config.state))
   }
@@ -334,23 +319,32 @@ const init = async () => {
 }
 
 init().then(async () => {
-
   let initialized = false
 
   const jumpSpringUp = audio.get('jumpSpringUp')
   const jumpSpringDown = audio.get('jumpSpringDown')
 
   if (jumpSpringUp && jumpSpringDown) {
+    jumpSpringUp.onload = () => {}
 
     playerState.jumping$.subscribe(async (jumping: boolean) => {
       if (!jumping) {
-        await jumpSpringDown.play()
-        jumpSpringUp.pause()
+        if (!jumpSpringUp.paused) {
+          jumpSpringUp.pause()
+        }
+
+        if (jumpSpringDown.paused) {
+          await jumpSpringDown.play()
+        }
       }
 
       if (jumping) {
-        await jumpSpringUp.play()
-        audio.get('jumpSpringDown')?.pause()
+        if (!jumpSpringDown.paused) {
+          jumpSpringDown.pause()
+        }
+        if (jumpSpringUp.paused) {
+          await jumpSpringUp.play()
+        }
       }
     })
 
@@ -369,20 +363,4 @@ init().then(async () => {
       }
     })
   }
-
 })
-
-
-/**
- * Carrega posições da fase informada no hash da URL
- * @example localhost:1234/#1
- * @deprecated use `getRandomPositions()`
- */
-const getPositions = async () => {
-  switch (location.hash) {
-    default:
-    case '#1': return import('./assets/levels/1.json')
-    case '#2': return import('./assets/levels/2.json')
-    case '#3': return import('./assets/levels/3.json')
-  }
-}
