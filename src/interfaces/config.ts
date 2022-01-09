@@ -1,5 +1,4 @@
 import { Platform } from '../map/platforms/platform'
-import { Vector2 } from '../geometry/vector2'
 import { Door } from '../map/doors/door'
 import { Point } from '../map'
 
@@ -20,6 +19,7 @@ interface Jump {
   speed: number
   nextY: number
 }
+
 interface Player {
   dir: number
   x: number
@@ -29,6 +29,7 @@ interface Player {
   animationFrame: number
   animationFrameCount: number
 }
+
 interface BrickConfig {
   shine: string
   shade: string
@@ -37,21 +38,25 @@ interface BrickConfig {
   height: number
   padding: number
 }
+
 export interface PlatformConfig {
   height: number
   width: number
   color: string
 }
+
 export interface TowerConfig {
   width: number
   shadowWidth: number
   skyWidth: number
 }
+
 export interface SkyConfig {
   bg: string
   starSizes: number[]
   starColors: string[]
 }
+
 export interface StateValue {
   points: number
   lastPlatform: Platform | null
@@ -69,6 +74,7 @@ export interface StateValue {
   jump: Jump
   player: Player
 }
+
 interface ColorsConfig {
   bg: string
   wood1: string
@@ -77,17 +83,20 @@ interface ColorsConfig {
   wood4: string
   wood5: string
 }
+
 interface GravityConfig {
   boost: number
   normal: number
   down: number
 }
+
 interface JumpConfig {
   gravity: GravityConfig
   maxSpeed: number
   fallStartSpeed: number
   friction: number
 }
+
 interface SettingsConfig {
   maxSpeed: number
   minSpeed: number
@@ -95,6 +104,7 @@ interface SettingsConfig {
   acceleration: number
   jump: JumpConfig
 }
+
 interface StorageConfig {
   bricks: Record<string, HTMLCanvasElement> | null
   sky: HTMLCanvasElement | null
@@ -105,6 +115,7 @@ interface InputConfig {
   right: boolean
   jump: boolean
 }
+
 interface AnimationFramesConfig {
   standing: HTMLCanvasElement[]
   jumpingUp: HTMLCanvasElement[]
@@ -112,6 +123,8 @@ interface AnimationFramesConfig {
   runningLeft: HTMLCanvasElement[]
   runningRight: HTMLCanvasElement[]
 }
+
+
 export interface StateConfig {
   points: number
   lastPlatform: Platform | null
@@ -129,6 +142,7 @@ export interface StateConfig {
   jump: Jump
   player: Player
 }
+
 export interface DOMConfig {
   container: HTMLElement | null
   canvas: HTMLCanvasElement | null
@@ -136,6 +150,7 @@ export interface DOMConfig {
   rect: DOMRect | null
   animationFrames: AnimationFramesConfig
 }
+
 export interface DefaultConfig {
   brick: BrickConfig
   platform: PlatformConfig
@@ -146,6 +161,7 @@ export interface DefaultConfig {
   storage: StorageConfig
   input: InputConfig
 }
+
 export interface CustomConfig {
   platforms: Platform[]
   doors: Door[]

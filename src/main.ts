@@ -285,41 +285,46 @@ function checkDoor(config: Config, door: Door) {
   }
 }
 
-function init() {
-  resize(config)
 
-  window.addEventListener('resize', () => resize(config))
+function getRandomPositions() {
+  let x = 0
+  let y = 0
+
+  const between = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  return new Array(30).fill(0).map(() => {
+    x = !!x ? between(x + 20, x + 60) : 1600
+    y = !!y ? between(y - 20, y - 60) : 600
+    return ({ x, y })
+  })
+}
+
+const init = async () => {
+  
+  const positions = getRandomPositions()
+  const platforms = getPlatformsByPoints(positions)
+  config.platforms.push(...platforms)
 
   if (!config.savedState) {
     config.savedState = JSON.parse(JSON.stringify(config.state))
   }
 
+  resize(config)
+
+  window.addEventListener('resize', () => resize(config))
   window.addEventListener('keydown', (e) => keyDown(config, e), false)
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
   keyboardState.initialize()
 
-  draw()
   loadAssets()
+
+  draw()
 }
 
-switch (location.hash) {
-  default:
-  case '#level1': {
-    import('./assets/levels/level1.json').then((positions) => {
-      config.platforms.push(...getPlatformsByPoints(positions))
-      init()
-    })
-    break
-  }
-  case '#level2': {
-    import('./assets/levels/level2.json').then((positions) => {
-      config.platforms.push(...getPlatformsByPoints(positions))
-      init()
-    })
-    break
-  }
-}
+init()
 
 let initialized = false
 
@@ -349,3 +354,19 @@ playerState.running$.subscribe((running: boolean) => {
     audio.get('running')?.play()
   }
 })
+
+
+
+/**
+ * Carrega posições da fase informada no hash da URL
+ * @example localhost:1234/#1
+ * @deprecated use `getRandomPositions()`
+ */
+ const getPositions = async () => {
+  switch (location.hash) {
+    default:
+    case '#1': return import('./assets/levels/1.json')
+    case '#2': return import('./assets/levels/2.json')
+    case '#3': return import('./assets/levels/3.json')
+  }
+}
