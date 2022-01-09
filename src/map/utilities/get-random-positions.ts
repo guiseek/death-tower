@@ -15,7 +15,7 @@ export function getRandomPositions(level: Level, length = 80) {
 
   return new Array(length).fill({ x, y }).map(() => {
     x = !!x ? between(x - level.min, x - level.max) : initial.x
-    y = !!y ? between(y - level.min, y - (level.max * 2)) : initial.y
+    y = !!y ? between(y - (level.min - 20), y - ((level.max * 2) - 20)) : initial.y
     return { x, y }
   })
 }

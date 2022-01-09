@@ -13,7 +13,7 @@ export function drawTitles(config: Config) {
   config.ctx!.fill()
 
   config.ctx!.fillStyle = 'rgba(201, 9, 21, ' + config.state.titles.opacity / 100 + ')'
-  config.ctx!.font = "64px 'UnifrakturCook', cursive"
+  config.ctx!.font = "64px 'UnifrakturMaguntia', cursive"
   config.ctx!.fillText(
     config.state.titles.text,
     600,
