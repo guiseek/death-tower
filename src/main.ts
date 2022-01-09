@@ -1,6 +1,7 @@
+import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { DeathTowerState, keyboardState, playerState } from './state'
+import { audio } from './providers/audio'
 import { Config } from './interfaces'
-import { Vector2 } from './geometry'
 import {
   getPlatformsByPoints,
   drawPlatforms,
@@ -19,141 +20,22 @@ import {
   resize,
 } from './map'
 
-import positions from './assets/levels/level2.json'
-
-const fallbackCanvas = new OffScreen(10, 10).canvas
-const form = document.querySelector('form')
-const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
-
 const container = document.querySelector('#container') as HTMLElement
-const canvas = document.querySelector('canvas')
-const ctx = canvas!.getContext('2d')
+const canvas = document.querySelector('canvas') as HTMLCanvasElement
+const fallbackCanvas = new OffScreen(10, 10).canvas
 
-// const platforms = getPlatformsByPoints(positions)
-// let platforms = []
+const defaultConfig = loadDefaultConfig()
+const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
+const customConfig = loadCustomConfig()
 
 const config: Config = {
-  container,
-  canvas,
-  ctx,
-  rect: null,
-  platforms: [],
-  openings: [new Door(1600, 350), new Door(1205, -1160)],
-  brick: {
-    shine: '',
-    shade: 'rgba(256, 256, 256, 0.8)',
-    color: '#7C747D',
-    width: 16,
-    height: 48,
-    padding: 4,
-  },
-  platform: {
-    height: 22,
-    /* Degrees */
-    width: 13,
-    color: '#5A4142',
-  },
-  tower: {
-    width: 1200,
-    shadowWidth: 130,
-    skyWidth: 200,
-  },
-  sky: {
-    bg: 'rgb(10, 10, 10)',
-    starSizes: [2, 3, 4, 5],
-    starColors: ['#1E728C', '#98ECFF', '#7AEFFF', '#FFF385'],
-  },
-  colors: {
-    bg: '#FBD0D0',
-    wood1: '#B5754C',
-    wood2: '#CB946D',
-    wood3: '#4B3937',
-    wood4: '#EB9A67',
-    wood5: '#B46736',
-  },
-  settings: {
-    maxSpeed: 0.09,
-    minSpeed: 0.01,
-    friction: 0.7,
-    acceleration: 0.02,
-    jump: {
-      gravity: {
-        boost: 0.0014,
-        normal: 0.003,
-        down: 0.004,
-      },
-      maxSpeed: 0.6,
-      fallStartSpeed: 0.07,
-      friction: 0.98,
-    },
-  },
-  storage: {
-    bricks: null,
-    sky: null,
-    shadows: null,
-  },
-  input: {
-    left: false,
-    right: false,
-    jump: false,
-  },
-  animationFrames: {
-    standing: [fallbackCanvas, fallbackCanvas],
-    jumpingUp: [fallbackCanvas, fallbackCanvas],
-    jumpingDown: [fallbackCanvas, fallbackCanvas],
-    runningLeft: [
-      fallbackCanvas,
-      fallbackCanvas,
-      fallbackCanvas,
-      fallbackCanvas,
-    ],
-    runningRight: [
-      fallbackCanvas,
-      fallbackCanvas,
-      fallbackCanvas,
-      fallbackCanvas,
-    ],
-  },
-  savedState: null,
-  state: {
-    paused: false,
-    finished: false,
-    points: 0,
-    lastPlatform: null,
-    platformReached: null,
-    titles: {
-      opacity: 0,
-      ready: false,
-      text: 'Não foi desta vez',
-    },
-    climbstarted: false,
-    time: null,
-    dt: null,
-    climbspeed: {
-      normal: 0.05,
-      fast: 0.12,
-    },
-    pos: new Vector2(1510, 0),
-    lastPos: new Vector2(1510, 0),
-    activePlatforms: [],
-    jump: {
-      isGrounded: true,
-      isJumping: false,
-      isBoosting: false,
-      speed: 0,
-      nextY: 0,
-    },
-    player: {
-      dir: 0,
-      x: 725,
-      y: 350,
-      prevY: 350,
-      speed: 0,
-      animationFrame: 0,
-      animationFrameCount: 0,
-    },
-  },
+  ...defaultConfig,
+  ...domConfig,
+  ...customConfig,
 }
+
+const form = document.querySelector('form')
+const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 
 const state = new DeathTowerState(config.state)
 
@@ -195,61 +77,6 @@ function loadAssets() {
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
-function loadAudios() {
-  const thunder = new Audio(
-    new URL('assets/sound/thunder-rumble.mp3', import.meta.url).pathname
-  )
-  const yeaah = new Audio(
-    new URL('assets/sound/zumbi/yeaah.mp3', import.meta.url).pathname
-  )
-  const running = new Audio(
-    new URL('assets/sound/running.mp3', import.meta.url).pathname
-  )
-  const jumpUp = new Audio(
-    new URL('assets/sound/jump-up.mp3', import.meta.url).pathname
-  )
-  const jumpSpring = new Audio(
-    new URL('assets/sound/jump-spring.mp3', import.meta.url).pathname
-  )
-  const jumpSpringDown = new Audio(
-    new URL('assets/sound/jump-spring-down.mp3', import.meta.url).pathname
-  )
-  const jumpDown = new Audio(
-    new URL('assets/sound/jump-down.mp3', import.meta.url).pathname
-  )
-  const tiger = new Audio(
-    new URL('assets/sound/zumbi/tiger.mp3', import.meta.url).pathname
-  )
-  const blood = new Audio(
-    new URL('assets/sound/zumbi/blood.mp3', import.meta.url).pathname
-  )
-  const scream = new Audio(
-    new URL('assets/sound/zumbi/scream.mp3', import.meta.url).pathname
-  )
-  const devoured = new Audio(
-    new URL('assets/sound/zumbi/devoured.mp3', import.meta.url).pathname
-  )
-
-  thunder.loop = true
-  running.loop = true
-
-  return {
-    thunder,
-    yeaah,
-    running,
-    jumpUp,
-    jumpDown,
-    jumpSpring,
-    jumpSpringDown,
-    tiger,
-    blood,
-    scream,
-    devoured,
-  }
-}
-
-const audio = loadAudios()
-
 let dead = false
 function draw() {
   const now = document.timeline.currentTime ?? 0
@@ -278,7 +105,7 @@ function draw() {
   if (config.state.paused) {
     drawTitles(config)
     if (!dead) {
-      audio.scream.play()
+      audio.get('scream')?.play()
       dead = true
     }
   }
@@ -452,7 +279,7 @@ function collisionDetection() {
 function checkDoor(config: Config, door: Door) {
   if (Math.abs(door.x - (config.state.pos.x + 40)) < 10) {
     if (!config.state.finished) {
-      audio.yeaah.play()
+      audio.get('yeaah')?.play()
       config.state.finished = true
     }
   }
@@ -498,31 +325,27 @@ let initialized = false
 
 playerState.jumping$.subscribe((jumping: boolean) => {
   if (!jumping) {
-    // audio.jumpDown.play()
-    audio.jumpSpringDown.play()
-    // audio.jumpUp.pause()
-    audio.jumpSpring.pause()
+    audio.get('jumpSpringDown')?.play()
+    audio.get('jumpSpringUp')?.pause()
   }
 
   if (jumping) {
-    // audio.jumpUp.play()
-    audio.jumpSpring.play()
-    audio.jumpSpringDown.pause()
-    // audio.jumpDown.pause()
+    audio.get('jumpSpringUp')?.play()
+    audio.get('jumpSpringDown')?.pause()
   }
 })
 
 playerState.running$.subscribe((running: boolean) => {
   if (!initialized && running) {
-    audio.thunder.play()
+    audio.get('thunder')?.play()
     initialized = true
   }
 
   if (!running) {
-    audio.running.pause()
+    audio.get('running')?.pause()
   }
 
   if (running) {
-    audio.running.play()
+    audio.get('running')?.play()
   }
 })

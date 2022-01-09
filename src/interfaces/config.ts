@@ -32,6 +32,33 @@ interface Player {
   animationFrameCount: number
 }
 
+interface BrickConfig {
+  shine: string
+  shade: string
+  color: string
+  width: number
+  height: number
+  padding: number
+}
+
+export interface PlatformConfig {
+  height: number
+  width: number
+  color: string
+}
+
+export interface TowerConfig {
+  width: number
+  shadowWidth: number
+  skyWidth: number
+}
+
+export interface SkyConfig {
+  bg: string
+  starSizes: number[]
+  starColors: string[]
+}
+
 export interface StateValue {
   points: number
   lastPlatform: Platform | null
@@ -44,83 +71,182 @@ export interface StateValue {
   dt: number | null
   climbspeed: ClimpSpeed
   pos: Point
-  lastPos: Vector2;
+  lastPos: Point
   activePlatforms: Platform[]
   jump: Jump
   player: Player
 }
 
-export interface Config {
+interface ColorsConfig {
+  bg: string
+  wood1: string
+  wood2: string
+  wood3: string
+  wood4: string
+  wood5: string
+}
+
+interface GravityConfig {
+  boost: number
+  normal: number
+  down: number
+}
+
+interface JumpConfig {
+  gravity: GravityConfig
+  maxSpeed: number
+  fallStartSpeed: number
+  friction: number
+}
+
+interface SettingsConfig {
+  maxSpeed: number
+  minSpeed: number
+  friction: number
+  acceleration: number
+  jump: JumpConfig
+}
+
+interface StorageConfig {
+  bricks: Record<string, HTMLCanvasElement> | null
+  sky: HTMLCanvasElement | null
+  shadows: HTMLCanvasElement | null
+}
+
+interface InputConfig {
+  left: boolean
+  right: boolean
+  jump: boolean
+}
+
+interface AnimationFramesConfig {
+  standing: HTMLCanvasElement[]
+  jumpingUp: HTMLCanvasElement[]
+  jumpingDown: HTMLCanvasElement[]
+  runningLeft: HTMLCanvasElement[]
+  runningRight: HTMLCanvasElement[]
+}
+
+// type CustomConfig = Pick<Config, 'openings' | 'platforms' | 'state'>
+// type DefaultConfig = Omit<Config, 'openings' | 'platforms' | 'state'>
+
+export interface StateConfig {
+  points: number
+  lastPlatform: Platform | null
+  platformReached: Platform | null
+  paused: boolean
+  finished: boolean
+  titles: InfoMessage
+  climbstarted: boolean
+  time: number | null
+  dt: number | null
+  climbspeed: ClimpSpeed
+  pos: Point
+  lastPos: Point
+  activePlatforms: Platform[]
+  jump: Jump
+  player: Player
+}
+
+export interface DOMConfig {
   container: HTMLElement | null
   canvas: HTMLCanvasElement | null
   ctx: CanvasRenderingContext2D | null
   rect: DOMRect | null
+  animationFrames: AnimationFramesConfig
+}
+
+export interface DefaultConfig {
+  brick: BrickConfig
+  platform: PlatformConfig
+  tower: TowerConfig
+  sky: SkyConfig
+  colors: ColorsConfig
+  settings: SettingsConfig
+  storage: StorageConfig
+  input: InputConfig
+}
+
+export interface CustomConfig {
   platforms: Platform[]
   openings: Door[]
-  brick: {
-    shine: string
-    shade: string
-    color: string
-    width: number
-    height: number
-    padding: number
-  }
-  platform: {
-    height: number
-    width: number
-    color: string
-  }
-  tower: {
-    width: number
-    shadowWidth: number
-    skyWidth: number
-  }
-  sky: {
-    bg: string
-    starSizes: number[]
-    starColors: string[]
-  }
-  colors: {
-    bg: string
-    wood1: string
-    wood2: string
-    wood3: string
-    wood4: string
-    wood5: string
-  }
-  settings: {
-    maxSpeed: number
-    minSpeed: number
-    friction: number
-    acceleration: number
-    jump: {
-      gravity: {
-        boost: number
-        normal: number
-        down: number
-      }
-      maxSpeed: number
-      fallStartSpeed: number
-      friction: number
-    }
-  }
-  storage: {
-    bricks: Record<string, HTMLCanvasElement> | null
-    sky: HTMLCanvasElement | null
-    shadows: HTMLCanvasElement | null
-  }
-  input: {
-    left: boolean
-    right: boolean
-    jump: boolean
-  }
-  animationFrames: {
-    standing: HTMLCanvasElement[]
-    jumpingUp: HTMLCanvasElement[]
-    jumpingDown: HTMLCanvasElement[]
-    runningLeft: HTMLCanvasElement[]
-    runningRight: HTMLCanvasElement[]
-  }
+  state: StateConfig
   savedState: null
-  state: StateValue
 }
+
+export type Config = DOMConfig & DefaultConfig & CustomConfig
+
+// export interface Config {
+//   container: HTMLElement | null
+//   canvas: HTMLCanvasElement | null
+//   ctx: CanvasRenderingContext2D | null
+//   rect: DOMRect | null
+//   platforms: Platform[]
+//   openings: Door[]
+//   brick: {
+//     shine: string
+//     shade: string
+//     color: string
+//     width: number
+//     height: number
+//     padding: number
+//   }
+//   platform: {
+//     height: number
+//     width: number
+//     color: string
+//   }
+//   tower: {
+//     width: number
+//     shadowWidth: number
+//     skyWidth: number
+//   }
+//   sky: {
+//     bg: string
+//     starSizes: number[]
+//     starColors: string[]
+//   }
+//   colors: {
+//     bg: string
+//     wood1: string
+//     wood2: string
+//     wood3: string
+//     wood4: string
+//     wood5: string
+//   }
+//   settings: {
+//     maxSpeed: number
+//     minSpeed: number
+//     friction: number
+//     acceleration: number
+//     jump: {
+//       gravity: {
+//         boost: number
+//         normal: number
+//         down: number
+//       }
+//       maxSpeed: number
+//       fallStartSpeed: number
+//       friction: number
+//     }
+//   }
+//   storage: {
+//     bricks: Record<string, HTMLCanvasElement> | null
+//     sky: HTMLCanvasElement | null
+//     shadows: HTMLCanvasElement | null
+//   }
+//   input: {
+//     left: boolean
+//     right: boolean
+//     jump: boolean
+//   }
+//   animationFrames: {
+//     standing: HTMLCanvasElement[]
+//     jumpingUp: HTMLCanvasElement[]
+//     jumpingDown: HTMLCanvasElement[]
+//     runningLeft: HTMLCanvasElement[]
+//     runningRight: HTMLCanvasElement[]
+//   }
+//   savedState: null
+//   state: StateValue
+// }

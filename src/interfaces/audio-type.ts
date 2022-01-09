@@ -1,9 +1,10 @@
 export type AudioType =
+  | 'jumpSpringDown'
+  | 'jumpSpringUp'
   | 'thunder'
   | 'yeaah'
   | 'running'
   | 'jumpUp'
-  | 'jumpDown'
   | 'tiger'
   | 'blood'
   | 'scream'

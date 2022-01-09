@@ -14,6 +14,7 @@
     "parcel": "^2.0.1"
   },
   "dependencies": {
-    "rxjs": "^7.5.1"
+    "rxjs": "^7.5.1",
+    "service-seeker": "^1.0.0"
   }
 }
