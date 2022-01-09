@@ -32,12 +32,17 @@ const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
 
 const level = getLevel(location.hash.substring(1))
 
-const positions = getRandomPositions(level, 40)
+// `num | 0` serve para arredondar um número
+// também é mais rápido que `Math.floor(num)`
+const len = ((level.min + level.max) / 2) | 0
+
+const positions = getRandomPositions(level, len)
 const platforms = getPlatformsByPoints(positions)
 
+// Adiciona a primeira porta
 const doors = [new Door(1600, 350)]
-
-const lastPos = positions[positions.length - 1]
+// Última posição gerada para plataformas
+const lastPos = positions.pop()
 
 if (lastPos) {
   doors.push(new Door(lastPos!.x, lastPos!.y - 250))
@@ -52,6 +57,10 @@ const config: Config = {
 }
 
 config.platforms.push(...platforms)
+
+onpopstate = (e) => {
+  location.reload()
+}
 
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement

@@ -1,9 +1,9 @@
 import { Level, Levels, LevelType } from '../interfaces/level'
 
 const levels: Levels = {
-  easy: { min: 20, max: 40 },
-  medium: { min: 30, max: 40 },
-  hard: { min: 40, max: 60 },
+  easy: { min: 30, max: 40 },
+  medium: { min: 20, max: 45 },
+  hard: { min: 15, max: 58 },
 }
 
 function isLevelType(level: string): level is LevelType {

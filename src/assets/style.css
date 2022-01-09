@@ -21,10 +21,38 @@ body {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(10, 10, 10, 1) 100%);
 }
 
+#container #levels {
+  z-index: 1000;
+  position: fixed;
+  left: 10px;
+  top: 10px;
+}
+
+#container #levels a {
+  display: inline-flex;
+  font-size: 140%;
+  margin: 10px;
+}
+
+#container #levels a,
+#container #levels a:link {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+#container #levels a:hover {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+}
+#container #levels a:active {
+  color: rgba(255, 255, 255, 1);
+  text-decoration: none;
+}
+
 #container > form {
   position: fixed;
   top: 10px;
   right: 10px;
+  z-index: 1000;
 }
 
 #container > form label {
@@ -42,7 +70,7 @@ body {
   z-index: 200;
 }
 
-nav {
+#buttons {
   z-index: 100;
   position: fixed;
   bottom: 0px;
@@ -51,7 +79,7 @@ nav {
   justify-content: space-between;
 }
 
-nav button {
+#buttons button {
   border-radius: 50%;
   border-width: 0;
   width: 64px;
@@ -67,7 +95,7 @@ canvas {
   canvas {
     width: 100%;
   }
-  nav {
+  #buttons {
     padding: 10px;
     display: flex;
   }
