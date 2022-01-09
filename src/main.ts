@@ -272,7 +272,7 @@ function collisionDetection() {
       config.state.jump.speed = config.settings.jump.fallStartSpeed
     }
   } else {
-    config.openings.forEach((door) => checkDoor(config, door))
+    config.doors.forEach((door) => checkDoor(config, door))
   }
 }
 

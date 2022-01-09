@@ -1,8 +1,12 @@
 import { CustomConfig } from '../interfaces/config'
+import { Door } from '../map'
 
 export const customConfig: CustomConfig = {
   platforms: [],
-  openings: [],
+  doors: [
+    new Door(1600, 350),
+    new Door(1205, -1160),
+  ],
   savedState: null,
   state: {
     paused: false,
