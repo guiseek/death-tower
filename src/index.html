@@ -4,9 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link rel='stylesheet' href="https://fonts.googleapis.com/css?family=Germania+One">
   <link rel="stylesheet" href="assets/style.css">
   <script type="module" src="main.ts"></script>
   <title>Death Tower</title>
@@ -37,5 +35,26 @@
       <button type="button" id="walk">Andar</button>
     </nav>
   </div>
+  
+  <dialog>
+    <button type="button" id="reload">Carregar outro mapa</button>
+    
+    <form id="level">
+      <section>
+        <input type="radio" name="level" id="easy">
+        <label for="easy">Fácil</label>
+      </section>
+      <section>
+        <input type="radio" name="level" id="medium">
+        <label for="medium">Médio</label>
+      </section>
+      <section>
+        <input type="radio" name="level" id="hard">
+        <label for="hard">Difícil</label>
+      </section>
+    </form>
+  </dialog>
+  
+  <div id="gui"></div>
 </body>
 </html>

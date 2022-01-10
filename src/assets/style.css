@@ -1,3 +1,8 @@
+:root {
+  /* --font-family: 'UnifrakturMaguntia', cursive; */
+  --font-family: 'Germania One', cursive;
+}
+
 html, body {
   height: 100%;
 }
@@ -5,8 +10,7 @@ html, body {
 body {
   margin: 0;
   background-color: rgb(10, 10, 10);
-  /* font-family: "UnifrakturCook", cursive; */
-  font-family: 'UnifrakturMaguntia', cursive;
+  font-family: var(--font-family);
   font-size: 100%;
 }
 
@@ -62,8 +66,7 @@ body {
 }
 
 #container > form input {
-  /* font-family: "UnifrakturCook", cursive; */
-  font-family: 'UnifrakturMaguntia', cursive;
+  font-family: var(--font-family);
   background-color: transparent;
   border-color: transparent;
   text-align: right;

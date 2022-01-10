@@ -12,8 +12,8 @@ export function drawTitles(config: Config) {
   config.ctx!.rect(0, 0, config.canvas!.width, config.canvas!.height)
   config.ctx!.fill()
 
-  config.ctx!.fillStyle = 'rgba(201, 9, 21, ' + config.state.titles.opacity / 100 + ')'
-  config.ctx!.font = "64px 'UnifrakturMaguntia', cursive"
+  config.ctx!.fillStyle = 'rgba(255, 236, 61, ' + config.state.titles.opacity / 100 + ')'
+  config.ctx!.font = "64px 'Germania One', cursive"
   config.ctx!.fillText(
     config.state.titles.text,
     600,

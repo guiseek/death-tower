@@ -1,4 +1,4 @@
-export function getEqualsPositions(nX = 48, nY = 48) {
+export function getEqualsPoints(nX = 48, nY = 48) {
   let x = 0
   let y = 0
 

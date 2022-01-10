@@ -1,14 +1,18 @@
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { DeathTowerState, keyboardState, playerState } from './state'
+import { Fireworks } from './effects/fireworks'
+import { Firework } from './effects/firework'
+import { rand } from './effects/rand'
 import { audio } from './providers/audio'
 import { Config } from './interfaces'
 import {
   getPlatformsByPoints,
-  getRandomPositions,
+  getRandomPoints,
   drawPlatforms,
   drawShadows,
   drawBricks,
   drawDoors,
+  checkDoor,
   drawTitles,
   drawPlayer,
   loadImage,
@@ -22,9 +26,11 @@ import {
   resize,
 } from './map'
 
-
+const form = document.querySelector('form')
+const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 const container = document.querySelector('#container') as HTMLElement
 const canvas = document.querySelector('canvas') as HTMLCanvasElement
+
 const fallbackCanvas = new OffScreen(10, 10).canvas
 
 const defaultConfig = loadDefaultConfig()
@@ -36,7 +42,7 @@ const level = getLevel(location.hash.substring(1))
 // também é mais rápido que `Math.floor(num)`
 const len = ((level.min + level.max) / 2) | 0
 
-const positions = getRandomPositions(level, len)
+const positions = getRandomPoints(level, len)
 const platforms = getPlatformsByPoints(positions)
 
 // Adiciona a primeira porta
@@ -62,30 +68,27 @@ onpopstate = (e) => {
   location.reload()
 }
 
-const form = document.querySelector('form')
-const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
-
 const state = new DeathTowerState(config.state)
 
 function loadAssets() {
   const standing = new URL(
-    'assets/player/zumbi/state=standing.svg',
+    'assets/player/zumbi/state=standing.png',
     import.meta.url
   )
   const jumping = new URL(
-    'assets/player/zumbi/state=jumping.svg',
+    'assets/player/zumbi/state=jumping.png',
     import.meta.url
   )
   const jumpingdown = new URL(
-    'assets/player/zumbi/state=jumpingdown.svg',
+    'assets/player/zumbi/state=jumpingdown.png',
     import.meta.url
   )
   const running = new URL(
-    'assets/player/zumbi/state=running.svg',
+    'assets/player/zumbi/state=running.png',
     import.meta.url
   )
   const walking = new URL(
-    'assets/player/zumbi/state=walking.svg',
+    'assets/player/zumbi/state=walking.png',
     import.meta.url
   )
 
@@ -300,15 +303,6 @@ function collisionDetection() {
   }
 }
 
-function checkDoor(config: Config, door: Door) {
-  if (Math.abs(door.x - (config.state.pos.x + 40)) < 10) {
-    if (!config.state.finished) {
-      audio.get('yeaah')?.play()
-      config.state.finished = true
-    }
-  }
-}
-
 const init = async () => {
   if (!config.savedState) {
     config.savedState = JSON.parse(JSON.stringify(config.state))
@@ -334,8 +328,6 @@ init().then(async () => {
   const jumpSpringDown = audio.get('jumpSpringDown')
 
   if (jumpSpringUp && jumpSpringDown) {
-    jumpSpringUp.onload = () => {}
-
     playerState.jumping$.subscribe(async (jumping: boolean) => {
       if (!jumping) {
         if (!jumpSpringUp.paused) {
