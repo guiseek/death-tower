@@ -1,2 +1,3 @@
-export * from './config';
-export * from './type-canvas';
+export * from './config'
+export * from './image-type'
+export * from './type-canvas'

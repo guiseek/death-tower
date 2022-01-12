@@ -1,8 +1,5 @@
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { DeathTowerState, keyboardState, playerState } from './state'
-import { Fireworks } from './effects/fireworks'
-import { Firework } from './effects/firework'
-import { rand } from './effects/rand'
 import { audio } from './providers/audio'
 import { Config } from './interfaces'
 import {
@@ -69,44 +66,6 @@ onpopstate = (e) => {
 }
 
 const state = new DeathTowerState(config.state)
-
-function loadAssets() {
-  const standing = new URL(
-    'assets/player/zumbi/state=standing.png',
-    import.meta.url
-  )
-  const jumping = new URL(
-    'assets/player/zumbi/state=jumping.png',
-    import.meta.url
-  )
-  const jumpingdown = new URL(
-    'assets/player/zumbi/state=jumpingdown.png',
-    import.meta.url
-  )
-  const running = new URL(
-    'assets/player/zumbi/state=running.png',
-    import.meta.url
-  )
-  const walking = new URL(
-    'assets/player/zumbi/state=walking.png',
-    import.meta.url
-  )
-
-  loadImage(config, standing.pathname, 'standing', 0, false)
-  loadImage(config, standing.pathname, 'standing', 1, true)
-  loadImage(config, jumping.pathname, 'jumpingUp', 0, false)
-  loadImage(config, jumping.pathname, 'jumpingUp', 1, true)
-  loadImage(config, jumpingdown.pathname, 'jumpingDown', 0, false)
-  loadImage(config, jumpingdown.pathname, 'jumpingDown', 1, true)
-  loadImage(config, running.pathname, 'runningLeft', 0, false)
-  loadImage(config, running.pathname, 'runningLeft', 1, false)
-  loadImage(config, walking.pathname, 'runningLeft', 2, false)
-  loadImage(config, walking.pathname, 'runningLeft', 3, false)
-  loadImage(config, running.pathname, 'runningRight', 0, true)
-  loadImage(config, running.pathname, 'runningRight', 1, true)
-  loadImage(config, walking.pathname, 'runningRight', 2, true)
-  loadImage(config, walking.pathname, 'runningRight', 3, true)
-}
 
 let dead = false
 function draw() {
@@ -303,6 +262,44 @@ function collisionDetection() {
   }
 }
 
+function loadImages(config: Config) {
+  const standing = new URL(
+    'assets/player/zumbi/state=standing.png',
+    import.meta.url
+  )
+  const jumping = new URL(
+    'assets/player/zumbi/state=jumping.png',
+    import.meta.url
+  )
+  const jumpingdown = new URL(
+    'assets/player/zumbi/state=jumpingdown.png',
+    import.meta.url
+  )
+  const running = new URL(
+    'assets/player/zumbi/state=running.png',
+    import.meta.url
+  )
+  const walking = new URL(
+    'assets/player/zumbi/state=walking.png',
+    import.meta.url
+  )
+
+  loadImage(config, standing.pathname, 'standing', 0, false)
+  loadImage(config, standing.pathname, 'standing', 1, true)
+  loadImage(config, jumping.pathname, 'jumpingUp', 0, false)
+  loadImage(config, jumping.pathname, 'jumpingUp', 1, true)
+  loadImage(config, jumpingdown.pathname, 'jumpingDown', 0, false)
+  loadImage(config, jumpingdown.pathname, 'jumpingDown', 1, true)
+  loadImage(config, running.pathname, 'runningLeft', 0, false)
+  loadImage(config, running.pathname, 'runningLeft', 1, false)
+  loadImage(config, walking.pathname, 'runningLeft', 2, false)
+  loadImage(config, walking.pathname, 'runningLeft', 3, false)
+  loadImage(config, running.pathname, 'runningRight', 0, true)
+  loadImage(config, running.pathname, 'runningRight', 1, true)
+  loadImage(config, walking.pathname, 'runningRight', 2, true)
+  loadImage(config, walking.pathname, 'runningRight', 3, true)
+}
+
 const init = async () => {
   if (!config.savedState) {
     config.savedState = JSON.parse(JSON.stringify(config.state))
@@ -316,7 +313,8 @@ const init = async () => {
 
   keyboardState.initialize()
 
-  loadAssets()
+  loadImages(config)
+  
 
   draw()
 }
