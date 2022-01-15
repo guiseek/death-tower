@@ -3,6 +3,7 @@ export type AudioType =
   | 'timeWaveRipple2'
   | 'jumpSpringDown'
   | 'jumpSpringUp'
+  | 'clockTicking'
   | 'thunder'
   | 'yeaah'
   | 'running'

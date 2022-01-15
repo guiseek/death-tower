@@ -46,6 +46,8 @@ const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
 const timerElement = form!.elements.namedItem('seconds') as HTMLInputElement
 
+timerElement.value = `${40}`
+
 const container = document.querySelector('#container') as HTMLElement
 const canvas = document.querySelector('canvas') as HTMLCanvasElement
 
@@ -126,16 +128,12 @@ function die() {
   dead = true
   scream.play()
   timeWaveRipple.play()
-  setTimeout(() => {
-    location.reload()
-  }, 1000 * 2.5)
 }
 
 /**
  * Contagem regressiva pra conclusão do jogo
  */
-const timer = new TimerService()
-const timer$ = timer.start(30)
+const timer = new TimerService(+timerElement.value)
 
 /**
  * Atualiza o estado do jogo no canvas
@@ -471,11 +469,12 @@ init().then(async () => {
   })
 
   playerState.running$.subscribe((isRunning: boolean) => {
+    
     if (!initialized && isRunning) {
-      timer.reset(30)
       thunder.play()
+      timer.start()
 
-      timer$
+      timer.countdown$
         .pipe(
           finalize(() => {
             if (!config.state.paused) {
@@ -486,7 +485,12 @@ init().then(async () => {
             }
           })
         )
-        .subscribe((value) => (timerElement.value = `${value}`))
+        .subscribe((value) => {
+          console.log('qwewqe: ', value);
+          timerElement.value = `${value}`
+        })
+
+        
 
       initialized = true
     }
