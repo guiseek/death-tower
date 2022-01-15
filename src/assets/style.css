@@ -91,6 +91,8 @@ body {
   position: fixed;
   bottom: 0px;
   width: calc(100% - 20px);
+  display: flex;
+  align-items: flex-end;
   justify-content: space-between;
 }
 
@@ -107,6 +109,8 @@ body {
   border: 2px solid #f1f1f1;
 }
 #buttons > div {
+  justify-content: center;
+  align-items: center;
   display: flex;
   gap: 10px;
 }
@@ -115,6 +119,11 @@ body {
 }
 #buttons button svg {
   fill: #f1f1f1;
+}
+#buttons button#fullscreen {
+  margin: 8px 8px 16px;
+  width: 48px;
+  height: 48px;
 }
 #buttons button svg#fullscreen-exit {
   display: none;
@@ -132,8 +141,26 @@ canvas {
   canvas {
     width: 100%;
   }
+
+  #container header a {
+    font-size: 100%;
+  }  
+  #container > form label {
+    font-size: 18px;
+  }
+  #container > form input {
+    max-width: 80px;
+    text-align: right;
+    font-size: 18px;
+  }
+  #buttons button#fullscreen {
+    margin: 8px;
+  }
+  #buttons  button:not(#fullscreen) {
+    display: unset;
+  }
   #buttons {
     padding: 10px;
-    display: flex;
+    /* display: flex; */
   }
 }
