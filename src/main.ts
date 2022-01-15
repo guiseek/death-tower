@@ -72,7 +72,7 @@ const level = location.hash.substring(1)
 const levelValue = getLevel(level)
 
 // `| 0` é utiliazdo aqui pra arredondar o número
-const len = ((levelValue.min + levelValue.max) / 2) | 0
+const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
 
 const positions =
   level === 'hard' ? puppets.positions : getRandomPoints(levelValue, len)

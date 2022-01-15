@@ -9,9 +9,9 @@ export function getRandomPoints(level: Level, length = 80) {
   }
 
   return new Array(length).fill({ x, y }).map((v, i) => {
-    x = x === 0 ? 1600 : between(x - level.min, x - level.max)
+    x = x === 0 ? 1600 : between(x - level.x.min, x - level.x.max)
 
-    y = y === 0 ? 600 : between(y - (level.min - 20), y - ((level.max * 2) - 20))
+    y = y === 0 ? 600 : between(y - (level.y.min - 20), y - (level.y.max * 2.5))
 
     return { x, y }
   })
