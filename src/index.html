@@ -28,9 +28,9 @@
         <a href="#medium">Medium</a>
         <a href="#hard">Hard</a>
       </nav>
-      <a class="github-icon" href="https://github.com/guiseek/death-tower">
+      <!-- <a class="github-icon" href="https://github.com/guiseek/death-tower">
         <img src="assets/logos/github.svg" alt="GitHub"> <span>GitHub</span>
-      </a>
+      </a> -->
     </header>
 
     <form id="player">
@@ -41,8 +41,23 @@
     </form>
     <canvas height=900 width=1600></canvas>
     <nav id="buttons">
-      <button type="button" id="jump">Pular</button>
-      <button type="button" id="walk">Andar</button>
+      <button type="button" id="jump">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 16.1911L2.93875 17.9873L12 9.6051L21.0475 18L23 16.1911L12 6L1 16.1911Z" />
+        </svg>          
+      </button>
+      <div>
+        <button type="button" id="left">
+          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.1911 23L17.9873 21.0612L9.6051 12L18 2.9525L16.1911 1L6 12L16.1911 23Z" />
+          </svg>            
+        </button>
+        <button type="button" id="right">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.80892 1L6.01274 2.93875L14.3949 12L6 21.0475L7.80892 23L18 12L7.80892 1Z" />
+          </svg>            
+        </button>
+      </div>
     </nav>
   </div>
 

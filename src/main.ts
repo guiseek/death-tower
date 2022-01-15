@@ -1,9 +1,10 @@
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { keyboardState, playerState } from './state'
-import { finalize, takeWhile } from 'rxjs'
+import { TimerService } from './services/timer'
 import { audio } from './providers/audio'
 import { puppets } from './maps/puppets'
 import { Config } from './interfaces'
+import { finalize } from 'rxjs'
 import {
   getPlatformsByPoints,
   drawPlatforms,
@@ -24,9 +25,21 @@ import {
   Door,
   Point,
   getRandomPoints,
+  move,
 } from './map'
-import { TimerService } from './services/timer'
-// import { timer } from './providers/timer'
+
+
+type ButtonType = 'jump' | 'left' | 'right'
+
+function getButton(selector: ButtonType) {
+  return document.querySelector(`#${selector}`) as HTMLButtonElement
+}
+
+const buttons: Record<ButtonType, HTMLButtonElement> = {
+  jump: getButton('jump'),
+  left: getButton('left'),
+  right: getButton('right'),
+}
 
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
@@ -40,43 +53,51 @@ const fallbackCanvas = new OffScreen(10, 10).canvas
 const defaultConfig = loadDefaultConfig()
 const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
 
+/**
+ * Áudio
+ */
 const jumpSpringDown = audio.get('jumpSpringDown')
 const jumpSpringUp = audio.get('jumpSpringUp')
 const timeWaveRipple = audio.get('timeWaveRipple2')
-const timeWavePassBy = audio.get('timeWavePassBy4')
 const running = audio.get('running')
 const thunder = audio.get('thunder')
 const scream = audio.get('scream')
 
-const level = location.hash.substring(1)
 
+/**
+ * Níveis de dificuldade
+ */
+const level = location.hash.substring(1)
 const levelValue = getLevel(level)
 
-// `num | 0` serve para arredondar um número
-// também é mais rápido que `Math.floor(num)`
+// `| 0` é utiliazdo aqui pra arredondar o número
 const len = ((levelValue.min + levelValue.max) / 2) | 0
 
 const positions =
   level === 'hard' ? puppets.positions : getRandomPoints(levelValue, len)
 
-// const positions = getRandomPoints(level, len)
+  // const positions = getRandomPoints(level, len)
 const platforms = getPlatformsByPoints(positions)
-
-function setPositions(positions: Point[]) {
-  ; (window as any)['positions'] = positions
-}
+const setPositions = (positions: Point[]) =>
+  ((window as any)['positions'] = positions)
 
 setPositions(positions)
 
-// Adiciona a primeira porta
+/**
+ * Portas
+ * 
+ * Adiciona a primeira porta ao array e abaixo adiciona
+ * a última no local da última plataforma do random
+ */
 const doors = [new Door(1600, 350)]
-// Última posição gerada para plataformas
 const lastPos = positions.pop()
-
 if (lastPos) {
   doors.push(new Door(lastPos!.x, lastPos!.y - 250))
 }
 
+/**
+ * Configurações do jogo
+ */
 const customConfig = loadCustomConfig({ doors })
 
 const config: Config = {
@@ -85,14 +106,21 @@ const config: Config = {
   ...customConfig,
 }
 
+/**
+ * Com as plataformas e configuração adiciona a configuração
+ */
 config.platforms.push(...platforms)
 
+/**
+ * Recarrega configurações do jogo
+ * ao trocar de level
+ */
 onpopstate = (e) => location.reload()
 
-
-
+// Estado global
 let dead = false
 
+// Mata o player
 function die() {
   dead = true
   scream.play()
@@ -102,9 +130,15 @@ function die() {
   }, 1000 * 2.5)
 }
 
+/**
+ * Contagem regressiva pra conclusão do jogo
+ */
 const timer = new TimerService()
 const timer$ = timer.start(30)
 
+/**
+ * Atualiza o estado do jogo no canvas
+ */
 function draw() {
   const now = document.timeline.currentTime ?? 0
   config.state.dt = now - (config.state.time || now)
@@ -137,6 +171,9 @@ function draw() {
   requestAnimationFrame(draw)
 }
 
+/**
+ * Calcula as posições do player e plataformas
+ */
 function doCalculations() {
   if (config.input.left) {
     config.state.player.speed += config.settings.acceleration
@@ -242,6 +279,10 @@ function doCalculations() {
   }
 }
 
+
+/**
+ * Detecta colisões
+ */
 function collisionDetection() {
   if (config.state.jump.isJumping && config.state.jump.speed < 0) {
     for (let i = 0; i < config.state.activePlatforms.length; i++) {
@@ -296,6 +337,9 @@ function collisionDetection() {
   }
 }
 
+/**
+ * Carrega imagens que alternam entre as cenas
+ */
 function loadImages(config: Config) {
   const standing = new URL(
     'assets/player/zumbi/state=standing.png',
@@ -334,6 +378,9 @@ function loadImages(config: Config) {
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
+/**
+ * Inicia o jogo
+ */
 const init = async () => {
   if (!config.savedState) {
     config.savedState = JSON.parse(JSON.stringify(config.state))
@@ -345,12 +392,22 @@ const init = async () => {
   window.addEventListener('keydown', (e) => keyDown(config, e), false)
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
+  buttons.jump.ontouchstart = () => config.input.jump = true
+  buttons.jump.ontouchend = () => config.input.jump = false
+
+  buttons.left.ontouchstart = () => config.input.left = true
+  buttons.left.ontouchend = () => config.input.left = false
+
+  buttons.right.ontouchstart = () => config.input.right = true
+  buttons.right.ontouchend = () => config.input.right = false
+
   keyboardState.initialize()
 
   loadImages(config)
 
   draw()
 }
+
 
 init().then(async () => {
   let initialized = false
