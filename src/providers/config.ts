@@ -1,19 +1,24 @@
 import { InjectionToken } from 'service-seeker/lib/src/core/injection-token'
-import { ImageService } from '../services/image'
+import { TimerService } from './../services/timer'
 import { AudioService } from '../services/audio'
+import { ImageService } from '../services/image'
 import { Injector } from 'service-seeker'
 
-export const IMAGE_TOKEN = new InjectionToken('image')
-export const AUDIO_TOKEN = new InjectionToken('audio')
 export const PLAYER_STATE_TOKEN = new InjectionToken('player-state')
+
+export const AUDIO_TOKEN = new InjectionToken('audio')
 
 export const providers = Injector.create([
   {
-    provide: IMAGE_TOKEN,
-    useClass: ImageService,
-  },
-  {
     provide: AUDIO_TOKEN,
     useClass: AudioService,
-  }
+  },
+  // {
+  //   provide: IMAGE_TOKEN,
+  //   useClass: ImageService,
+  // },
+  // {
+  //   provide: TIMER_TOKEN,
+  //   useClass: TimerService,
+  // },
 ])

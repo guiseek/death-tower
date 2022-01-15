@@ -12,6 +12,7 @@ interface ClimpSpeed {
   normal: number
   fast: number
 }
+
 interface Jump {
   isGrounded: boolean
   isJumping: boolean

@@ -9,6 +9,6 @@ export class AudioService<Types> {
   }
 
   get(type: Types) {
-    return this._audio.get(type)
+    return this._audio.get(type) as HTMLAudioElement
   }
 }

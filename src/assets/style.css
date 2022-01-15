@@ -25,30 +25,40 @@ body {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(10, 10, 10, 1) 100%);
 }
 
-#container #levels {
+#container > header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  
   z-index: 1000;
   position: fixed;
   left: 10px;
   top: 10px;
 }
 
-#container #levels a {
+#container > header .github-icon {
+  display: inline-flex;
+  max-height: 24px;
+  color: white;
+}
+
+#container header a {
   display: inline-flex;
   font-weight: 500;
   font-size: 140%;
   margin: 10px;
 }
 
-#container #levels a,
-#container #levels a:link {
+#container header a,
+#container header a:link {
   color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
 }
-#container #levels a:hover {
+#container header a:hover {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: underline;
 }
-#container #levels a:active {
+#container header a:active {
   color: rgba(255, 255, 255, 1);
   text-decoration: none;
 }

@@ -1,10 +1,11 @@
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
-import { DeathTowerState, keyboardState, playerState } from './state'
+import { keyboardState, playerState } from './state'
+import { finalize, takeWhile } from 'rxjs'
 import { audio } from './providers/audio'
+import { puppets } from './maps/puppets'
 import { Config } from './interfaces'
 import {
   getPlatformsByPoints,
-  getRandomPoints,
   drawPlatforms,
   drawShadows,
   drawBricks,
@@ -17,14 +18,20 @@ import {
   checkPoint,
   getLevel,
   drawSky,
+  resize,
   keyDown,
   keyUp,
   Door,
-  resize,
+  Point,
+  getRandomPoints,
 } from './map'
+import { TimerService } from './services/timer'
+// import { timer } from './providers/timer'
 
 const form = document.querySelector('form')
 const pointsElement = form!.elements.namedItem('points') as HTMLInputElement
+const timerElement = form!.elements.namedItem('seconds') as HTMLInputElement
+
 const container = document.querySelector('#container') as HTMLElement
 const canvas = document.querySelector('canvas') as HTMLCanvasElement
 
@@ -33,14 +40,33 @@ const fallbackCanvas = new OffScreen(10, 10).canvas
 const defaultConfig = loadDefaultConfig()
 const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
 
-const level = getLevel(location.hash.substring(1))
+const jumpSpringDown = audio.get('jumpSpringDown')
+const jumpSpringUp = audio.get('jumpSpringUp')
+const timeWaveRipple = audio.get('timeWaveRipple2')
+const timeWavePassBy = audio.get('timeWavePassBy4')
+const running = audio.get('running')
+const thunder = audio.get('thunder')
+const scream = audio.get('scream')
+
+const level = location.hash.substring(1)
+
+const levelValue = getLevel(level)
 
 // `num | 0` serve para arredondar um número
 // também é mais rápido que `Math.floor(num)`
-const len = ((level.min + level.max) / 2) | 0
+const len = ((levelValue.min + levelValue.max) / 2) | 0
 
-const positions = getRandomPoints(level, len)
+const positions =
+  level === 'hard' ? puppets.positions : getRandomPoints(levelValue, len)
+
+// const positions = getRandomPoints(level, len)
 const platforms = getPlatformsByPoints(positions)
+
+function setPositions(positions: Point[]) {
+  ; (window as any)['positions'] = positions
+}
+
+setPositions(positions)
 
 // Adiciona a primeira porta
 const doors = [new Door(1600, 350)]
@@ -61,13 +87,24 @@ const config: Config = {
 
 config.platforms.push(...platforms)
 
-onpopstate = (e) => {
-  location.reload()
-}
+onpopstate = (e) => location.reload()
 
-const state = new DeathTowerState(config.state)
+
 
 let dead = false
+
+function die() {
+  dead = true
+  scream.play()
+  timeWaveRipple.play()
+  setTimeout(() => {
+    location.reload()
+  }, 1000 * 2.5)
+}
+
+const timer = new TimerService()
+const timer$ = timer.start(30)
+
 function draw() {
   const now = document.timeline.currentTime ?? 0
   config.state.dt = now - (config.state.time || now)
@@ -94,10 +131,8 @@ function draw() {
 
   if (config.state.paused) {
     drawTitles(config)
-    if (!dead) {
-      audio.get('scream')?.play()
-      dead = true
-    }
+
+    if (!dead) die()
   }
   requestAnimationFrame(draw)
 }
@@ -120,7 +155,7 @@ function doCalculations() {
         : -1 * config.settings.maxSpeed
   } else if (Math.abs(config.state.player.speed) < config.settings.minSpeed) {
     playerState.idle()
-    state.player({ speed: 0 })
+    playerState.setSpeed(0)
 
     config.state.player.speed = 0
   }
@@ -134,13 +169,18 @@ function doCalculations() {
       ? config.state.player.speed * 0.7
       : config.state.player.speed
 
+    playerState.setSpeed(currentSpeed)
+
     config.state.pos.x +=
       config.state.player.speed < 0
         ? Math.ceil(currentSpeed * (config.state.dt as number))
         : Math.floor(currentSpeed * (config.state.dt as number))
 
-    config.state.player.dir = currentSpeed > 0 ? 0 : 1
-    state.player(config.state.player)
+    const dir = currentSpeed > 0 ? 0 : 1
+
+    playerState.toTurn(dir)
+
+    config.state.player.dir = dir
   }
 
   if (!config.state.climbstarted && config.input.jump) {
@@ -193,12 +233,13 @@ function doCalculations() {
   collisionDetection()
 
   if (config.state.player.y + config.state.pos.y > 900) {
+    console.log(config.state.player.y + config.state.pos.y)
+
+    playerState.pause()
     playerState.idle()
 
     config.state.paused = true
   }
-
-  state.setState(config.state)
 }
 
 function collisionDetection() {
@@ -211,20 +252,13 @@ function collisionDetection() {
         const playerFloorPrev = config.state.player.prevY + 250
 
         if (playerFloor > platform.y && playerFloorPrev < platform.y) {
+          playerState.setPlatform(platform.n)
           playerState.jumpDown()
           playerState.idle()
 
           checkPoint(config.state, platform)
 
           pointsElement.value = (config.state.points | 0).toString()
-
-          state.jump({
-            isGrounded: true,
-            isJumping: false,
-            isBoosting: false,
-            speed: 0,
-          })
-          state.player({ y: platform.y - 250 })
 
           config.state.player.y = platform.y - 250
           config.state.jump.isGrounded = true
@@ -314,7 +348,6 @@ const init = async () => {
   keyboardState.initialize()
 
   loadImages(config)
-  
 
   draw()
 }
@@ -322,44 +355,54 @@ const init = async () => {
 init().then(async () => {
   let initialized = false
 
-  const jumpSpringUp = audio.get('jumpSpringUp')
-  const jumpSpringDown = audio.get('jumpSpringDown')
-
-  if (jumpSpringUp && jumpSpringDown) {
-    playerState.jumping$.subscribe(async (jumping: boolean) => {
-      if (!jumping) {
-        if (!jumpSpringUp.paused) {
-          jumpSpringUp.pause()
-        }
-
-        if (jumpSpringDown.paused) {
-          await jumpSpringDown.play()
-        }
+  playerState.jumping$.subscribe(async (jumping: boolean) => {
+    if (!jumping) {
+      if (!jumpSpringUp.paused) {
+        jumpSpringUp.pause()
       }
 
-      if (jumping) {
-        if (!jumpSpringDown.paused) {
-          jumpSpringDown.pause()
-        }
-        if (jumpSpringUp.paused) {
-          await jumpSpringUp.play()
-        }
+      if (jumpSpringDown.paused) {
+        await jumpSpringDown.play()
       }
-    })
+    }
 
-    playerState.running$.subscribe((running: boolean) => {
-      if (!initialized && running) {
-        audio.get('thunder')?.play()
-        initialized = true
+    if (jumping) {
+      if (!jumpSpringDown.paused) {
+        jumpSpringDown.pause()
       }
+      if (jumpSpringUp.paused) {
+        await jumpSpringUp.play()
+      }
+    }
+  })
 
-      if (!running) {
-        audio.get('running')?.pause()
-      }
+  playerState.running$.subscribe((isRunning: boolean) => {
+    if (!initialized && isRunning) {
+      timer.reset(30)
+      thunder.play()
 
-      if (running) {
-        audio.get('running')?.play()
-      }
-    })
-  }
+      timer$
+        .pipe(
+          finalize(() => {
+            if (!config.state.paused) {
+              config.state.paused = true
+              playerState.pause()
+              playerState.idle()
+              die()
+            }
+          })
+        )
+        .subscribe((value) => (timerElement.value = `${value}`))
+
+      initialized = true
+    }
+
+    if (!isRunning) {
+      running.pause()
+    }
+
+    if (isRunning) {
+      running.play()
+    }
+  })
 })

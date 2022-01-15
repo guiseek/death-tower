@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,22 +13,31 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YQSL9XL6H"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'G-3YQSL9XL6H');
   </script>
 </head>
+
 <body>
   <div id="container">
-    <nav id="levels">
-      <a href="#easy">Easy</a>
-      <a href="#medium">Medium</a>
-      <a href="#hard">Hard</a>
-    </nav>
+    <header>
+      <nav id="levels">
+        <a href="#easy">Easy</a>
+        <a href="#medium">Medium</a>
+        <a href="#hard">Hard</a>
+      </nav>
+      <a class="github-icon" href="https://github.com/guiseek/death-tower">
+        <img src="assets/logos/github.svg" alt="GitHub"> <span>GitHub</span>
+      </a>
+    </header>
+
     <form id="player">
       <input mode="numeric" name="points" id="points" readonly aria-label="Pontos" value="0">
       <label for="points">pontos</label>
+      <input mode="numeric" name="seconds" id="seconds" readonly aria-label="Segundos" value="0">
+      <label for="seconds">segundos</label>
     </form>
     <canvas height=900 width=1600></canvas>
     <nav id="buttons">
@@ -35,10 +45,10 @@
       <button type="button" id="walk">Andar</button>
     </nav>
   </div>
-  
+
   <dialog>
     <button type="button" id="reload">Carregar outro mapa</button>
-    
+
     <form id="level">
       <section>
         <input type="radio" name="level" id="easy">
@@ -54,7 +64,8 @@
       </section>
     </form>
   </dialog>
-  
+
   <div id="gui"></div>
 </body>
+
 </html>
