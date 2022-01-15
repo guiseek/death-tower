@@ -76,6 +76,7 @@ body {
 }
 
 #container > form input {
+  max-width: 100px;
   font-family: var(--font-family);
   background-color: transparent;
   border-color: transparent;
@@ -99,7 +100,7 @@ body {
   border-width: 0;
   width: 64px;
   height: 64px;
-  background: #212121;
+  background: #121212;
   border: 2px solid #f1f1f1;
 }
 #buttons > div {
