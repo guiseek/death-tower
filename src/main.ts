@@ -29,13 +29,14 @@ import {
 } from './map'
 
 
-type ButtonType = 'jump' | 'left' | 'right'
+type ButtonType = 'jump' | 'left' | 'right' | 'fullscreen'
 
 function getButton(selector: ButtonType) {
   return document.querySelector(`#${selector}`) as HTMLButtonElement
 }
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
+  fullscreen: getButton('fullscreen'),
   jump: getButton('jump'),
   left: getButton('left'),
   right: getButton('right'),
@@ -407,6 +408,39 @@ const init = async () => {
 
   draw()
 }
+
+
+let fullscreen = false
+
+const handleFullScreen = () => {
+  const svgEnter = buttons.fullscreen.querySelector('#fullscreen-enter')
+  const svgExit = buttons.fullscreen.querySelector('#fullscreen-exit')
+  
+  buttons.fullscreen.onclick = () => {
+    
+    if (!fullscreen) {
+      document.documentElement.requestFullscreen()
+      svgExit?.classList.add('hidden')
+      svgEnter?.classList.remove('hidden')
+    } else {
+      document.exitFullscreen()
+      svgExit?.classList.remove('hidden')
+      svgEnter?.classList.add('hidden')
+    }
+    
+    fullscreen = !fullscreen
+  }
+  
+  document.onfullscreenchange = (e) => {
+    console.log(e);
+  }
+
+}
+
+
+handleFullScreen()
+
+
 
 
 init().then(async () => {

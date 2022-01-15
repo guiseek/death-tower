@@ -91,8 +91,11 @@ body {
   position: fixed;
   bottom: 0px;
   width: calc(100% - 20px);
-  display: none;
   justify-content: space-between;
+}
+
+#buttons button:not(#fullscreen) {
+  display: none;
 }
 
 #buttons button {
@@ -107,8 +110,17 @@ body {
   display: flex;
   gap: 10px;
 }
+#buttons > .vertical {
+  flex-direction: column;
+}
 #buttons button svg {
   fill: #f1f1f1;
+}
+#buttons button svg#fullscreen-exit {
+  display: none;
+}
+.hidden {
+  display: none;
 }
 
 canvas {
