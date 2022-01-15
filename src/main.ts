@@ -297,6 +297,8 @@ function collisionDetection() {
           playerState.setPlatform(platform.n)
           playerState.jumpDown()
           playerState.idle()
+          
+          navigator.vibrate(100)
 
           checkPoint(config.state, platform)
 
@@ -450,6 +452,7 @@ init().then(async () => {
     if (!jumping) {
       if (!jumpSpringUp.paused) {
         jumpSpringUp.pause()
+
       }
 
       if (jumpSpringDown.paused) {
