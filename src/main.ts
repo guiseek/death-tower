@@ -22,9 +22,10 @@ import {
   keyUp,
   Door,
   Point,
+  getLevel,
+  getRandomPoints,
 } from './map'
-import { impossible } from './maps/impossible'
-
+import { drawWinner } from './map/draw-winner'
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
@@ -60,15 +61,14 @@ const scream = audio.get('scream')
 /**
  * Níveis de dificuldade
  */
-const positions = impossible.positions
+// const positions = impossible.positions
 
-// const level = location.hash.substring(1)
-// const levelValue = getLevel(level)
+const level = location.hash.substring(1)
+const levelValue = getLevel(level)
 // `| 0` é utiliazdo aqui pra arredondar o número
-// const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
+const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
 
-
-// const positions = getRandomPoints(level, len)
+const positions = getRandomPoints(levelValue, len)
 const platforms = getPlatformsByPoints(positions)
 const setPositions = (positions: Point[]) =>
   ((window as any)['positions'] = positions)
@@ -141,7 +141,11 @@ function draw() {
     dead = false
   }
 
-  if (!config.state.paused && config.state.titles.opacity !== 100) {
+  if (
+    !config.state.paused &&
+    config.state.titles.opacity !== 100 &&
+    config.state.winner.opacity !== 100
+  ) {
     drawSky(config)
     drawPlatforms(config, false)
     drawBricks(config)
@@ -151,11 +155,16 @@ function draw() {
     drawPlayer(config)
   }
 
+  if (!config.state.paused && config.state.finished) {
+    drawWinner(config)
+  }
+
   if (config.state.paused) {
     drawTitles(config)
 
     if (!dead) die()
   }
+
   requestAnimationFrame(draw)
 }
 
@@ -263,6 +272,13 @@ function doCalculations() {
 
     config.state.paused = true
   }
+
+  if (
+    config.state.lastPlatform &&
+    config.state.lastPlatform.n === platforms.length - 1
+  ) {
+    config.state.finished = true
+  }
 }
 
 /**
@@ -365,6 +381,8 @@ function loadImages(config: Config) {
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
+let initialized = false
+
 /**
  * Inicia o jogo
  */
@@ -379,7 +397,12 @@ const init = async () => {
   window.addEventListener('keydown', (e) => keyDown(config, e), false)
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
-  buttons.jump.ontouchstart = () => (config.input.jump = true)
+  buttons.jump.ontouchstart = () => {
+    if (!initialized) {
+      buttons.fullscreen.click()
+    }
+    config.input.jump = true
+  }
   buttons.jump.ontouchend = () => (config.input.jump = false)
 
   buttons.left.ontouchstart = () => (config.input.left = true)
@@ -401,8 +424,10 @@ const handleFullScreen = () => {
   const svgEnter = buttons.fullscreen.querySelector('#fullscreen-enter')
   const svgExit = buttons.fullscreen.querySelector('#fullscreen-exit')
 
+  buttons.fullscreen.focus()
+
   buttons.fullscreen.onclick = () => {
-    if (!fullscreen) {
+    if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen()
       svgExit?.classList.add('hidden')
       svgEnter?.classList.remove('hidden')
@@ -411,6 +436,8 @@ const handleFullScreen = () => {
       svgExit?.classList.remove('hidden')
       svgEnter?.classList.add('hidden')
     }
+
+    buttons.fullscreen.blur()
 
     fullscreen = !fullscreen
   }
@@ -421,10 +448,8 @@ const handleFullScreen = () => {
 }
 
 init().then(async () => {
-  let initialized = false
-
   handleFullScreen()
-  
+
   playerState.jumping$.subscribe(async (jumping: boolean) => {
     if (!jumping) {
       if (!jumpSpringUp.paused) {
@@ -451,10 +476,9 @@ init().then(async () => {
       thunder.play()
       timer.start()
 
-
       timer.gameover$.subscribe((isOver) => {
-        console.log('isOver: ', isOver);
-        
+        console.log('isOver: ', isOver)
+
         if (isOver && !config.state.paused) {
           config.state.paused = true
           playerState.pause()

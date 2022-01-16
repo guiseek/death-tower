@@ -19,6 +19,11 @@ export const customConfig: CustomConfig = {
       ready: false,
       text: 'Não foi desta vez',
     },
+    winner: {
+      opacity: 0,
+      ready: false,
+      text: 'Você conseguiu!!!',
+    },
     climbstarted: false,
     time: null,
     dt: null,

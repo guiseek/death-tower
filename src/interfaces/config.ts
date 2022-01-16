@@ -58,24 +58,6 @@ export interface SkyConfig {
   starColors: string[]
 }
 
-export interface StateValue {
-  points: number
-  lastPlatform: Platform | null
-  platformReached: Platform | null
-  paused: boolean
-  finished?: boolean
-  titles: InfoMessage
-  climbstarted: boolean
-  time: number | null
-  dt: number | null
-  climbspeed: ClimpSpeed
-  pos: Point
-  lastPos: Point
-  activePlatforms: Platform[]
-  jump: Jump
-  player: Player
-}
-
 interface ColorsConfig {
   bg: string
   wood1: string
@@ -133,6 +115,7 @@ export interface StateConfig {
   paused: boolean
   finished: boolean
   titles: InfoMessage
+  winner: InfoMessage
   climbstarted: boolean
   time: number | null
   dt: number | null
