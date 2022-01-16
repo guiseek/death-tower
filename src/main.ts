@@ -1,10 +1,9 @@
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { keyboardState, playerState } from './state'
+import { Config, ButtonType } from './interfaces'
 import { TimerService } from './services/timer'
+import { getButton } from './utils/get-button'
 import { audio } from './providers/audio'
-import { puppets } from './maps/puppets'
-import { Config } from './interfaces'
-import { finalize } from 'rxjs'
 import {
   getPlatformsByPoints,
   drawPlatforms,
@@ -17,23 +16,15 @@ import {
   loadImage,
   OffScreen,
   checkPoint,
-  getLevel,
   drawSky,
   resize,
   keyDown,
   keyUp,
   Door,
   Point,
-  getRandomPoints,
-  move,
 } from './map'
+import { impossible } from './maps/impossible'
 
-
-type ButtonType = 'jump' | 'left' | 'right' | 'fullscreen'
-
-function getButton(selector: ButtonType) {
-  return document.querySelector(`#${selector}`) as HTMLButtonElement
-}
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
@@ -66,20 +57,18 @@ const running = audio.get('running')
 const thunder = audio.get('thunder')
 const scream = audio.get('scream')
 
-
 /**
  * Níveis de dificuldade
  */
-const level = location.hash.substring(1)
-const levelValue = getLevel(level)
+const positions = impossible.positions
 
+// const level = location.hash.substring(1)
+// const levelValue = getLevel(level)
 // `| 0` é utiliazdo aqui pra arredondar o número
-const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
+// const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
 
-const positions =
-  level === 'hard' ? puppets.positions : getRandomPoints(levelValue, len)
 
-  // const positions = getRandomPoints(level, len)
+// const positions = getRandomPoints(level, len)
 const platforms = getPlatformsByPoints(positions)
 const setPositions = (positions: Point[]) =>
   ((window as any)['positions'] = positions)
@@ -88,7 +77,7 @@ setPositions(positions)
 
 /**
  * Portas
- * 
+ *
  * Adiciona a primeira porta ao array e abaixo adiciona
  * a última no local da última plataforma do random
  */
@@ -269,15 +258,12 @@ function doCalculations() {
   collisionDetection()
 
   if (config.state.player.y + config.state.pos.y > 900) {
-    console.log(config.state.player.y + config.state.pos.y)
-
     playerState.pause()
     playerState.idle()
 
     config.state.paused = true
   }
 }
-
 
 /**
  * Detecta colisões
@@ -295,8 +281,8 @@ function collisionDetection() {
           playerState.setPlatform(platform.n)
           playerState.jumpDown()
           playerState.idle()
-          
-          navigator.vibrate(100)
+
+          navigator.vibrate(50)
 
           checkPoint(config.state, platform)
 
@@ -343,23 +329,23 @@ function collisionDetection() {
  */
 function loadImages(config: Config) {
   const standing = new URL(
-    'assets/player/zumbi/state=standing.png',
+    'assets/player/zumbi-2/state=standing.png',
     import.meta.url
   )
   const jumping = new URL(
-    'assets/player/zumbi/state=jumping.png',
+    'assets/player/zumbi-2/state=jumping.png',
     import.meta.url
   )
   const jumpingdown = new URL(
-    'assets/player/zumbi/state=jumpingdown.png',
+    'assets/player/zumbi-2/state=jumpingdown.png',
     import.meta.url
   )
   const running = new URL(
-    'assets/player/zumbi/state=running.png',
+    'assets/player/zumbi-2/state=running.png',
     import.meta.url
   )
   const walking = new URL(
-    'assets/player/zumbi/state=walking.png',
+    'assets/player/zumbi-2/state=walking.png',
     import.meta.url
   )
 
@@ -371,11 +357,11 @@ function loadImages(config: Config) {
   loadImage(config, jumpingdown.pathname, 'jumpingDown', 1, true)
   loadImage(config, running.pathname, 'runningLeft', 0, false)
   loadImage(config, running.pathname, 'runningLeft', 1, false)
-  loadImage(config, walking.pathname, 'runningLeft', 2, false)
-  loadImage(config, walking.pathname, 'runningLeft', 3, false)
   loadImage(config, running.pathname, 'runningRight', 0, true)
   loadImage(config, running.pathname, 'runningRight', 1, true)
   loadImage(config, walking.pathname, 'runningRight', 2, true)
+  loadImage(config, walking.pathname, 'runningLeft', 2, false)
+  loadImage(config, walking.pathname, 'runningLeft', 3, false)
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
@@ -393,14 +379,14 @@ const init = async () => {
   window.addEventListener('keydown', (e) => keyDown(config, e), false)
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
-  buttons.jump.ontouchstart = () => config.input.jump = true
-  buttons.jump.ontouchend = () => config.input.jump = false
+  buttons.jump.ontouchstart = () => (config.input.jump = true)
+  buttons.jump.ontouchend = () => (config.input.jump = false)
 
-  buttons.left.ontouchstart = () => config.input.left = true
-  buttons.left.ontouchend = () => config.input.left = false
+  buttons.left.ontouchstart = () => (config.input.left = true)
+  buttons.left.ontouchend = () => (config.input.left = false)
 
-  buttons.right.ontouchstart = () => config.input.right = true
-  buttons.right.ontouchend = () => config.input.right = false
+  buttons.right.ontouchstart = () => (config.input.right = true)
+  buttons.right.ontouchend = () => (config.input.right = false)
 
   keyboardState.initialize()
 
@@ -409,15 +395,13 @@ const init = async () => {
   draw()
 }
 
-
 let fullscreen = false
 
 const handleFullScreen = () => {
   const svgEnter = buttons.fullscreen.querySelector('#fullscreen-enter')
   const svgExit = buttons.fullscreen.querySelector('#fullscreen-exit')
-  
+
   buttons.fullscreen.onclick = () => {
-    
     if (!fullscreen) {
       document.documentElement.requestFullscreen()
       svgExit?.classList.add('hidden')
@@ -427,30 +411,24 @@ const handleFullScreen = () => {
       svgExit?.classList.remove('hidden')
       svgEnter?.classList.add('hidden')
     }
-    
+
     fullscreen = !fullscreen
   }
-  
+
   document.onfullscreenchange = (e) => {
-    console.log(e);
+    console.log(e)
   }
-
 }
-
-
-handleFullScreen()
-
-
-
 
 init().then(async () => {
   let initialized = false
 
+  handleFullScreen()
+  
   playerState.jumping$.subscribe(async (jumping: boolean) => {
     if (!jumping) {
       if (!jumpSpringUp.paused) {
         jumpSpringUp.pause()
-
       }
 
       if (jumpSpringDown.paused) {
@@ -469,28 +447,24 @@ init().then(async () => {
   })
 
   playerState.running$.subscribe((isRunning: boolean) => {
-    
     if (!initialized && isRunning) {
       thunder.play()
       timer.start()
 
-      timer.countdown$
-        .pipe(
-          finalize(() => {
-            if (!config.state.paused) {
-              config.state.paused = true
-              playerState.pause()
-              playerState.idle()
-              die()
-            }
-          })
-        )
-        .subscribe((value) => {
-          console.log('qwewqe: ', value);
-          timerElement.value = `${value}`
-        })
 
+      timer.gameover$.subscribe((isOver) => {
+        console.log('isOver: ', isOver);
         
+        if (isOver && !config.state.paused) {
+          config.state.paused = true
+          playerState.pause()
+          playerState.idle()
+          die()
+        }
+      })
+      timer.countdown$.subscribe((value) => {
+        timerElement.value = `${value}`
+      })
 
       initialized = true
     }

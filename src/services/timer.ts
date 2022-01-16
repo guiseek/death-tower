@@ -1,42 +1,42 @@
 import {
-  BehaviorSubject,
-  interval,
   map,
-  startWith,
-  Subscription,
-  takeUntil,
+  take,
   timer,
+  finalize,
+  interval,
+  takeUntil,
+  Subscription,
+  BehaviorSubject,
 } from 'rxjs'
 
 export class TimerService {
-  
   get countdown$() {
     return this._countdown.asObservable()
   }
-  
+
+  get gameover$() {
+    return this._gameover.asObservable().pipe(take(1))
+  }
+
+  private _gameover
   private _countdown
-  private _subscription?: Subscription
+  
+  private _subscription: Subscription | undefined
 
   constructor(readonly duration = 60) {
     this._countdown = new BehaviorSubject(duration)
+    this._gameover = new BehaviorSubject(false)
   }
 
   start() {
     const sub = this._timeKeeper(this.duration)
-    
+
     this._subscription = sub
       .pipe(
-        map((value) => {
-          console.log(`${this.duration} - ${value} = ${this.duration - value}`);
-          return this.duration - value
-          
-        })
+        map((value) => this.duration - value),
+        finalize(() => this._gameover.next(true))
       )
-      .subscribe((time) => {
-        console.log(time);
-        this._countdown.next(time)
-        
-      })
+      .subscribe((time) => this._countdown.next(time))
   }
 
   reset() {
