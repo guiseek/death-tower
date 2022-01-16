@@ -1,96 +1,163 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Germania+One"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+    <script type="module" src="main.ts"></script>
+    <title>Death Tower</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-3YQSL9XL6H"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel='stylesheet' href="https://fonts.googleapis.com/css?family=Germania+One">
-  <link rel="stylesheet" href="assets/style.css">
-  <script type="module" src="main.ts"></script>
-  <title>Death Tower</title>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YQSL9XL6H"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+      gtag('config', 'G-3YQSL9XL6H')
+    </script>
+  </head>
 
-    gtag('config', 'G-3YQSL9XL6H');
-  </script>
-</head>
+  <body>
+    <div id="container">
+      <header>
+        <a
+          title="GitHub"
+          class="github-icon"
+          target="_blank"
+          href="https://github.com/guiseek/death-tower"
+        >
+          <img src="assets/logos/github.svg" alt="GitHub" /> <span>GitHub</span>
+        </a>
+        <nav id="levels">
+          <a href="#easy">fácil</a>
+          <a href="#medium">médio</a>
+          <a href="#hard">difícil</a>
+        </nav>
+      </header>
 
-<body>
-  <div id="container">
-    <header>
-      <a title="GitHub" class="github-icon" href="https://github.com/guiseek/death-tower">
-        <img src="assets/logos/github.svg" alt="GitHub"> <span>GitHub</span>
-      </a>
-      <nav id="levels">
-        <a href="#easy">fácil</a>
-        <a href="#medium">médio</a>
-        <a href="#hard">difícil</a>
+      <form id="player">
+        <input
+          mode="numeric"
+          name="points"
+          id="points"
+          readonly
+          aria-label="Pontos"
+          value="0"
+        />
+        <label for="points">pontos</label>
+        <input
+          mode="numeric"
+          name="seconds"
+          id="seconds"
+          readonly
+          aria-label="Segundos"
+          value="0"
+        />
+        <label for="seconds">segundos</label>
+      </form>
+      <canvas height="900" width="1600"></canvas>
+      <nav id="buttons">
+        <div class="vertical">
+          <button type="button" id="fullscreen">
+            <svg
+              id="fullscreen-enter"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7 14H5V19H10V17H7V14ZM5 10H7V7H10V5H5V10ZM17 17H14V19H19V14H17V17ZM14 5V7H17V10H19V5H14Z"
+              />
+            </svg>
+            <svg
+              id="fullscreen-exit"
+              class="hidden"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 16H8V19H10V14H5V16ZM8 8H5V10H10V5H8V8ZM14 19H16V16H19V14H14V19ZM16 8V5H14V10H19V8H16Z"
+              />
+            </svg>
+          </button>
+          <button type="button" id="jump">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 16.1911L2.93875 17.9873L12 9.6051L21.0475 18L23 16.1911L12 6L1 16.1911Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="horizontal">
+          <button type="button" id="left">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16.1911 23L17.9873 21.0612L9.6051 12L18 2.9525L16.1911 1L6 12L16.1911 23Z"
+              />
+            </svg>
+          </button>
+          <button type="button" id="right">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.80892 1L6.01274 2.93875L14.3949 12L6 21.0475L7.80892 23L18 12L7.80892 1Z"
+              />
+            </svg>
+          </button>
+        </div>
       </nav>
-    </header>
+    </div>
 
-    <form id="player">
-      <input mode="numeric" name="points" id="points" readonly aria-label="Pontos" value="0">
-      <label for="points">pontos</label>
-      <input mode="numeric" name="seconds" id="seconds" readonly aria-label="Segundos" value="0">
-      <label for="seconds">segundos</label>
-    </form>
-    <canvas height=900 width=1600></canvas>
-    <nav id="buttons">
-      <div class="vertical">
-        <button type="button" id="fullscreen">
-          <svg id="fullscreen-enter" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 14H5V19H10V17H7V14ZM5 10H7V7H10V5H5V10ZM17 17H14V19H19V14H17V17ZM14 5V7H17V10H19V5H14Z" />
-          </svg>
-          <svg id="fullscreen-exit" class="hidden" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 16H8V19H10V14H5V16ZM8 8H5V10H10V5H8V8ZM14 19H16V16H19V14H14V19ZM16 8V5H14V10H19V8H16Z" />
-          </svg>
-        </button>
-        <button type="button" id="jump">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 16.1911L2.93875 17.9873L12 9.6051L21.0475 18L23 16.1911L12 6L1 16.1911Z" />
-          </svg>
-        </button>
-      </div>
-      <div class="horizontal">
-        <button type="button" id="left">
-          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.1911 23L17.9873 21.0612L9.6051 12L18 2.9525L16.1911 1L6 12L16.1911 23Z" />
-          </svg>
-        </button>
-        <button type="button" id="right">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.80892 1L6.01274 2.93875L14.3949 12L6 21.0475L7.80892 23L18 12L7.80892 1Z" />
-          </svg>
-        </button>
-      </div>
-    </nav>
-  </div>
+    <dialog>
+      <button type="button" id="reload">Carregar outro mapa</button>
 
-  <dialog>
-    <button type="button" id="reload">Carregar outro mapa</button>
+      <form id="level">
+        <section>
+          <input type="radio" name="level" id="easy" />
+          <label for="easy">Fácil</label>
+        </section>
+        <section>
+          <input type="radio" name="level" id="medium" />
+          <label for="medium">Médio</label>
+        </section>
+        <section>
+          <input type="radio" name="level" id="hard" />
+          <label for="hard">Difícil</label>
+        </section>
+      </form>
+    </dialog>
 
-    <form id="level">
-      <section>
-        <input type="radio" name="level" id="easy">
-        <label for="easy">Fácil</label>
-      </section>
-      <section>
-        <input type="radio" name="level" id="medium">
-        <label for="medium">Médio</label>
-      </section>
-      <section>
-        <input type="radio" name="level" id="hard">
-        <label for="hard">Difícil</label>
-      </section>
-    </form>
-  </dialog>
-
-  <div id="gui"></div>
-</body>
-
+    <div id="gui"></div>
+  </body>
 </html>
