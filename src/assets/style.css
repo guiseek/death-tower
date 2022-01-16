@@ -1,9 +1,11 @@
 :root {
   /* --font-family: 'UnifrakturMaguntia', cursive; */
   --font-family: 'Germania One', cursive;
+  --canvas-width-mobile: 100%;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -14,6 +16,9 @@ body {
   font-size: 100%;
 }
 
+@media (min-width: 700px) and (orientation: landscape) {
+}
+
 #container {
   height: 100%;
   display: flex;
@@ -22,14 +27,18 @@ body {
 
   transform-origin: 50% 0;
   background: rgb(0, 0, 0);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 27%, rgba(10, 10, 10, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 27%,
+    rgba(10, 10, 10, 1) 100%
+  );
 }
 
 #container > header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  
+
   z-index: 1000;
   position: fixed;
   left: 10px;
@@ -37,9 +46,14 @@ body {
 }
 
 #container > header .github-icon {
-  display: inline-flex;
-  max-height: 24px;
-  color: white;
+  flex-direction: column;
+  display: flex;
+}
+#container > header .github-icon img {
+  height: 24px;
+}
+#container > header .github-icon span {
+  display: none;
 }
 
 #container header a {
@@ -137,14 +151,15 @@ canvas {
   width: 100%;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 844px) {
   canvas {
     width: 100%;
+    max-height: 100%;
   }
 
   #container header a {
     font-size: 100%;
-  }  
+  }
   #container > form label {
     font-size: 18px;
   }
@@ -156,7 +171,7 @@ canvas {
   #buttons button#fullscreen {
     margin: 8px;
   }
-  #buttons  button:not(#fullscreen) {
+  #buttons button:not(#fullscreen) {
     display: unset;
   }
   #buttons {
