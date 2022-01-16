@@ -5,7 +5,9 @@
   "description": "",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build --public-url ./"
+    "build": "parcel build --public-url ./",
+    "copy": "cp CNAME dist/",
+    "deploy": "npm run build && npm run copy"
   },
   "keywords": [],
   "author": "",
