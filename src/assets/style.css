@@ -117,8 +117,8 @@ body {
 #buttons button {
   border-radius: 50%;
   border-width: 0;
-  width: 64px;
-  height: 64px;
+  width: 82px;
+  height: 82px;
   background: #121212;
   border: 2px solid #f1f1f1;
 }
@@ -136,8 +136,8 @@ body {
 }
 #buttons button#fullscreen {
   margin: 8px 8px 16px;
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
 }
 #buttons button svg#fullscreen-exit {
   display: none;
