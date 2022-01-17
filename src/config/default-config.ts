@@ -58,6 +58,7 @@ export const defaultConfig: DefaultConfig = {
     left: false,
     right: false,
     jump: false,
+    flip: false
   },
 }
 
