@@ -2,6 +2,7 @@ import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { keyboardState, playerState } from './state'
 import { Config, ButtonType } from './interfaces'
 import { TimerService } from './services/timer'
+import { drawWinner } from './map/draw-winner'
 import { getButton } from './utils/get-button'
 import { audio } from './providers/audio'
 import {
@@ -25,8 +26,7 @@ import {
   getLevel,
   getRandomPoints,
 } from './map'
-import { drawWinner } from './map/draw-winner'
-import { finalize } from 'rxjs'
+
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
@@ -63,17 +63,14 @@ const clock = audio.get('clockTicking')
 /**
  * Níveis de dificuldade
  */
-const level = location.hash.substring(1)
+const hashLevel = location.hash.substring(1)
 
-if (!level) {
+if (!hashLevel) {
   location.hash = 'training'
 }
 
-const levelValue = getLevel(level)
-// `| 0` é utiliazdo aqui pra arredondar o número
-const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
-
-const positions = getRandomPoints(levelValue, len)
+const level = getLevel(hashLevel)
+const positions = getRandomPoints(level, level.y.max - 2)
 const platforms = getPlatformsByPoints(positions)
 const setPositions = (positions: Point[]) =>
   ((window as any)['positions'] = positions)
@@ -488,6 +485,10 @@ init().then(async () => {
 
       timer.countdown$.subscribe((value) => {
         timerElement.value = `${value}`
+
+        if (!config.state.paused && value === 0) {
+          die(config)
+        }
 
         if (clock.paused && value < 20) {
           clock.play()
