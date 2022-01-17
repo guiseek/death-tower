@@ -1,8 +1,6 @@
 import {
-  map,
   take,
   timer,
-  finalize,
   interval,
   takeUntil,
   Subscription,
@@ -20,8 +18,8 @@ export class TimerService {
 
   private _gameover
   private _countdown
-  
-  private _subscription: Subscription | undefined
+
+  private _sub: Subscription | undefined
 
   constructor(readonly duration = 60) {
     this._countdown = new BehaviorSubject(duration)
@@ -31,17 +29,19 @@ export class TimerService {
   start() {
     const sub = this._timeKeeper(this.duration)
 
-    this._subscription = sub
-      .pipe(
-        map((value) => this.duration - value),
-        finalize(() => this._gameover.next(true))
-      )
-      .subscribe((time) => this._countdown.next(time))
+    this._sub = sub.pipe(
+    ).subscribe((time) => {
+      const countdown = this.duration - time
+      this._countdown.next(countdown)
+      if (this._sub && countdown <= 0) {
+        this._sub.unsubscribe()
+      }
+    })
   }
 
   reset() {
-    if (this._subscription) {
-      this._subscription.unsubscribe()
+    if (this._sub) {
+      this._sub.unsubscribe()
     }
 
     this.start()
@@ -49,7 +49,7 @@ export class TimerService {
 
   private _timeKeeper(duration = this.duration) {
     const timeInterval = interval(1000)
-    const timeRunsOut = timer(duration * 1000)
+    const timeRunsOut = timer((duration + 2) * 1000)
     return timeInterval.pipe(takeUntil(timeRunsOut))
   }
 }

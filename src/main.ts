@@ -113,10 +113,15 @@ onpopstate = (e) => location.reload()
 let dead = false
 
 // Mata o player
-function die() {
-  dead = true
-  scream.play()
+function die(config: Config) {
   timeWaveRipple.play()
+  timer.reset()
+  scream.play()
+  playerState.idle()
+  playerState.pause()
+
+  config.state.paused = true
+  dead = true
 }
 
 /**
@@ -157,12 +162,13 @@ function draw() {
 
   if (!config.state.paused && config.state.finished) {
     drawWinner(config)
+    timer.reset()
   }
 
   if (config.state.paused) {
     drawTitles(config)
 
-    if (!dead) die()
+    if (!dead) die(config)
   }
 
   requestAnimationFrame(draw)
@@ -397,12 +403,7 @@ const init = async () => {
   window.addEventListener('keydown', (e) => keyDown(config, e), false)
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
-  buttons.jump.ontouchstart = () => {
-    if (!initialized && !fullscreen) {
-      buttons.fullscreen.click()
-    }
-    config.input.jump = true
-  }
+  buttons.jump.ontouchstart = () => (config.input.jump = true)
   buttons.jump.ontouchend = () => (config.input.jump = false)
 
   buttons.left.ontouchstart = () => (config.input.left = true)
@@ -424,8 +425,6 @@ const handleFullScreen = () => {
   const svgEnter = buttons.fullscreen.querySelector('#fullscreen-enter')
   const svgExit = buttons.fullscreen.querySelector('#fullscreen-exit')
 
-  buttons.fullscreen.focus()
-
   buttons.fullscreen.onclick = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen()
@@ -443,7 +442,6 @@ const handleFullScreen = () => {
   }
 
   document.onfullscreenchange = (e) => {
-    console.log(e)
     fullscreen = !fullscreen
   }
 }
@@ -477,16 +475,6 @@ init().then(async () => {
       thunder.play()
       timer.start()
 
-      timer.gameover$.subscribe((isOver) => {
-        console.log('isOver: ', isOver)
-
-        if (isOver && !config.state.paused) {
-          config.state.paused = true
-          playerState.pause()
-          playerState.idle()
-          die()
-        }
-      })
       timer.countdown$.subscribe((value) => {
         timerElement.value = `${value}`
       })
