@@ -26,6 +26,7 @@ import {
   getRandomPoints,
 } from './map'
 import { drawWinner } from './map/draw-winner'
+import { finalize } from 'rxjs'
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
@@ -57,6 +58,7 @@ const timeWaveRipple = audio.get('timeWaveRipple2')
 const running = audio.get('running')
 const thunder = audio.get('thunder')
 const scream = audio.get('scream')
+const clock = audio.get('clockTicking')
 
 /**
  * Níveis de dificuldade
@@ -164,14 +166,19 @@ function draw() {
   }
 
   if (!config.state.paused && config.state.finished) {
-    drawWinner(config)
-    timer.reset()
     navigator.vibrate(500)
+    drawWinner(config)
+    if (!clock.paused) {
+      clock.pause()
+    }
+    timer.reset()
   }
 
   if (config.state.paused) {
     drawTitles(config)
-
+    if (!clock.paused) {
+      clock.pause()
+    }
     if (!dead) die(config)
   }
 
@@ -481,6 +488,10 @@ init().then(async () => {
 
       timer.countdown$.subscribe((value) => {
         timerElement.value = `${value}`
+
+        if (clock.paused && value < 20) {
+          clock.play()
+        }
       })
 
       initialized = true
