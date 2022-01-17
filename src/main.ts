@@ -398,7 +398,7 @@ const init = async () => {
   window.addEventListener('keyup', (e) => keyUp(config, e), false)
 
   buttons.jump.ontouchstart = () => {
-    if (!initialized) {
+    if (!initialized && !fullscreen) {
       buttons.fullscreen.click()
     }
     config.input.jump = true
@@ -444,6 +444,7 @@ const handleFullScreen = () => {
 
   document.onfullscreenchange = (e) => {
     console.log(e)
+    fullscreen = !fullscreen
   }
 }
 
