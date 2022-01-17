@@ -16,8 +16,6 @@ body {
   font-size: 100%;
 }
 
-@media (min-width: 700px) and (orientation: landscape) {
-}
 
 #container {
   height: 100%;
@@ -103,8 +101,8 @@ body {
 #buttons {
   z-index: 100;
   position: fixed;
-  bottom: 0px;
-  width: calc(100% - 20px);
+  bottom: 8px;
+  width: calc(100% - 32px);
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -151,6 +149,54 @@ canvas {
   width: 100%;
 }
 
+@media (min-width: 896px) and (max-width: 1200px) and (orientation: landscape) {
+  canvas {
+    width: 100%;
+    max-height: 100%;
+  }
+
+  #buttons button#fullscreen {
+    margin: 16px;
+  }
+  #buttons button:not(#fullscreen) {
+    display: unset;
+    width: 100px;
+    height: 100px;
+  }
+  #buttons {
+    padding: 10px;
+    /* display: flex; */
+  }
+}
+
+@media (max-width: 896px) and (orientation: landscape) {
+  canvas {
+    width: 100%;
+    max-height: 100%;
+  }
+
+  #container header a {
+    font-size: 100%;
+  }
+  #container > form label {
+    font-size: 18px;
+  }
+  #container > form input {
+    max-width: 80px;
+    text-align: right;
+    font-size: 18px;
+  }
+  #buttons button#fullscreen {
+    margin: 8px;
+  }
+  #buttons button:not(#fullscreen) {
+    display: unset;
+  }
+  #buttons {
+    padding: 10px;
+    /* display: flex; */
+  }
+}
 @media (max-width: 844px) {
   canvas {
     width: 100%;
