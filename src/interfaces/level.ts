@@ -7,6 +7,6 @@ export interface Level {
   y: Range
 }
 
-export type LevelType = 'easy' | 'medium' | 'hard'
+export type LevelType = 'training' | 'easy' | 'medium' | 'hard'
 
 export type Levels = { [key in LevelType]: Level }

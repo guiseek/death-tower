@@ -1,6 +1,16 @@
 import { Level, Levels, LevelType } from '../interfaces/level'
 
 const levels: Levels = {
+  training: {
+    x: {
+      min: 15,
+      max: 20
+    },
+    y: {
+      min: 15,
+      max: 20
+    }
+  },
   easy: {
     x: { min: 30, max: 40 },
     y: { min: 30, max: 40 },
