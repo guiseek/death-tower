@@ -65,13 +65,19 @@ body {
 #container header a:link {
   color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
+  transition: color 200ms;
 }
 #container header a:hover {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: underline;
 }
-#container header a:active {
+#container header a:target {
   color: rgba(255, 255, 255, 1);
+  text-decoration: underline;
+}
+
+#container header a:active {
+  color: rgba(255, 255, 255,.9);
   text-decoration: none;
 }
 

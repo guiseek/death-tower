@@ -61,9 +61,12 @@ const scream = audio.get('scream')
 /**
  * Níveis de dificuldade
  */
-// const positions = impossible.positions
-
 const level = location.hash.substring(1)
+
+if (!level) {
+  location.hash = 'training'
+}
+
 const levelValue = getLevel(level)
 // `| 0` é utiliazdo aqui pra arredondar o número
 const len = ((levelValue.x.min + levelValue.x.max) / 2) | 0
@@ -163,6 +166,7 @@ function draw() {
   if (!config.state.paused && config.state.finished) {
     drawWinner(config)
     timer.reset()
+    navigator.vibrate(500)
   }
 
   if (config.state.paused) {

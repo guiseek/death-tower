@@ -32,5 +32,5 @@ function isLevelType(level: string): level is LevelType {
 export function getLevel(type: string): Level
 export function getLevel(type: LevelType): Level
 export function getLevel(type: LevelType | string): Level {
-  return isLevelType(type) ? levels[type] : levels.easy
+  return isLevelType(type) ? levels[type] : levels.training
 }
