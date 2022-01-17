@@ -486,6 +486,10 @@ init().then(async () => {
       timer.countdown$.subscribe((value) => {
         timerElement.value = `${value}`
 
+        if (!config.state.paused && value === 0) {
+          die(config)
+        }
+
         if (clock.paused && value < 20) {
           clock.play()
         }
