@@ -1,0 +1,76 @@
+<header>
+  <nav>
+    <a routerLink="/easy" routerLinkActive="active">fácil</a>
+    <a routerLink="/medium" routerLinkActive="active">médio</a>
+    <a routerLink="/hard" routerLinkActive="active">difícil</a>
+  </nav>
+</header>
+
+<section id="game">
+  <canvas dt-canvas></canvas>
+</section>
+
+<footer>
+  <nav>
+    <div class="vertical">
+      <button dt-control action="fullscreen" (touch)="toggleFullscreen()">
+        <svg>
+          <use
+            [ngClass]="{ hidden: inFullscreen }"
+            xlink:href="#fullscreen-exit"
+          ></use>
+          <use
+            [ngClass]="{ hidden: !inFullscreen }"
+            xlink:href="#fullscreen-enter"
+          ></use>
+        </svg>
+      </button>
+      <button dt-control action="jump" (touch)="onTouch($event)">
+        <svg>
+          <use xlink:href="#jump"></use>
+        </svg>
+      </button>
+    </div>
+
+    <div class="horizontal">
+      <button dt-control action="left" (touch)="onTouch($event)">
+        <svg>
+          <use xlink:href="#left"></use>
+        </svg>
+      </button>
+      <button dt-control action="right" (touch)="onTouch($event)">
+        <svg>
+          <use xlink:href="#right"></use>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</footer>
+
+<svg class="svg-symbols">
+  <symbol id="fullscreen-enter" viewBox="0 0 24 24">
+    <path
+      d="M7 14H5V19H10V17H7V14ZM5 10H7V7H10V5H5V10ZM17 17H14V19H19V14H17V17ZM14 5V7H17V10H19V5H14Z"
+    />
+  </symbol>
+  <symbol id="fullscreen-exit" viewBox="0 0 24 24">
+    <path
+      d="M5 16H8V19H10V14H5V16ZM8 8H5V10H10V5H8V8ZM14 19H16V16H19V14H14V19ZM16 8V5H14V10H19V8H16Z"
+    />
+  </symbol>
+  <symbol id="jump" viewBox="0 0 24 24">
+    <path
+      d="M1 16.1911L2.93875 17.9873L12 9.6051L21.0475 18L23 16.1911L12 6L1 16.1911Z"
+    />
+  </symbol>
+  <symbol id="left" viewBox="0 0 24 24">
+    <path
+      d="M16.1911 23L17.9873 21.0612L9.6051 12L18 2.9525L16.1911 1L6 12L16.1911 23Z"
+    />
+  </symbol>
+  <symbol id="right" viewBox="0 0 24 24">
+    <path
+      d="M7.80892 1L6.01274 2.93875L14.3949 12L6 21.0475L7.80892 23L18 12L7.80892 1Z"
+    />
+  </symbol>
+</svg>
