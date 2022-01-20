@@ -25,14 +25,16 @@ import {
   Point,
   getLevel,
   getRandomPoints,
+  getParamsPoints,
+  getPointsByParams,
 } from './map'
-
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
   jump: getButton('jump'),
   left: getButton('left'),
   right: getButton('right'),
+  share: getButton('share'),
 }
 
 const form = document.querySelector('form')
@@ -61,16 +63,35 @@ const scream = audio.get('scream')
 const clock = audio.get('clockTicking')
 
 /**
+ * Gera parâmetros de URL para que o mapa possa ser compartilhado
+ * e carregado identico para quem acessar o link gerado e copiado
+ */
+
+buttons.share.onclick = () => {
+  const params = getParamsPoints(positions)
+  const urlToShare = `${location.origin}/?${params + location.hash}`
+  navigator.clipboard.writeText(urlToShare).then(() => {
+    location.search = params
+  })
+}
+
+const points = getPointsByParams(location.search)
+
+/**
  * Níveis de dificuldade
  */
 const hashLevel = location.hash.substring(1)
 
-if (!hashLevel) {
+if (!points.length && !hashLevel) {
   location.hash = 'training'
 }
 
 const level = getLevel(hashLevel)
-const positions = getRandomPoints(level, level.y.max - 2)
+
+const positions = points.length
+  ? points
+  : getRandomPoints(level, level.y.max - 2)
+
 const platforms = getPlatformsByPoints(positions)
 const setPositions = (positions: Point[]) =>
   ((window as any)['positions'] = positions)
@@ -359,23 +380,23 @@ function collisionDetection() {
  */
 function loadImages(config: Config) {
   const standing = new URL(
-    'assets/player/zumbi-2/state=standing.png',
+    'assets/player/burn/state=standing.png',
     import.meta.url
   )
   const jumping = new URL(
-    'assets/player/zumbi-2/state=jumping.png',
+    'assets/player/burn/state=jumping-up.png',
     import.meta.url
   )
   const jumpingdown = new URL(
-    'assets/player/zumbi-2/state=jumpingdown.png',
+    'assets/player/burn/state=jumping-down.png',
     import.meta.url
   )
   const running = new URL(
-    'assets/player/zumbi-2/state=running.png',
+    'assets/player/burn/state=running.png',
     import.meta.url
   )
   const walking = new URL(
-    'assets/player/zumbi-2/state=walking.png',
+    'assets/player/burn/state=walking.png',
     import.meta.url
   )
 
