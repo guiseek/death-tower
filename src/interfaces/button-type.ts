@@ -1,1 +1,1 @@
-export type ButtonType = 'jump' | 'left' | 'right' | 'fullscreen'
+export type ButtonType = 'jump' | 'left' | 'right' | 'fullscreen' | 'share'

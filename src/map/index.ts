@@ -1,4 +1,6 @@
 export * from './platforms/get-platforms-by-points'
+export * from './utilities/get-params-points'
+export * from './utilities/get-points-params'
 export * from './utilities/get-random-points'
 export * from './utilities/get-equals-points'
 export * from './utilities/get-circle-point'

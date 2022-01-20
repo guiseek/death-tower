@@ -119,7 +119,12 @@ body {
   justify-content: space-between;
 }
 
-#buttons button:not(#fullscreen) {
+#buttons button#share,
+#buttons button#fullscreen {
+  display: inline;
+}
+
+#buttons button {
   display: none;
 }
 
@@ -142,11 +147,6 @@ body {
 }
 #buttons button svg {
   fill: #f1f1f1;
-}
-#buttons button#fullscreen {
-  margin: 8px 8px 16px;
-  width: 64px;
-  height: 64px;
 }
 #buttons button svg#fullscreen-exit {
   display: none;
@@ -235,4 +235,11 @@ canvas {
     padding: 10px;
     /* display: flex; */
   }
+}
+
+#buttons button#share,
+#buttons button#fullscreen {
+  margin: 8px 8px 16px;
+  width: 64px;
+  height: 64px;
 }
