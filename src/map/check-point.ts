@@ -4,6 +4,7 @@ import { Platform } from './platforms/platform'
 export function checkPoint(state: StateConfig, platform: Platform) {
   if (state.lastPlatform && platform.n > state.lastPlatform.n) {
     state.lastPlatform = platform
-    state.points += (10 * platform.n)
+    const speed = (state.player.speed * -1) * 1000    
+    state.points = platform.n * speed
   }
 }

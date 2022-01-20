@@ -20,7 +20,6 @@ body {
   overflow: hidden;
 }
 
-
 #container {
   flex: 1;
   height: 100%;
@@ -40,12 +39,23 @@ body {
 #container > header {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
 
   z-index: 1000;
   position: fixed;
   left: 10px;
   top: 10px;
+}
+
+#container > header .death-tower-icon {
+  flex-direction: column;
+  display: flex;
+}
+#container > header .death-tower-icon img {
+  height: 80px;
+}
+#container > header .death-tower-icon span {
+  display: none;
 }
 
 #container > header .github-icon {
@@ -82,7 +92,7 @@ body {
 }
 
 #container header a:active {
-  color: rgba(255, 255, 255,.9);
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
 }
 
@@ -91,9 +101,12 @@ body {
   top: 10px;
   right: 10px;
   z-index: 1000;
+  display: flex;
+  flex-direction: row;
 }
 
 #container > form label {
+  text-align: end;
   font-size: 160%;
   color: rgba(255, 255, 255, 0.9);
 }
@@ -138,7 +151,6 @@ body {
 }
 #buttons > div {
   justify-content: center;
-  align-items: center;
   display: flex;
   gap: 10px;
 }
@@ -205,6 +217,8 @@ canvas {
   }
   #buttons {
     padding: 10px;
+    display: flex;
+    gap: 10px;
     /* display: flex; */
   }
 }
@@ -214,9 +228,22 @@ canvas {
     max-height: 100%;
   }
 
+  #container header {
+    justify-content: space-between;
+    right: 10px;
+  }
   #container header a {
     font-size: 100%;
   }
+
+  #container > form {
+    top: 60px;
+    right: 10px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+  }
+
   #container > form label {
     font-size: 18px;
   }
@@ -239,7 +266,32 @@ canvas {
 
 #buttons button#share,
 #buttons button#fullscreen {
-  margin: 8px 8px 16px;
+  margin: 8px 8px 0px;
   width: 64px;
   height: 64px;
+}
+
+
+
+@media (max-width: 844px) {
+  .ml-sm-20 {
+    margin-left: 20px;
+  }
+  .mr-sm-20 {
+    margin-right: 20px;
+  }
+  .t-sm-40 {
+    top: 40px;
+  }
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.ml-40 {
+  margin-left: 40px;
+}
+.mr-40 {
+  margin-right: 40px;
 }

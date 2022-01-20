@@ -1,3 +1,4 @@
+import { url } from './providers/url';
 import { loadDefaultConfig, loadCustomConfig, loadDomConfig } from './config'
 import { keyboardState, playerState } from './state'
 import { Config, ButtonType } from './interfaces'
@@ -26,7 +27,9 @@ import {
   getLevel,
   getRandomPoints,
   getParamsPoints,
-  getPointsByParams,
+  getPointsParams,
+  getPointsCode,
+  drawText,
 } from './map'
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
@@ -75,12 +78,13 @@ buttons.share.onclick = () => {
   })
 }
 
-const points = getPointsByParams(location.search)
+const points = getPointsParams(location.search)
 
 /**
  * Níveis de dificuldade
  */
 const hashLevel = location.hash.substring(1)
+
 
 if (!points.length && !hashLevel) {
   location.hash = 'training'
@@ -88,7 +92,9 @@ if (!points.length && !hashLevel) {
 
 const level = getLevel(hashLevel)
 
-const positions = points.length
+const urlSearch = new URLSearchParams(location.search)
+
+const positions = urlSearch.has('points')
   ? points
   : getRandomPoints(level, level.y.max - 2)
 
@@ -97,6 +103,8 @@ const setPositions = (positions: Point[]) =>
   ((window as any)['positions'] = positions)
 
 setPositions(positions)
+
+const code = points.length ? getPointsCode(points) : null
 
 /**
  * Portas
@@ -130,7 +138,7 @@ config.platforms.push(...platforms)
  * Recarrega configurações do jogo
  * ao trocar de level
  */
-onpopstate = (e) => location.reload()
+onpopstate = () => url.reload()
 
 // Estado global
 let dead = false
@@ -184,8 +192,14 @@ function draw() {
   }
 
   if (!config.state.paused && config.state.finished) {
-    navigator.vibrate(500)
-    drawWinner(config)
+    navigator.vibrate(100)
+    if (code) {
+      drawWinner(config, code)
+    } else {
+      drawWinner(config)
+    }
+    
+
     if (!clock.paused) {
       clock.pause()
     }
