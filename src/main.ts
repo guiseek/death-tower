@@ -73,12 +73,15 @@ const clock = audio.get('clockTicking')
 buttons.share.onclick = () => {
   const params = getParamsPoints(positions)
   const urlToShare = `${location.origin}/?${params + location.hash}`
+  const message = ` *Como andam suas habilidades? Mostre-me enviando o código que está na última porta deste mapa.*       `
   navigator.clipboard.writeText(urlToShare).then(() => {
-    location.search = params
+    //location.search = params
+    window.open(`https://api.whatsapp.com/send?text=${message} ${urlToShare}`,'_blank')
   })
 }
 
 const points = getPointsParams(location.search)
+
 
 /**
  * Níveis de dificuldade
