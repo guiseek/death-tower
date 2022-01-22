@@ -8,14 +8,28 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 
-
 @Component({
   selector: 'button[dt-control],dt-control',
   template: `<ng-content></ng-content>`,
-  styleUrls: ['./button-control.component.scss'],
+  styles: [
+    `
+      :host {
+        width: 56px;
+        height: 56px;
+        padding: 16px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+        border: 2px solid #f1f1f1;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonControlComponent {
+export class ButtonComponent {
   @Output() public touch: EventEmitter<ControlActionEvent> = new EventEmitter();
 
   @Input() public action: ControlAction = 'jump';

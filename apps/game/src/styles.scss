@@ -3,19 +3,22 @@
 :root {
   --font-heading: 'Germania One', cursive;
   --font-body: 'Walter Turncoat', cursive;
-  --color-bg: #212121;
-  --color-text: #f1f1f1;
+  --font-size: 1.6rem;
+  --color-bg: 18, 18, 18;
+  --color-text: 241, 241, 241;
+  --color-active: 255,255,255;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 body {
   margin: 0;
   font-size: 1.2rem;
   font-family: var(--font-body);
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
 }
 
 header {
@@ -23,15 +26,43 @@ header {
   font-family: var(--font-heading);
 }
 
+input {
+  font-family: var(--font-heading);
+}
+
 a:link,
 a:visited,
 a:hover {
-  color: #9a9a9a;
+  cursor: pointer;
+  color: rgba(var(--color-active), 0.6);
   transition: color 200ms;
   text-decoration: none;
 }
 a:hover {
-  color: #fff;
+  color: rgba(var(--color-active), 0.8);
   text-decoration: underline;
+}
+a:target,
+a:active,
+a.active {
+  color: rgb(var(--color-active));
+}
 
+.flex {
+  display: flex;
+
+  &-row {
+    flex-direction: row;
+  }
+
+  &-column {
+    flex-direction: column;
+  }
+}
+
+.gap-8 {
+  gap: 8px;
+}
+.gap-16 {
+  gap: 16px;
 }

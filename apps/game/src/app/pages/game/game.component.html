@@ -4,15 +4,20 @@
     <a routerLink="/medium" routerLinkActive="active">médio</a>
     <a routerLink="/hard" routerLinkActive="active">difícil</a>
   </nav>
+
+  <form [formGroup]="player" id="player">
+    <dt-timer formControlName="timer"></dt-timer>
+    <dt-score formControlName="score"></dt-score>
+  </form>
 </header>
 
-<section id="game">
-  <canvas dt-canvas></canvas>
-</section>
+<main #container>
+  <canvas #canvas height="900" width="1600"></canvas>
+</main>
 
 <footer>
   <nav>
-    <div class="vertical">
+    <div class="flex flex-column gap-16">
       <button dt-control action="fullscreen" (touch)="toggleFullscreen()">
         <svg>
           <use
@@ -32,7 +37,7 @@
       </button>
     </div>
 
-    <div class="horizontal">
+    <div class="flex flex-row gap-16">
       <button dt-control action="left" (touch)="onTouch($event)">
         <svg>
           <use xlink:href="#left"></use>

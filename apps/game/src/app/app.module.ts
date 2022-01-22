@@ -1,13 +1,14 @@
-import { NgModule } from '@angular/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import {
-  ANIMATION_FRAMES_TOKEN,
-  ANIMATION_FRAMES_VALUE,
-} from './config/animation-frames';
+// import {
+//   ANIMATION_FRAMES_TOKEN,
+//   ANIMATION_FRAMES_VALUE,
+// } from './config/animation-frames';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,14 +22,15 @@ import {
             import('./pages/pages.module').then((m) => m.PagesModule),
         },
       ],
-      { useHash: true, initialNavigation: 'enabledBlocking' }
+      { initialNavigation: 'enabledBlocking' }
     ),
   ],
   providers: [
-    {
-      provide: ANIMATION_FRAMES_TOKEN,
-      useValue: ANIMATION_FRAMES_VALUE,
-    },
+    // {
+    //   provide: ANIMATION_FRAMES_TOKEN,
+    //   useValue: ANIMATION_FRAMES_VALUE,
+    // },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   bootstrap: [AppComponent],
 })

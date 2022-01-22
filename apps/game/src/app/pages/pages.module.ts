@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
+import { GameModule } from '../shared/game/game.module';
 import { PagesRoutingModule } from './pages-routing.module';
 import { GameComponent } from './game/game.component';
-import { ControlModule } from '../shared/control/control.module';
-import { MapModule } from '../shared/map/map.module';
 
 
 @NgModule({
@@ -12,9 +12,9 @@ import { MapModule } from '../shared/map/map.module';
     GameComponent
   ],
   imports: [
+    GameModule,
     CommonModule,
-    MapModule,
-    ControlModule,
+    ReactiveFormsModule,
     PagesRoutingModule
   ]
 })

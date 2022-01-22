@@ -2,8 +2,21 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
 
   header {
+    display: flex;
+    justify-content: space-between;
+
+    form {
+      gap: 20px;
+      display: flex;
+      margin: 8px 16px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     nav {
       a {
         margin: 8px 16px;
@@ -12,28 +25,26 @@
     }
   }
 
-  #game {
+  main {
     flex: 1;
+
+    overflow: hidden;
+    max-height: 100vh;
+
+    canvas {
+      width: 100%;
+    }
   }
 
   footer {
+    bottom: 0;
+    position: fixed;
+    width: calc(100vw - 48px);
     padding: 24px;
     nav {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-    }
-    .vertical,
-    .horizontal {
-      gap: 16px;
-    }
-    .vertical {
-      display: flex;
-      flex-direction: column;
-    }
-    .horizontal {
-      display: flex;
-      flex-direction: row;
     }
   }
 
