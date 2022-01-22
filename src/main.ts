@@ -5,7 +5,7 @@ import { Config, ButtonType } from './interfaces'
 import { TimerService } from './services/timer'
 import { drawWinner } from './map/draw-winner'
 import { getButton } from './utils/get-button'
-import { audio } from './providers/audio'
+import { audioAction } from './providers/audio'
 import {
   getPlatformsByPoints,
   drawPlatforms,
@@ -29,8 +29,8 @@ import {
   getParamsPoints,
   getPointsParams,
   getPointsCode,
-  drawText,
 } from './map'
+import { isMobile } from './utils/is-mobile';
 
 const buttons: Record<ButtonType, HTMLButtonElement> = {
   fullscreen: getButton('fullscreen'),
@@ -52,18 +52,7 @@ const canvas = document.querySelector('canvas') as HTMLCanvasElement
 const fallbackCanvas = new OffScreen(10, 10).canvas
 
 const defaultConfig = loadDefaultConfig()
-const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
-
-/**
- * Áudio
- */
-const jumpSpringDown = audio.get('jumpSpringDown')
-const jumpSpringUp = audio.get('jumpSpringUp')
-const timeWaveRipple = audio.get('timeWaveRipple2')
-const running = audio.get('running')
-const thunder = audio.get('thunder')
-const scream = audio.get('scream')
-const clock = audio.get('clockTicking')
+const domConfig = loadDomConfig(container, canvas, fallbackCanvas, audioAction)
 
 /**
  * Gera parâmetros de URL para que o mapa possa ser compartilhado
@@ -145,12 +134,13 @@ let dead = false
 
 // Mata o player
 function die(config: Config) {
-  timeWaveRipple.play()
+  config.audioAction.timeWaveRipple2.play()
+  config.audioAction.scream.play()
   timer.reset()
-  scream.play()
   playerState.idle()
   playerState.pause()
-
+  
+  config.state.ready = false
   config.state.paused = true
   dead = true
 }
@@ -192,24 +182,23 @@ function draw() {
   }
 
   if (!config.state.paused && config.state.finished) {
-    navigator.vibrate(100)
     if (code) {
       drawWinner(config, code)
     } else {
       drawWinner(config)
     }
-    
 
-    if (!clock.paused) {
-      clock.pause()
+
+    if (!config.audioAction.clockTicking.paused) {
+      config.audioAction.clockTicking.pause()
     }
     timer.reset()
   }
 
   if (config.state.paused) {
     drawTitles(config)
-    if (!clock.paused) {
-      clock.pause()
+    if (!config.audioAction.clockTicking.paused) {
+      config.audioAction.clockTicking.pause()
     }
     if (!dead) die(config)
   }
@@ -347,7 +336,9 @@ function collisionDetection() {
           playerState.jumpDown()
           playerState.idle()
 
-          navigator.vibrate(50)
+          if (isMobile()) {
+            navigator.vibrate(50)
+          }
 
           checkPoint(config.state, platform)
 
@@ -430,8 +421,6 @@ function loadImages(config: Config) {
   loadImage(config, walking.pathname, 'runningRight', 3, true)
 }
 
-let initialized = false
-
 /**
  * Inicia o jogo
  */
@@ -489,56 +478,79 @@ const handleFullScreen = () => {
   }
 }
 
+const handleInteraction = () => {
+  const events = ['mousemove', 'scroll', 'keydown', 'click', 'touchstart']
+
+  function removeInteractListener() {
+    events.forEach(event => {
+      document.body.removeEventListener(event, handleInteractEvent, false)
+    })
+  }
+
+  function handleInteractEvent(e: Event) {
+    if (e.isTrusted) {
+      if (config.state.ready) {
+        // removeInteractListener()
+      }
+      config.state.ready = true
+    }
+  }
+
+  events.forEach(event => {
+    document.body.addEventListener(event, handleInteractEvent, false)
+  })
+}
+
 init().then(async () => {
+  handleInteraction()
+  
   handleFullScreen()
 
-  playerState.jumping$.subscribe(async (jumping: boolean) => {
-    if (!jumping) {
-      if (!jumpSpringUp.paused) {
-        jumpSpringUp.pause()
+  timer.countdown$.subscribe((value) => {
+    timerElement.value = `${value}`
+
+    if (!config.state.paused && value === 0) {
+      die(config)
+    }
+
+    if (config.audioAction.clockTicking.paused && value < 20) {
+      config.audioAction.clockTicking.play()
+    }
+  })
+
+  playerState.jumping$.subscribe((jumping: boolean) => {
+    if (!jumping && config.state.ready) {
+      if (!config.audioAction.jumpSpringUp.paused) {
+        config.audioAction.jumpSpringUp.pause()
       }
 
-      if (jumpSpringDown.paused) {
-        await jumpSpringDown.play()
+      if (config.audioAction.jumpSpringDown.paused) {
+        config.audioAction.jumpSpringDown.play()
       }
     }
 
-    if (jumping) {
-      if (!jumpSpringDown.paused) {
-        jumpSpringDown.pause()
+    if (jumping && config.state.ready) {
+      if (!config.audioAction.jumpSpringDown.paused) {
+        config.audioAction.jumpSpringDown.pause()
       }
-      if (jumpSpringUp.paused) {
-        await jumpSpringUp.play()
+      if (config.audioAction.jumpSpringUp.paused) {
+        config.audioAction.jumpSpringUp.play()
       }
     }
   })
 
   playerState.running$.subscribe((isRunning: boolean) => {
-    if (!initialized && isRunning) {
-      thunder.play()
+    if (!config.state.ready && isRunning) {
+      console.log('groundToStandOnFound');
+      config.audioAction.thunder.play()      
       timer.start()
-
-      timer.countdown$.subscribe((value) => {
-        timerElement.value = `${value}`
-
-        if (!config.state.paused && value === 0) {
-          die(config)
-        }
-
-        if (clock.paused && value < 20) {
-          clock.play()
-        }
-      })
-
-      initialized = true
-    }
-
+    } 
     if (!isRunning) {
-      running.pause()
+      config.audioAction.running.pause()
     }
 
     if (isRunning) {
-      running.play()
+      config.audioAction.running.play()
     }
   })
 })

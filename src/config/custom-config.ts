@@ -9,6 +9,7 @@ export const customConfig: CustomConfig = {
   ],
   savedState: null,
   state: {
+    ready: false,
     paused: false,
     finished: false,
     points: 0,

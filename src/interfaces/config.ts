@@ -110,6 +110,7 @@ interface AnimationFramesConfig {
 
 
 export interface StateConfig {
+  ready: boolean
   points: number
   lastPlatform: Platform | null
   platformReached: Platform | null
@@ -128,11 +129,24 @@ export interface StateConfig {
   player: Player
 }
 
+export interface AudioActionConfig {
+  timeWavePassBy4: HTMLAudioElement
+  timeWaveRipple2: HTMLAudioElement
+  jumpSpringDown: HTMLAudioElement
+  jumpSpringUp: HTMLAudioElement
+  clockTicking: HTMLAudioElement
+  thunder: HTMLAudioElement
+  yeaah: HTMLAudioElement
+  running: HTMLAudioElement
+  scream: HTMLAudioElement
+}
+
 export interface DOMConfig {
   container: HTMLElement | null
   canvas: HTMLCanvasElement | null
   ctx: CanvasRenderingContext2D | null
   rect: DOMRect | null
+  audioAction: AudioActionConfig
   animationFrames: AnimationFramesConfig
 }
 
