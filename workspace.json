@@ -1,6 +1,9 @@
 {
   "version": 2,
   "projects": {
+    "core-interfaces": "libs/core/interfaces",
+    "core-util-config": "libs/core/util-config",
+    "core-util-map": "libs/core/util-map",
     "game": "apps/game"
   }
 }

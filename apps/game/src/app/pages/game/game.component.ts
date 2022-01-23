@@ -1,3 +1,7 @@
+import { Platform as CdkPlatform } from '@angular/cdk/platform';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { filter, Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import {
   OnInit,
   Component,
@@ -5,88 +9,47 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
 
-import { PlatformService } from '../../shared/services/platform.service';
-import { ConfigService } from '../../shared/services/config.service';
-import { PointService } from '../../shared/services/point.service';
-import { ControlActionEvent } from '../../shared/types/control';
-import { ScoreState } from '../../+state/score.state';
+import {
+  Config,
+  Platform,
+  ControlActionEvent,
+} from '@death-tower/core/interfaces';
 
-import { OffScreen } from '../../shared/map/utilities/offscreen';
-import { getLevel } from '../../shared/map/levels/get-level';
-import { getRandomPoints } from '../../shared/map/utilities/math/get-random-points';
-import { getPlatformsByPoints } from '../../shared/map/utilities/math/get-platforms-by-points';
 import {
   loadCustomConfig,
   loadDefaultConfig,
   loadDomConfig,
-} from '../../shared/map/map-config';
-import { Door } from '../../shared/map/utilities/door';
-import { CountdownState } from '../../+state/countdown.state';
-import { Config } from '../../shared/types/config';
+} from '@death-tower/core/util-config';
+
 import {
-  drawBricks,
-  drawDoors,
-  drawPlatforms,
-  drawPlayer,
-  drawShadows,
+  Door,
   drawSky,
+  drawDoors,
+  OffScreen,
+  drawBricks,
+  drawPlayer,
   drawTitles,
-} from '../../shared/map/utilities/draw';
-import { checkDoor } from '../../shared/map/utilities/check';
-import { keyDown } from '../../shared/map/utilities/key-down';
-import { keyUp } from '../../shared/map/utilities/key-up';
+  drawShadows,
+  drawPlatforms,
+  drawWinner,
+} from '@death-tower/core/util-map';
+
+import { loadImages } from '../../config/animation-frames';
+import { GameState, PlayerState } from '../../+state';
 
 const dir = '/assets/sounds';
 
-const timeWavePassBy4 = new Audio(`${dir}/time/time-wave-pass-by-4.mp3`);
-const timeWaveRipple2 = new Audio(`${dir}/time/time-wave-ripple-2.mp3`);
 const clockTicking = new Audio(`${dir}/ambient/clock-ticking.mp3`);
-const jumpSpringDown = new Audio(`${dir}/jump-spring-down.mp3`);
-const jumpSpringUp = new Audio(`${dir}/jump-spring-up.mp3`);
+const jumpingDown = new Audio(`${dir}/jump-spring-down.mp3`);
+const jumpingUp = new Audio(`${dir}/jump-spring-up.mp3`);
 const thunder = new Audio(`${dir}/thunder-rumble.mp3`);
 const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
 const running = new Audio(`${dir}/running.mp3`);
 const scream = new Audio(`${dir}/scream.mp3`);
-
-// const jumpSpringDown = new Audio('/assets/sounds/jump-spring-down.mp3');
-// const jumpSpringUp = new Audio('/assets/sounds/jump-spring-up.mp3');
-// const timeWaveRipple = new Audio('/assets/sounds/time-wave-ripple-2.mp3');
-// const thunder = new Audio('/assets/sounds/thunder-rumble.mp3');
-// const running = new Audio('/assets/sounds/running.mp3');
-// const scream = new Audio('/assets/sounds/scream.mp3');
-// const clock = new Audio('/assets/sounds/clock-ticking.mp3');
-
-
-
-
-
-const fallback = new OffScreen(10, 10).canvas;
-
-const hashLevel = location.hash.substring(1);
-
-if (!hashLevel) {
-  location.hash = 'training';
-}
-
-const level = getLevel(hashLevel);
-const positions = getRandomPoints(level, level.y.max - 2);
-const platforms = getPlatformsByPoints(positions);
-
-const doors = [new Door(1600, 350)];
-const lastPos = positions.pop();
-if (lastPos) {
-  doors.push(new Door(lastPos.x, lastPos.y - 250));
-}
-
-// const defaultConfig = loadDefaultConfig()
-// const domConfig = loadDomConfig(container, canvas, fallbackCanvas)
-// const customConfig = loadCustomConfig({ doors })
 
 @Component({
   selector: 'dt-game',
@@ -95,20 +58,17 @@ if (lastPos) {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
-      provide: ScoreState,
+      provide: GameState,
       useFactory: () => {
-        return new ScoreState();
+        return new GameState();
       },
     },
     {
-      provide: CountdownState,
+      provide: PlayerState,
       useFactory: () => {
-        return new CountdownState();
+        return new PlayerState();
       },
     },
-    ConfigService,
-    PointService,
-    PlatformService,
   ],
 })
 export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -120,11 +80,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas')
   canvas!: ElementRef<HTMLCanvasElement>;
 
-  player = this.formBuilder.group({
-    timer: [0, Validators.min(0)],
-    score: [0, Validators.min(0)],
-  });
-
   get hasFullscreen() {
     return document.fullscreenEnabled;
   }
@@ -132,6 +87,9 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   get inFullscreen() {
     return document.fullscreenElement;
   }
+
+  mobileQuery: MediaQueryList;
+  private _mobileQueryListener: () => void;
 
   private _config!: Config;
 
@@ -143,71 +101,120 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
+  touched = false;
+
   constructor(
+    media: MediaMatcher,
+    cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
-    private platformService: PlatformService,
-    private configService: ConfigService,
-    private pointService: PointService,
-    readonly countdownState: CountdownState,
-    readonly scoreState: ScoreState
-  ) {}
+    private cdkPlatform: CdkPlatform,
+
+    readonly player: PlayerState,
+    private readonly game: GameState
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 900px)');
+    this._mobileQueryListener = () => cdr.detectChanges();
+    this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+  }
 
   ngOnInit(): void {
-    this.route.params.subscribe(({ level }) => {
-      if (level) this.pointService.setPoints(level);
-    });
+    this.route.params
+      .pipe(
+        filter((level) => !!level),
+        takeUntil(this.destroy)
+      )
+      .subscribe(({ level }) => {
+        this.game.loadLevel(level);
+      });
 
-    this.countdownState.seconds$.subscribe((seconds) => {
-      console.log('seconds: ', seconds);
-    })
-    this.countdownState.gameover$.subscribe((gameover) => {
-      console.log('gameover: ', gameover)
-    })
-
-    this.countdownState.start(3)
+    this.player.gameover$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((gameover) => {
+        console.log('gameover: ', gameover);
+      });
   }
 
   ngAfterViewInit(): void {
-    this.scoreState.score$.pipe(takeUntil(this.destroy)).subscribe((score) => {
-      const control = this.player.get('score');
-      if (control) control.setValue(score);
-    });
-
-    this.platformService.platforms$
-      .pipe(takeUntil(this.destroy))
-      .subscribe((platforms) => {
-        if (platforms.length) {
-          this.configService.setPlatforms(platforms);
-          console.log(platforms);
-        }
-      });
-
-    this.pointService.points$
-      .pipe(takeUntil(this.destroy))
-      .subscribe((points) => {
-        if (points.length) {
-          this.platformService.setPlatforms(points);
-        }
-      });
-
     const container = this.container.nativeElement;
-    const canvas = this.canvas.nativeElement;
+    const game = this.canvas.nativeElement;
+
+    const doors = [new Door(1600, 350)];
+    const { canvas } = new OffScreen(10, 10);
 
     this.config = Object.assign(
       loadDefaultConfig(),
-      loadDomConfig(container, canvas, fallback),
+      loadDomConfig(container, game, canvas),
       loadCustomConfig({ doors })
     );
 
-    this.configService.loadAnimations(this.config);
+    /**
+     * Reinicia o jogo e coloca o player
+     * novamente na primeira plataforma
+     */
+    if (!this.config.savedState) {
+      this.config.savedState = JSON.parse(JSON.stringify(this.config.state));
+    }
 
-    addEventListener('keydown', (e) => keyDown(this.config, e), false)
-    addEventListener('keyup', (e) => keyUp(this.config, e), false)
+    /**
+     * Carrega as imagens como frames
+     * sequenciais com estados do player
+     */
+    loadImages(this.config);
 
-    this.config.platforms.push(...platforms);
+    /**
+     * Atualiza plataformas na torre
+     */
+    this.game.platforms$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((platforms) => {
+        if (this.config && platforms.length) {
+          if (!this.config.platforms.length) {
+            this.config.platforms = platforms;
 
-    this.drawCanvas();
+            this.config.state.lastPlatform = platforms[0];
+
+            /**
+             * Como ainda não haviam plataformas
+             * inicializa processo de renderização
+             */
+            this.drawCanvas();
+          } else {
+            this.config.platforms = platforms;
+          }
+        }
+      });
+
+    addEventListener('keyup', this.onKeyUp, false);
+    addEventListener('keydown', this.onKeyDown, false);
+    addEventListener('keypress', this.onKeyPress, false);
+  }
+
+  onKeyUp = (e: KeyboardEvent) => this.move(e, false);
+  onKeyDown = (e: KeyboardEvent) => this.move(e, true);
+  onKeyPress = () => {
+    if (!this.touched) {
+      this.player.start();
+      this.touched = true;
+      thunder.play();
+    }
+  };
+
+  move(e: KeyboardEvent, keyDown: boolean) {
+    if (e.key === 'ArrowLeft') this.config.input.left = keyDown;
+    if (e.key === 'ArrowRight') this.config.input.right = keyDown;
+    if (e.key === ' ') this.config.input.jump = keyDown;
+  }
+
+  onTouch({ action, time }: ControlActionEvent): void {
+    this.config.input[action] = time === 'press';
+  }
+
+  toggleFullscreen() {
+    if (!this.inFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
   }
 
   drawCanvas() {
@@ -221,7 +228,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.config.state.lastPlatform) {
       this.config.state.lastPlatform = this.config.platforms[0];
-      // dead = false
+      this.player.reset();
     }
 
     if (
@@ -239,20 +246,11 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!this.config.state.paused && this.config.state.finished) {
-      navigator.vibrate(500);
-      // drawWinner(this.config)
-      if (!clockTicking.paused) {
-        clockTicking.pause();
-      }
-      this.countdownState.reset();
+      drawWinner(this.config);
     }
 
     if (this.config.state.paused) {
       drawTitles(this.config);
-      if (!clockTicking.paused) {
-        clockTicking.pause();
-      }
-      // if (!dead) die(config)
     }
 
     requestAnimationFrame(() => this.drawCanvas());
@@ -279,22 +277,13 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (
       Math.abs(this.config.state.player.speed) < this.config.settings.minSpeed
     ) {
-      // playerState.idle()
-      // playerState.setSpeed(0)
-
       this.config.state.player.speed = 0;
     }
 
     if (this.config.state.player.speed !== 0) {
-      if (!this.config.state.jump.isJumping) {
-        // playerState.run()
-      }
-
       const currentSpeed = this.config.state.jump.isJumping
         ? this.config.state.player.speed * 0.7
         : this.config.state.player.speed;
-
-      // playerState.setSpeed(currentSpeed)
 
       this.config.state.pos.x +=
         this.config.state.player.speed < 0
@@ -302,8 +291,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
           : Math.floor(currentSpeed * (this.config.state.dt as number));
 
       const dir = currentSpeed > 0 ? 0 : 1;
-
-      // playerState.toTurn(dir)
 
       this.config.state.player.dir = dir;
     }
@@ -314,9 +301,9 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.config.input.jump || this.config.state.jump.isJumping) {
       if (this.config.state.jump.isGrounded) {
-        // playerState.jumpUp()
-        // playerState.idle()
-
+        if (jumpingUp.paused) {
+          jumpingUp.play();
+        }
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;
         this.config.state.jump.isBoosting = true;
@@ -337,6 +324,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
         this.config.state.player.prevY = this.config.state.player.y;
         this.config.state.player.y -=
           this.config.state.jump.speed * (this.config.state.dt as number);
+
         this.config.state.jump.speed -=
           (this.config.settings.jump.gravity[
             upwards
@@ -362,21 +350,26 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
         (this.config.state.dt as number);
     }
 
-    // collisionDetection()
+    this.collisionDetection();
 
-    if (this.config.state.player.y + this.config.state.pos.y > 900) {
-      // playerState.pause()
-      // playerState.idle()
-
+    if (this.landedOut()) {
       this.config.state.paused = true;
     }
 
-    if (
-      this.config.state.lastPlatform &&
-      this.config.state.lastPlatform.n === platforms.length - 1
-    ) {
+    if (this.isTheLastPlatform()) {
       this.config.state.finished = true;
     }
+  }
+
+  landedOut() {
+    return this.config.state.player.y + this.config.state.pos.y > 900;
+  }
+
+  isTheLastPlatform() {
+    return (
+      this.config.state.lastPlatform &&
+      this.config.state.lastPlatform.n === this.config.platforms.length - 1
+    );
   }
 
   collisionDetection() {
@@ -389,15 +382,15 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
           const playerFloorPrev = this.config.state.player.prevY + 250;
 
           if (playerFloor > platform.y && playerFloorPrev < platform.y) {
-            // playerState.setPlatform(platform.n)
-            // playerState.jumpDown()
-            // playerState.idle()
+            if (this.touched) {
+              jumpingDown.play();
+            }
 
-            navigator.vibrate(50);
+            if (this.cdkPlatform.ANDROID || this.cdkPlatform.IOS) {
+              navigator.vibrate(50);
+            }
 
-            // checkPoint(this.config.state, platform)
-
-            // pointsElement.value = (this.config.state.points | 0).toString()
+            this.checkPoint(platform);
 
             this.config.state.player.y = platform.y - 250;
             this.config.state.jump.isGrounded = true;
@@ -423,33 +416,38 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (!groundToStandOnFound) {
-        // playerState.jumpUp()
-
+        if (jumpingUp.paused) {
+          jumpingUp.play();
+        }
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;
         this.config.state.jump.isBoosting = true;
         this.config.state.jump.speed = this.config.settings.jump.fallStartSpeed;
       }
-    } else {
-      this.config.doors.forEach((door) => checkDoor(this.config, door));
     }
   }
 
-  onTouch({ action }: ControlActionEvent): void {
-    this.configService.updateInput({ [action]: true });
-    this.scoreState.increment(10);
+  checkPoint(platform: Platform) {
+    if (
+      this.config.state.lastPlatform &&
+      platform.n > this.config.state.lastPlatform.n
+    ) {
+      this.config.state.lastPlatform = platform;
+      this.updateScore(platform);
+    }
   }
 
-  toggleFullscreen() {
-    if (!this.inFullscreen) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
+  updateScore(platform: Platform) {
+    const speed = this.config.state.player.speed * -1 * 1000;
+    const score = parseInt(`${platform.n * speed}`, 10);
+
+    this.config.state.points = score;
+    this.player.patchValue({ score });
   }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }
 }

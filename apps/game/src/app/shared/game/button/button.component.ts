@@ -1,4 +1,3 @@
-import { ControlActionEvent, ControlAction } from '../../types/control';
 import {
   Input,
   Output,
@@ -7,6 +6,10 @@ import {
   HostListener,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import {
+  ControlAction,
+  ControlActionEvent,
+} from '@death-tower/core/interfaces';
 
 @Component({
   selector: 'button[dt-control],dt-control',

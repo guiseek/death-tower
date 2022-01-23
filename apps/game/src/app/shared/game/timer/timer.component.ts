@@ -1,25 +1,10 @@
-import { DefaultValueAccessor, FormControl, NgControl } from '@angular/forms';
-import {
-  Self,
-  Optional,
-  Component,
-  Renderer2,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'dt-timer',
   template: `
-    <input
-      readonly
-      value="0"
-      id="seconds"
-      mode="numeric"
-      name="seconds"
-      [formControl]="control"
-      aria-label="Segundos"
-    />
-    <label for="seconds">segundos</label>
+    <h3>{{ value }}</h3>
+    <span>segundos</span>
   `,
   styles: [
     `
@@ -27,35 +12,19 @@ import {
         display: flex;
         gap: 10px;
 
-        input {
-          border: none;
-          outline: none;
+        min-width: 20px;
+        max-width: 200px;
+        font-size: var(--font-size);
+        user-select: none;
+
+        h3 {
+          margin: 0;
           color: white;
-          text-align: end;
-          min-width: 20px;
-          max-width: 100px;
-          user-select: none;
-          font-size: var(--font-size);
-          background-color: transparent;
         }
       }
-    `
+    `,
   ],
 })
-export class TimerComponent extends DefaultValueAccessor {
-  get control() {
-    return this.ngControl.control as FormControl;
-  }
-
-  constructor(
-    @Self()
-    @Optional()
-    public ngControl: NgControl,
-    renderer: Renderer2,
-    element: ElementRef
-  ) {
-    super(renderer, element, true);
-
-    this.ngControl.valueAccessor = this;
-  }
+export class TimerComponent {
+  @Input() value: number | null = 0;
 }

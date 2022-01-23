@@ -1,0 +1,33 @@
+{
+  "root": "libs/core/util-map",
+  "sourceRoot": "libs/core/util-map/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/core/util-map",
+        "main": "libs/core/util-map/src/index.ts",
+        "tsConfig": "libs/core/util-map/tsconfig.lib.json",
+        "assets": ["libs/core/util-map/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/core/util-map/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/core/util-map"],
+      "options": {
+        "jestConfig": "libs/core/util-map/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

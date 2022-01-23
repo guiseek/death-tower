@@ -5,9 +5,26 @@
   max-height: 100vh;
   overflow: hidden;
 
+  .only-mobile {
+    visibility: hidden;
+  }
+
+  .is-mobile .only-mobile {
+    visibility: visible;
+  }
+
   header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+
+    .death-tower-icon {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px;
+    }
+
+
 
     form {
       gap: 20px;
@@ -36,6 +53,14 @@
     }
   }
 
+  svg {
+    display: inline-flex;
+    height: 100%;
+    use {
+      fill: #fff;
+    }
+  }
+
   footer {
     bottom: 0;
     position: fixed;
@@ -45,14 +70,6 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-    }
-  }
-
-  svg {
-    display: inline-flex;
-    max-height: 24px;
-    use {
-      fill: #f1f1f1;
     }
   }
 

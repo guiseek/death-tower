@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@death-tower/core/interfaces": ["libs/core/interfaces/src/index.ts"],
+      "@death-tower/core/util-config": ["libs/core/util-config/src/index.ts"],
+      "@death-tower/core/util-map": ["libs/core/util-map/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
