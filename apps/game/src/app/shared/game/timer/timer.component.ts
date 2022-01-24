@@ -21,6 +21,10 @@ import { Component, Input } from '@angular/core';
           margin: 0;
           color: white;
         }
+
+        span {
+          color: rgba(var(--color-text), .6);
+        }
       }
     `,
   ],

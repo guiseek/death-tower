@@ -52,6 +52,10 @@ const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
 const running = new Audio(`${dir}/running.mp3`);
 const scream = new Audio(`${dir}/scream.mp3`);
 
+function parsify<T>(obj: T): NonNullable<T> {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 @Component({
   selector: 'dt-game',
   templateUrl: './game.component.html',
@@ -127,8 +131,35 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     this.player.gameover$
       .pipe(takeUntil(this.destroy))
       .subscribe((gameover) => {
-        console.log('gameover: ', gameover);
+        this.player.restart();
       });
+
+    this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
+      if (paused) {
+        this.player.gameover();
+        scream.play();
+      }
+    });
+
+    this.player.finished$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((finished) => {
+        if (finished) {
+          yeaah.play();
+        }
+      });
+
+    this.player.jumpingUp$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
+      if (jump && jumpingUp.paused) {
+        jumpingUp.play();
+      }
+    });
+
+    this.player.jumpingDown$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
+      if (jump && jumpingDown.paused) {
+        jumpingDown.play();
+      }
+    });
 
     // this.tower.on('findAllTower').do((value) => {
     //   console.log(value);
@@ -153,7 +184,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
      * novamente na primeira plataforma
      */
     if (!this.config.savedState) {
-      this.config.savedState = JSON.parse(JSON.stringify(this.config.state));
+      this.config.savedState = parsify(this.config.state);
     }
 
     /**
@@ -270,10 +301,24 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.config.state.paused && this.config.state.finished) {
       drawWinner(this.config);
+
+      if (this.config.state.winner.ready && this.config.input.jump) {
+        this.config.state = parsify(this.config.savedState);
+        this.player.patchValue(this.config.state);
+        this.config.state.lastPlatform = null;
+        this.config.state.touched = false;
+      }
     }
 
     if (this.config.state.paused) {
       drawTitles(this.config);
+
+      if (this.config.state.titles.ready && this.config.input.jump) {
+        this.config.state = parsify(this.config.savedState);
+        this.player.patchValue(this.config.state);
+        this.config.state.lastPlatform = null;
+        this.config.state.touched = false;
+      }
     }
 
     requestAnimationFrame(() => this.drawCanvas());
@@ -324,9 +369,8 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.config.input.jump || this.config.state.jump.isJumping) {
       if (this.config.state.jump.isGrounded) {
-        if (jumpingUp.paused) {
-          jumpingUp.play();
-        }
+        this.player.jump('up');
+
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;
         this.config.state.jump.isBoosting = true;
@@ -377,10 +421,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.landedOut()) {
       this.config.state.paused = true;
+      this.player.pause();
     }
 
     if (this.isTheLastPlatform()) {
       this.config.state.finished = true;
+      this.player.finish();
     }
   }
 
@@ -406,10 +452,10 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
           if (playerFloor > platform.y && playerFloorPrev < platform.y) {
             if (this.config.state.touched) {
-              jumpingDown.play();
+              this.player.jump('down');
             }
 
-            if (this.cdkPlatform.ANDROID || this.cdkPlatform.IOS) {
+            if (this.cdkPlatform.ANDROID) {
               navigator.vibrate(50);
             }
 
@@ -439,9 +485,8 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (!groundToStandOnFound) {
-        if (jumpingUp.paused) {
-          jumpingUp.play();
-        }
+        this.player.jump('up');
+
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;
         this.config.state.jump.isBoosting = true;

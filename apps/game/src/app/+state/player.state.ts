@@ -1,11 +1,12 @@
-import { interval, take, timer } from 'rxjs';
+import { interval, Subscription, take, takeWhile, timer } from 'rxjs';
 import { State } from './state';
 
 interface Player {
   score: number;
   seconds: number;
   paused: boolean;
-  jumping: boolean;
+  jumpingUp: boolean;
+  jumpingDown: boolean;
   finished: boolean;
   gameover: boolean;
 }
@@ -15,46 +16,73 @@ export class PlayerState extends State<Player> {
   score$ = this.select((state) => state.score);
   paused$ = this.select((state) => state.paused);
   seconds$ = this.select((state) => state.seconds);
-  jumping$ = this.select((state) => state.jumping);
+  jumpingUp$ = this.select((state) => state.jumpingUp);
+  jumpingDown$ = this.select((state) => state.jumpingDown);
   finished$ = this.select((state) => state.finished);
   gameover$ = this.select((state) => state.gameover);
 
+  private _timerInterval: Subscription | null = null
+
   constructor(
-    private initialState: Player = {
+    private initialState: Player = Object.freeze({
       score: 0,
       seconds: 60,
       paused: false,
-      jumping: false,
+      jumpingUp: false,
+      jumpingDown: false,
       finished: false,
       gameover: false,
-    }
+    })
   ) {
     super(initialState);
   }
 
   start(time = this.initialState.seconds) {
+    if (this._timerInterval) {
+      this._timerInterval.unsubscribe()
+    }
+
     const timerInterval$ = interval(1000).pipe(take(time));
-    timerInterval$.subscribe(() => this.update());
+    this._timerInterval = timerInterval$.subscribe(() => this.update());
 
     const timer$ = timer(time * 1000);
     timer$.pipe(take(1)).subscribe(() => this.gameover());
   }
 
-  pause() {
-    this.setState({ ...this.state, paused: true });
+  continue() {
+    this.setState({ paused: false, gameover: false });
   }
 
-  jump() {
-    this.setState({ ...this.state, jumping: true });
+  restart() {
+    this.setState(this.initialState);
+  }
+
+  pause() {
+    this.setState({ paused: true });
+
+    if (this._timerInterval) {
+      this._timerInterval.unsubscribe()
+    }
+  }
+
+  jump(dir: 'up' | 'down' = 'up') {
+    this.setState({
+      jumpingUp: dir === 'up',
+      jumpingDown: dir === 'down',
+    });
   }
 
   finish() {
-    this.setState({ ...this.state, finished: true });
+    this.setState({ finished: true });
+
+    if (this._timerInterval) {
+      this._timerInterval.unsubscribe()
+    }
   }
 
   up(value: number) {
     const score = this.state.score + value;
-    this.setState({ ...this.state, score });
+    this.setState({ score });
   }
 
   update() {
@@ -68,7 +96,7 @@ export class PlayerState extends State<Player> {
   }
 
   patchValue(state: Partial<Player>) {
-    this.setState({ ...this.state, ...state });
+    this.setState(state);
   }
 
   gameover() {
