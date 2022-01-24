@@ -27,7 +27,7 @@ export const defaultConfig: DefaultConfig = {
     skyWidth: 200,
   },
   sky: {
-    bg: 'rgb(10, 11, 12)',
+    bg: 'rgb(10, 21, 32)',
     starSizes: [3, 1, 2, 2],
     starColors: ['#f1f1f1', '#FFDCD4', '#7AEFFF', '#FFF385'],
   },
@@ -74,8 +74,9 @@ export const customConfig: CustomConfig = {
   savedState: null,
   state: {
     paused: false,
+    touched: false,
     finished: false,
-    points: 0,
+    score: 0,
     lastPlatform: null,
     platformReached: null,
     titles: {

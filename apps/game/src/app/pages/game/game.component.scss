@@ -5,6 +5,11 @@
   max-height: 100vh;
   overflow: hidden;
 
+  button {
+    color: rgba(var(--color-text), .6);
+    font-family: var(--font-heading);
+  }
+
   .only-mobile {
     visibility: hidden;
   }
@@ -24,21 +29,19 @@
       padding: 8px;
     }
 
+    nav {
 
+      .level {
 
-    form {
+      }
+    }
+
+    section#player {
       gap: 20px;
       display: flex;
       margin: 8px 16px;
       justify-content: space-between;
       align-items: center;
-    }
-
-    nav {
-      a {
-        margin: 8px 16px;
-        display: inline-flex;
-      }
     }
   }
 

@@ -8,6 +8,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  HostListener,
   AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
@@ -57,18 +58,14 @@ const scream = new Audio(`${dir}/scream.mp3`);
   styleUrls: ['./game.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    {
-      provide: GameState,
-      useFactory: () => {
-        return new GameState();
-      },
-    },
-    {
-      provide: PlayerState,
-      useFactory: () => {
-        return new PlayerState();
-      },
-    },
+    // {
+    //   provide: TowerService,
+    //   useFactory: () => {
+    //     return new TowerService(
+    //       io('http://localhost:3333')
+    //     );
+    //   },
+    // },
   ],
 })
 export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -101,16 +98,16 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
-  touched = false;
-
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
 
-    readonly player: PlayerState,
-    private readonly game: GameState
+    // private tower: TowerService,
+
+    readonly game: GameState,
+    readonly player: PlayerState
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => cdr.detectChanges();
@@ -132,6 +129,10 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((gameover) => {
         console.log('gameover: ', gameover);
       });
+
+    // this.tower.on('findAllTower').do((value) => {
+    //   console.log(value);
+    // })
   }
 
   ngAfterViewInit(): void {
@@ -181,23 +182,41 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.config.platforms = platforms;
           }
+
+          if (this.config.platforms) {
+            const lastPlatform = this.config.platforms.pop();
+            if (lastPlatform) this.addLastDoor(lastPlatform);
+
+          }
         }
       });
-
-    addEventListener('keyup', this.onKeyUp, false);
-    addEventListener('keydown', this.onKeyDown, false);
-    addEventListener('keypress', this.onKeyPress, false);
   }
 
-  onKeyUp = (e: KeyboardEvent) => this.move(e, false);
-  onKeyDown = (e: KeyboardEvent) => this.move(e, true);
-  onKeyPress = () => {
-    if (!this.touched) {
+  addLastDoor(lastPlatform: Platform) {
+    if (lastPlatform) {
+      const { x, y } = lastPlatform;
+      this.config.doors.push(new Door(x + 40, y - 250));
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyUp(e: KeyboardEvent) {
+    this.move(e, false);
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(e: KeyboardEvent) {
+    this.move(e, true);
+  }
+
+  @HostListener('window:keypress')
+  onKeyPress() {
+    if (!this.config.state.touched) {
+      this.config.state.touched = true;
       this.player.start();
-      this.touched = true;
       thunder.play();
     }
-  };
+  }
 
   move(e: KeyboardEvent, keyDown: boolean) {
     if (e.key === 'ArrowLeft') this.config.input.left = keyDown;
@@ -205,8 +224,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     if (e.key === ' ') this.config.input.jump = keyDown;
   }
 
-  onTouch({ action, time }: ControlActionEvent): void {
-    this.config.input[action] = time === 'press';
+  onTouchStart({ action }: ControlActionEvent): void {
+    this.config.input[action] = true;
+  }
+
+  onTouchEnd({ action }: ControlActionEvent): void {
+    this.config.input[action] = false;
   }
 
   toggleFullscreen() {
@@ -382,7 +405,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
           const playerFloorPrev = this.config.state.player.prevY + 250;
 
           if (playerFloor > platform.y && playerFloorPrev < platform.y) {
-            if (this.touched) {
+            if (this.config.state.touched) {
               jumpingDown.play();
             }
 
@@ -441,7 +464,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     const speed = this.config.state.player.speed * -1 * 1000;
     const score = parseInt(`${platform.n * speed}`, 10);
 
-    this.config.state.points = score;
+    this.config.state.score = score;
     this.player.patchValue({ score });
   }
 

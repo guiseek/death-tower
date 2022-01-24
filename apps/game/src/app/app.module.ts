@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
+import { GameState, PlayerState } from './+state';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -22,6 +23,18 @@ import { AppComponent } from './app.component';
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    {
+      provide: GameState,
+      useFactory: () => {
+        return new GameState();
+      },
+    },
+    {
+      provide: PlayerState,
+      useFactory: () => {
+        return new PlayerState();
+      },
+    },
   ],
   bootstrap: [AppComponent],
 })

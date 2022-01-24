@@ -31,5 +31,6 @@ export function drawTitles(config: Config) {
   if (config.state.titles.ready && config.input.jump) {
     config.state = JSON.parse(JSON.stringify(config.savedState));
     config.state.lastPlatform = null;
+    config.state.touched = false;
   }
 }

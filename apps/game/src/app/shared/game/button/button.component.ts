@@ -17,8 +17,8 @@ import {
   styles: [
     `
       :host {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
         padding: 16px;
         border-radius: 50%;
         cursor: pointer;
@@ -34,12 +34,14 @@ import {
 })
 export class ButtonComponent {
   @Output() public touch: EventEmitter<ControlActionEvent> = new EventEmitter();
+  @Output() public touchStart: EventEmitter<ControlActionEvent> = new EventEmitter();
+  @Output() public touchEnd: EventEmitter<ControlActionEvent> = new EventEmitter();
 
   @Input() public action: ControlAction = 'jump';
 
   @HostListener('touchstart', ['$event'])
   public onTouchStart(event: TouchEvent): void {
-    this.touch.emit({ event, action: this.action, time: 'press' });
+    this.touchStart.emit({ event, action: this.action, time: 'press' });
   }
 
   @HostListener('click', ['$event'])
@@ -49,6 +51,6 @@ export class ButtonComponent {
 
   @HostListener('touchend', ['$event'])
   public onTouchEnd(event: TouchEvent): void {
-    this.touch.emit({ event, action: this.action, time: 'hold' });
+    this.touchEnd.emit({ event, action: this.action, time: 'hold' });
   }
 }

@@ -7,6 +7,6 @@ export function isItANewPlatform(current: Platform, last: Platform | null) {
 export function checkPoint(state: StateConfig, platform: Platform) {
   if (isItANewPlatform(platform, state.lastPlatform)) {
     state.lastPlatform = platform;
-    state.points = platform.n * (state.player.speed * -1 * 1000);
+    state.score = platform.n * (state.player.speed * -1 * 1000);
   }
 }

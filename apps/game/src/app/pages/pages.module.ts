@@ -8,6 +8,7 @@ import { GameModule } from '../shared/game/game.module';
 import { PagesRoutingModule } from './pages-routing.module';
 import { GameComponent } from './game/game.component';
 import { HomeComponent } from './home/home.component';
+import { MenuModule } from '../shared/menu/menu.module';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { HomeComponent } from './home/home.component';
   ],
   imports: [
     GameModule,
+    MenuModule,
     CommonModule,
     LayoutModule,
     PlatformModule,

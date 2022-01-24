@@ -6,9 +6,10 @@ import { Coord } from './coord';
 import { Jump } from './jump';
 
 export interface StateConfig {
-  points: number;
+  score: number;
   lastPlatform: Platform | null;
   platformReached: Platform | null;
+  touched: boolean;
   paused: boolean;
   finished: boolean;
   titles: TextMessage;

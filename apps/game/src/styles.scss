@@ -1,12 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
 :root {
-  --font-heading: 'Germania One', cursive;
-  --font-body: 'Walter Turncoat', cursive;
+  --font-heading: "Germania One", cursive;
+  --font-body: "Walter Turncoat", cursive;
   --font-size: 1.6rem;
   --color-bg: 18, 18, 18;
   --color-text: 241, 241, 241;
-  --color-active: 255,255,255;
+  --color-active: 255, 255, 255;
 }
 
 html,
@@ -19,6 +19,10 @@ body {
   font-family: var(--font-body);
   background-color: rgb(var(--color-bg));
   color: rgb(var(--color-text));
+
+  button {
+    font-family: var(--font-heading);
+  }
 }
 
 header {

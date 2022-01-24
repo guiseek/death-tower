@@ -1,16 +1,19 @@
 import { Coord, Platform } from '@death-tower/core/util-map';
 import { Level } from '@death-tower/core/interfaces';
 import { State } from './state';
+import { Injectable } from '@angular/core';
 
 interface Game {
   platforms: Platform[];
   coords: Coord[];
   levels: Level[];
+  level: Level | null;
 }
 
 const initialState: Game = {
   platforms: [],
   coords: [],
+  level: null,
   levels: [
     {
       id: 'training',
@@ -39,10 +42,12 @@ const initialState: Game = {
   ],
 };
 
+@Injectable({ providedIn: 'platform' })
 export class GameState extends State<Game> {
   public platforms$ = this.select((state) => state.platforms);
   public coords$ = this.select((state) => state.coords);
   public levels$ = this.select((state) => state.levels);
+  public level$ = this.select((state) => state.level);
 
   constructor() {
     super(initialState);
@@ -60,10 +65,10 @@ export class GameState extends State<Game> {
     const mapper = ({ x, y }: Coord) => new Platform(x, y);
     const platforms = coords.map(mapper)
 
-    this.setState({ coords, platforms });
+    this.setState({ level, coords, platforms });
   }
 
-  private getRandomCoords(level: Level, length = 80) {
+  private getRandomCoords(level: Level, length = 40) {
     let x = 0;
     let y = 0;
 
