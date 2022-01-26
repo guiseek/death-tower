@@ -1,9 +1,23 @@
+@use '@angular/material' as mat;
+
 @import '@angular/cdk/overlay-prebuilt.css';
+
+@include mat.core();
+
+$dark-theme: mat.define-dark-theme((color: (
+  primary: mat.$pink-palette,
+  accent: mat.$blue-gray-palette,
+)));
+
+// Apply the dark theme by default
+@include mat.all-component-themes($dark-theme);
+
+
 /* You can add global styles to this file, and also import other style files */
 
 :root {
-  --font-heading: "Germania One", cursive;
-  --font-body: "Walter Turncoat", cursive;
+  --font-heading: 'Germania One', cursive;
+  --font-body: 'Walter Turncoat', cursive;
   --font-size: 1.6rem;
   --color-bg: 18, 18, 18;
   --color-text: 241, 241, 241;

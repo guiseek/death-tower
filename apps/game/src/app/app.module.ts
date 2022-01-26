@@ -3,6 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
+import { PLAYER_FRAMES_CONFIG } from '@death-tower/stage/tower';
+
+import { FRAMES_CONFIG_VALUE } from './config/animation-frames';
+
+
 import { GameState, PlayerState } from './+state';
 import { AppComponent } from './app.component';
 
@@ -15,7 +20,9 @@ import { AppComponent } from './app.component';
         {
           path: '',
           loadChildren: () =>
-            import('./pages/pages.module').then((m) => m.PagesModule),
+            import('@death-tower/stage/tower').then(
+              (module) => module.StageTowerModule
+            ),
         },
       ],
       { initialNavigation: 'enabledBlocking' }
@@ -24,18 +31,10 @@ import { AppComponent } from './app.component';
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     {
-      provide: GameState,
-      useFactory: () => {
-        return new GameState();
-      },
-    },
-    {
-      provide: PlayerState,
-      useFactory: () => {
-        return new PlayerState();
-      },
+      provide: PLAYER_FRAMES_CONFIG,
+      useValue: FRAMES_CONFIG_VALUE
     },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,7 +1,5 @@
-import { DialogService } from '../../shared/dialog/dialog.service';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavLevelComponent } from './../../shared/game';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { filter, Subject, takeUntil } from 'rxjs';
 import {
@@ -14,6 +12,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  Inject,
 } from '@angular/core';
 
 import {
@@ -26,6 +25,8 @@ import {
   loadCustomConfig,
   loadDefaultConfig,
   loadDomConfig,
+  loadImage,
+  parsify,
 } from '@death-tower/core/util-config';
 
 import {
@@ -42,10 +43,9 @@ import {
   getParamsCoords,
 } from '@death-tower/core/util-map';
 
-import { loadImages } from '../../config/animation-frames';
 import { GameState, PlayerState } from '../../+state';
-import { OverlayRef } from '@angular/cdk/overlay';
-import { SettingsComponent } from '../../shared/forms/settings/settings.component';
+
+import { PlayerFramesConfig, PLAYER_FRAMES_CONFIG } from '../../state-tower.config';
 
 const dir = '/assets/sounds';
 
@@ -56,18 +56,13 @@ const thunder = new Audio(`${dir}/thunder-rumble.mp3`);
 const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
 const scream = new Audio(`${dir}/scream.mp3`);
 
-function parsify<T>(obj: T): NonNullable<T> {
-  return JSON.parse(JSON.stringify(obj));
-}
-
 @Component({
-  selector: 'dt-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss'],
+  selector: 'death-tower',
+  templateUrl: './tower.component.html',
+  styleUrls: ['./tower.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService],
 })
-export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy = new Subject<void>();
 
   @ViewChild('container')
@@ -97,8 +92,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
-  private _dialogRef: OverlayRef | null = null;
-
   readonly game = new GameState();
   readonly player = new PlayerState();
 
@@ -108,25 +101,13 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
-    readonly dialog: DialogService
+
+    @Inject(PLAYER_FRAMES_CONFIG)
+    readonly playerFrames: PlayerFramesConfig
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => cdr.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
-  }
-
-  openDialog() {
-    this._dialogRef = this.dialog.openDialog(NavLevelComponent);
-    setTimeout(() => {
-      if (this._dialogRef) {
-        this._dialogRef.dispose();
-        this._dialogRef = null;
-      }
-    }, 3 * 1000);
-  }
-
-  openSettings() {
-    this._dialogRef = this.dialog.openDialog(SettingsComponent);
   }
 
   share() {
@@ -190,37 +171,11 @@ ${location.origin}/?${params}
         jumpingDown.play();
       }
     });
-
-    // this.tower.on('findAllTower').do((value) => {
-    //   console.log(value);
-    // })
   }
 
   ngAfterViewInit(): void {
-    const container = this.container.nativeElement;
-    const game = this.canvas.nativeElement;
 
-    const { canvas } = new OffScreen(10, 10);
-
-    this.config = Object.assign(
-      loadDefaultConfig(),
-      loadDomConfig(container, game, canvas),
-      loadCustomConfig({ doors: [] })
-    );
-
-    /**
-     * Reinicia o jogo e coloca o player
-     * novamente na primeira plataforma
-     */
-    if (!this.config.savedState) {
-      this.config.savedState = parsify(this.config.state);
-    }
-
-    /**
-     * Carrega as imagens como frames
-     * sequenciais com estados do player
-     */
-    loadImages(this.config);
+    this.loadMap();
 
     /**
      * Atualiza plataformas na torre
@@ -246,6 +201,35 @@ ${location.origin}/?${params}
           if (lastPlatform) this.addDoors(lastPlatform);
         }
       });
+  }
+
+  loadMap() {
+    const container = this.container.nativeElement;
+    const game = this.canvas.nativeElement;
+
+    const { canvas } = new OffScreen(10, 10);
+
+    this.config = Object.assign(
+      loadDefaultConfig(),
+      loadDomConfig(container, game, canvas),
+      loadCustomConfig({ doors: [] })
+    );
+
+    /**
+     * Reinicia o jogo e coloca o player
+     * novamente na primeira plataforma
+     */
+    if (!this.config.savedState) {
+      this.config.savedState = parsify(this.config.state);
+    }
+
+    /**
+     * Carrega as imagens como frames
+     * sequenciais com estados do player
+     */
+    this.playerFrames.forEach(([src, type, index, flipped]) => {
+      loadImage(this.config, src, type, index, flipped)
+    })
   }
 
   addDoors(lastPlatform: Platform) {
@@ -338,12 +322,12 @@ ${location.origin}/?${params}
     if (this.config.state.paused) {
       drawTitles(this.config);
 
-      if (this.config.state.titles.ready && this.config.input.jump) {
-        this.config.state = parsify(this.config.savedState);
-        this.player.patchValue(this.config.state);
-        this.config.state.lastPlatform = null;
-        this.config.state.touched = false;
-      }
+      // if (this.config.state.titles.ready && this.config.input.jump) {
+      //   this.config.state = parsify(this.config.savedState);
+      //   this.player.patchValue(this.config.state);
+      //   this.config.state.lastPlatform = null;
+      //   this.config.state.touched = false;
+      // }
     }
 
     requestAnimationFrame(() => this.drawCanvas());
@@ -447,6 +431,8 @@ ${location.origin}/?${params}
     if (this.landedOut()) {
       this.config.state.paused = true;
       this.player.pause();
+
+      this.config.state = parsify(this.config.savedState);
     }
 
     if (this.isTheLastPlatform()) {

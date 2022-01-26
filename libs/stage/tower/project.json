@@ -1,0 +1,26 @@
+{
+  "projectType": "library",
+  "root": "libs/stage/tower",
+  "sourceRoot": "libs/stage/tower/src",
+  "prefix": "death",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/stage/tower"],
+      "options": {
+        "jestConfig": "libs/stage/tower/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/stage/tower/src/**/*.ts",
+          "libs/stage/tower/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

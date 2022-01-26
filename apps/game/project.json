@@ -14,7 +14,11 @@
         "polyfills": "apps/game/src/polyfills.ts",
         "tsConfig": "apps/game/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/game/src/favicon.ico", "apps/game/src/assets"],
+        "assets": [
+          "apps/game/src/favicon.ico",
+          "apps/game/src/assets",
+          "apps/game/src/CNAME"
+        ],
         "styles": ["apps/game/src/styles.scss"],
         "scripts": []
       },

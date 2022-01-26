@@ -18,27 +18,21 @@
     </svg>
   </a>
   <nav>
-    <dt-menu>
+    <death-menu>
       <button>Dificuldade</button>
-      <a dt-menu-item routerLink="/easy" routerLinkActive="active">fácil</a>
-      <a dt-menu-item routerLink="/medium" routerLinkActive="active">médio</a>
-      <a dt-menu-item routerLink="/hard" routerLinkActive="active">difícil</a>
-    </dt-menu>
+      <a death-menu-item routerLink="/easy" routerLinkActive="active">fácil</a>
+      <a death-menu-item routerLink="/medium" routerLinkActive="active">médio</a>
+      <a death-menu-item routerLink="/hard" routerLinkActive="active">difícil</a>
+    </death-menu>
 
     <span class="level">{{ (game.level$ | async)?.name }}</span>
   </nav>
 
   <section id="player">
-    <dt-timer [value]="player.seconds$ | async"></dt-timer>
-    <dt-score [value]="player.score$ | async"></dt-score>
+    <death-timer [value]="player.seconds$ | async"></death-timer>
+    <death-score [value]="player.score$ | async"></death-score>
   </section>
 </header>
-
-<mat-toolbar>
-  <button type="button" mat-button (click)="openSettings()">
-    Configurações
-  </button>
-</mat-toolbar>
 
 <main #container>
   <canvas #canvas height="900" width="1600"></canvas>
@@ -47,7 +41,7 @@
 <footer [class.is-mobile]="mobileQuery.matches">
   <nav>
     <div class="flex flex-column gap-16">
-      <button dt-control action="fullscreen" (touch)="toggleFullscreen()">
+      <button death-control action="fullscreen" (touch)="toggleFullscreen()">
         <svg>
           <use
             [ngClass]="{ hidden: inFullscreen }"
@@ -59,13 +53,13 @@
           ></use>
         </svg>
       </button>
-      <button dt-control (click)="share()">
+      <button death-control (click)="share()">
         <svg>
           <use xlink:href="#share"></use>
         </svg>
       </button>
       <button
-        dt-control
+        death-control
         class="only-mobile"
         action="jump"
         (touchStart)="onTouchStart($event)"
@@ -79,7 +73,7 @@
 
     <div class="only-mobile flex flex-row gap-16">
       <button
-        dt-control
+        death-control
         action="left"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"
@@ -89,7 +83,7 @@
         </svg>
       </button>
       <button
-        dt-control
+        death-control
         action="right"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"

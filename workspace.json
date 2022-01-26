@@ -5,6 +5,7 @@
     "core-util-config": "libs/core/util-config",
     "core-util-map": "libs/core/util-map",
     "game": "apps/game",
-    "server": "apps/server"
+    "server": "apps/server",
+    "stage-tower": "libs/stage/tower"
   }
 }
