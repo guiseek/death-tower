@@ -62,7 +62,7 @@ export class GameState extends State<Game> {
     const length = ((level.x.min + level.x.max) / 2) | 0;
     const coords = this.getRandomCoords(level, length);
 
-    const mapper = ({ x, y }: Coord) => new Platform(x, y);
+    const mapper = ({ x, y }: Coord, i: number) => new Platform(x, y, i);
     const platforms = coords.map(mapper)
 
     this.setState({ level, coords, platforms });

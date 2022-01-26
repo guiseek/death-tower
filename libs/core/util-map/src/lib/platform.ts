@@ -7,15 +7,11 @@ import { Coord } from './coords/coord';
 import { drawPolygon } from './draw/polygon';
 import { getBox } from './get-box';
 
-let INC = 0;
-
 export class Platform implements IPlatform {
-  n = INC++;
-
   infront: boolean;
   outerBox: OuterBox<number, number> | null;
 
-  constructor(public x: number, public y: number) {
+  constructor(public x: number, public y: number, public n: number) {
     this.x = x;
     this.y = y;
     this.infront = false;

@@ -38,10 +38,4 @@ export function drawWinner(config: Config, code?: number) {
   if (config.state.winner.opacity == 100 && config.input.jump) {
     config.state.winner.ready = true;
   }
-
-  // if (config.state.winner.ready && config.input.jump) {
-  //   config.state = JSON.parse(JSON.stringify(config.savedState));
-  //   config.state.lastPlatform = null;
-  //   config.state.touched = false;
-  // }
 }

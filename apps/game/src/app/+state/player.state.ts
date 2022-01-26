@@ -1,4 +1,4 @@
-import { interval, Subscription, take, takeWhile, timer } from 'rxjs';
+import { interval, Subscription, take, timer } from 'rxjs';
 import { State } from './state';
 
 interface Player {
@@ -21,7 +21,7 @@ export class PlayerState extends State<Player> {
   finished$ = this.select((state) => state.finished);
   gameover$ = this.select((state) => state.gameover);
 
-  private _timerInterval: Subscription | null = null
+  private _timerInterval: Subscription | null = null;
 
   constructor(
     private initialState: Player = Object.freeze({
@@ -39,7 +39,7 @@ export class PlayerState extends State<Player> {
 
   start(time = this.initialState.seconds) {
     if (this._timerInterval) {
-      this._timerInterval.unsubscribe()
+      this._timerInterval.unsubscribe();
     }
 
     const timerInterval$ = interval(1000).pipe(take(time));
@@ -61,7 +61,7 @@ export class PlayerState extends State<Player> {
     this.setState({ paused: true });
 
     if (this._timerInterval) {
-      this._timerInterval.unsubscribe()
+      this._timerInterval.unsubscribe();
     }
   }
 
@@ -76,13 +76,12 @@ export class PlayerState extends State<Player> {
     this.setState({ finished: true });
 
     if (this._timerInterval) {
-      this._timerInterval.unsubscribe()
+      this._timerInterval.unsubscribe();
     }
   }
 
   up(value: number) {
-    const score = this.state.score + value;
-    this.setState({ score });
+    this.setState({ score: this.state.score + value });
   }
 
   update() {

@@ -1,7 +1,9 @@
+import { DialogService } from '../../shared/dialog/dialog.service';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavLevelComponent } from './../../shared/game';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import {
   OnInit,
   Component,
@@ -37,19 +39,20 @@ import {
   drawShadows,
   drawPlatforms,
   drawWinner,
+  getParamsCoords,
 } from '@death-tower/core/util-map';
 
 import { loadImages } from '../../config/animation-frames';
 import { GameState, PlayerState } from '../../+state';
+import { OverlayRef } from '@angular/cdk/overlay';
 
 const dir = '/assets/sounds';
 
-const clockTicking = new Audio(`${dir}/ambient/clock-ticking.mp3`);
+// const clockTicking = new Audio(`${dir}/ambient/clock-ticking.mp3`);
 const jumpingDown = new Audio(`${dir}/jump-spring-down.mp3`);
 const jumpingUp = new Audio(`${dir}/jump-spring-up.mp3`);
 const thunder = new Audio(`${dir}/thunder-rumble.mp3`);
 const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
-const running = new Audio(`${dir}/running.mp3`);
 const scream = new Audio(`${dir}/scream.mp3`);
 
 function parsify<T>(obj: T): NonNullable<T> {
@@ -61,16 +64,7 @@ function parsify<T>(obj: T): NonNullable<T> {
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    // {
-    //   provide: TowerService,
-    //   useFactory: () => {
-    //     return new TowerService(
-    //       io('http://localhost:3333')
-    //     );
-    //   },
-    // },
-  ],
+  providers: [DialogService],
 })
 export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy = new Subject<void>();
@@ -102,20 +96,49 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
+  private _dialogRef: OverlayRef | null = null;
+
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
+    private router: Router,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
-
-    // private tower: TowerService,
-
     readonly game: GameState,
+    readonly dialog: DialogService,
     readonly player: PlayerState
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => cdr.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+  }
+
+  openDialog() {
+    this._dialogRef = this.dialog.openDialog(NavLevelComponent);
+    setTimeout(() => {
+      if (this._dialogRef) {
+        this._dialogRef.dispose();
+        this._dialogRef = null;
+      }
+    }, 3 * 1000);
+  }
+
+  share() {
+    const params = getParamsCoords(this.config.platforms);
+
+    const message = `Opa 👍 %0a %0a
+Como andam suas habilidades motoras? %0a %0a
+*Mostre-me enviando o código que está na última porta deste mapa.* %0a %0a
+
+${location.origin}/?${params}
+
+%0a %0a 🔥 💀 Death Tower 🗼 🚧
+`;
+    open(
+      `https://api.whatsapp.com/send?text=${message}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
   ngOnInit(): void {
@@ -131,6 +154,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     this.player.gameover$
       .pipe(takeUntil(this.destroy))
       .subscribe((gameover) => {
+        console.log('gameover: ', gameover);
         this.player.restart();
       });
 
@@ -170,13 +194,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     const container = this.container.nativeElement;
     const game = this.canvas.nativeElement;
 
-    const doors = [new Door(1600, 350)];
     const { canvas } = new OffScreen(10, 10);
 
     this.config = Object.assign(
       loadDefaultConfig(),
       loadDomConfig(container, game, canvas),
-      loadCustomConfig({ doors })
+      loadCustomConfig({ doors: [] })
     );
 
     /**
@@ -201,8 +224,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((platforms) => {
         if (this.config && platforms.length) {
           if (!this.config.platforms.length) {
-            this.config.platforms = platforms;
-
             this.config.state.lastPlatform = platforms[0];
 
             /**
@@ -210,24 +231,22 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
              * inicializa processo de renderização
              */
             this.drawCanvas();
-          } else {
-            this.config.platforms = platforms;
           }
 
-          if (this.config.platforms) {
-            const lastPlatform = this.config.platforms.pop();
-            if (lastPlatform) this.addLastDoor(lastPlatform);
+          this.config.platforms = platforms;
 
-          }
+          const lastIndex = platforms.length - 1;
+          const lastPlatform = platforms[lastIndex];
+          if (lastPlatform) this.addDoors(lastPlatform);
         }
       });
   }
 
-  addLastDoor(lastPlatform: Platform) {
-    if (lastPlatform) {
-      const { x, y } = lastPlatform;
-      this.config.doors.push(new Door(x + 40, y - 250));
-    }
+  addDoors(lastPlatform: Platform) {
+    const { x, y } = lastPlatform;
+    const doors = [new Door()];
+    doors.push(new Door(x, y - 250));
+    this.config.doors = doors;
   }
 
   @HostListener('window:keyup', ['$event'])

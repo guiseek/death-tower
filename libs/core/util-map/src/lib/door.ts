@@ -4,7 +4,7 @@ import { OffScreen } from './offscreen';
 import { drawDoor } from './draw/door';
 
 export class Door {
-  constructor(public x: number, public y: number) {}
+  constructor(public x = 1600, public y = 350) {}
 
   draw(config: Config) {
     const center = this.x - config.state.pos.x;
