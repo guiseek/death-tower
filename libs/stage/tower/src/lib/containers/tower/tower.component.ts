@@ -321,13 +321,6 @@ ${location.origin}/?${params}
 
     if (this.config.state.paused) {
       drawTitles(this.config);
-
-      // if (this.config.state.titles.ready && this.config.input.jump) {
-      //   this.config.state = parsify(this.config.savedState);
-      //   this.player.patchValue(this.config.state);
-      //   this.config.state.lastPlatform = null;
-      //   this.config.state.touched = false;
-      // }
     }
 
     requestAnimationFrame(() => this.drawCanvas());
