@@ -18,7 +18,7 @@ export class Platform implements IPlatform {
     this.outerBox = null;
   }
 
-  private getY(config: Config) {
+  getY(config: Config) {
     return this.y + config.state.pos.y;
   }
 

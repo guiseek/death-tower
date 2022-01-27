@@ -1,6 +1,6 @@
 import { OffScreen } from '@death-tower/core/util-map';
 import { Config } from '@death-tower/core/interfaces';
-import { PlayerAction } from './player-action';
+import { PlayerAction } from './types/player-action';
 
 export function loadImage(
   config: Config,

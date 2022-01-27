@@ -2,7 +2,6 @@ import { OuterBox } from './outer-box';
 import { Config } from './types/config';
 
 export interface Platform {
-  n: number;
 
   infront: boolean;
 
@@ -10,6 +9,9 @@ export interface Platform {
 
   x: number;
   y: number;
+  n: number;
+
+  getY(config: Config): number;
 
   isInFront(config: Config): boolean;
 

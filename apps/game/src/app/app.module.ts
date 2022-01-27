@@ -7,8 +7,6 @@ import { PLAYER_FRAMES_CONFIG } from '@death-tower/stage/tower';
 
 import { FRAMES_CONFIG_VALUE } from './config/animation-frames';
 
-
-import { GameState, PlayerState } from './+state';
 import { AppComponent } from './app.component';
 
 @NgModule({

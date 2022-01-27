@@ -5,6 +5,7 @@ import {
   EventEmitter,
   HostListener,
   ChangeDetectionStrategy,
+  HostBinding,
 } from '@angular/core';
 import {
   ControlAction,
@@ -16,9 +17,9 @@ import {
   template: `<ng-content></ng-content>`,
   styles: [
     `
-      :host {
-        width: 64px;
-        height: 64px;
+    :host {
+        width: var(--button-size);
+        height: var(--button-size);
         padding: 16px;
         border-radius: 50%;
         cursor: pointer;
@@ -33,24 +34,34 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
-  @Output() public touch: EventEmitter<ControlActionEvent> = new EventEmitter();
-  @Output() public touchStart: EventEmitter<ControlActionEvent> = new EventEmitter();
-  @Output() public touchEnd: EventEmitter<ControlActionEvent> = new EventEmitter();
+  private _size = 64
 
-  @Input() public action: ControlAction = 'jump';
+  @Input() set size(value: number) {
+    this._size = value;
+  }
+
+  @HostBinding('attr.style') get buttonSize() {
+    return `--button-size: ${this._size}px;`
+  }
+
+  @Input() action: ControlAction = 'jump';
+
+  @Output() touch: EventEmitter<ControlActionEvent> = new EventEmitter();
+  @Output() touchStart: EventEmitter<ControlActionEvent> = new EventEmitter();
+  @Output() touchEnd: EventEmitter<ControlActionEvent> = new EventEmitter();
 
   @HostListener('touchstart', ['$event'])
-  public onTouchStart(event: TouchEvent): void {
+  onTouchStart(event: TouchEvent): void {
     this.touchStart.emit({ event, action: this.action, time: 'press' });
   }
 
   @HostListener('click', ['$event'])
-  public onClick(event: PointerEvent): void {
+  onClick(event: PointerEvent): void {
     this.touch.emit({ event, action: this.action, time: 'press' });
   }
 
   @HostListener('touchend', ['$event'])
-  public onTouchEnd(event: TouchEvent): void {
+  onTouchEnd(event: TouchEvent): void {
     this.touchEnd.emit({ event, action: this.action, time: 'hold' });
   }
 }

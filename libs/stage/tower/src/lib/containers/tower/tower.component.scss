@@ -6,7 +6,7 @@
   overflow: hidden;
 
   button {
-    color: rgba(var(--color-text), .6);
+    color: rgba(var(--color-text), 0.6);
     font-family: var(--font-heading);
   }
 
@@ -19,9 +19,21 @@
   }
 
   header {
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(var(--color-bg), 0.8);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    opacity: 1;
+
+    // transition: visibility 400ms linear;
+    transition: opacity 400ms ease-in-out, visibility 400ms linear;
+
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
 
     .death-tower-icon {
       display: inline-flex;
@@ -40,9 +52,10 @@
 
   main {
     flex: 1;
-
+    position: fixed;
     overflow: hidden;
     max-height: 100vh;
+    width: 100vw;
 
     canvas {
       width: 100%;
@@ -70,7 +83,7 @@
   }
 
   .hidden {
-    display: none;
+    visibility: hidden;
   }
 
   .svg-symbols {

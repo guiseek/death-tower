@@ -1,0 +1,29 @@
+import { Coord, Level } from '@death-tower/core/interfaces';
+import { UseCase } from './usecase';
+
+export interface GetRandomCoordsParams {
+  level: Level;
+  length: number;
+}
+
+export class GetRandomCoordsUseCase
+  implements UseCase<GetRandomCoordsParams, Coord[]>
+{
+  execute({ level, length = 40 }: GetRandomCoordsParams) {
+    let x = 0;
+    let y = 0;
+
+    const between = (min: number, max: number) => {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    return new Array(length).fill({ x, y }).map(() => {
+      x = x === 0 ? 1600 : between(x - level.x.min, x - level.x.max);
+
+      y =
+        y === 0 ? 600 : between(y - (level.y.min - 20), y - level.y.max * 2.5);
+
+      return { x, y };
+    });
+  }
+}

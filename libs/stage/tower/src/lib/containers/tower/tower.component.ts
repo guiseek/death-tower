@@ -1,7 +1,7 @@
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import {
   OnInit,
   Component,
@@ -45,7 +45,10 @@ import {
 
 import { GameState, PlayerState } from '../../+state';
 
-import { PlayerFramesConfig, PLAYER_FRAMES_CONFIG } from '../../state-tower.config';
+import {
+  PlayerFramesConfig,
+  PLAYER_FRAMES_CONFIG,
+} from '../../state-tower.config';
 
 const dir = '/assets/sounds';
 
@@ -95,6 +98,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly game = new GameState();
   readonly player = new PlayerState();
 
+  readonly displayHeader$;
+
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
@@ -108,6 +113,10 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => cdr.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+
+    const idleTime$ = timer(0, 1000);
+    const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
+    this.displayHeader$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
   }
 
   share() {
@@ -174,7 +183,6 @@ ${location.origin}/?${params}
   }
 
   ngAfterViewInit(): void {
-
     this.loadMap();
 
     /**
@@ -228,8 +236,8 @@ ${location.origin}/?${params}
      * sequenciais com estados do player
      */
     this.playerFrames.forEach(([src, type, index, flipped]) => {
-      loadImage(this.config, src, type, index, flipped)
-    })
+      loadImage(this.config, src, type, index, flipped);
+    });
   }
 
   addDoors(lastPlatform: Platform) {

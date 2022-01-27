@@ -1,6 +1,6 @@
 import { Callback, Config } from '@death-tower/core/interfaces';
 import { OffScreen } from '@death-tower/core/util-map';
-import { PlayerAction } from './player-action';
+import { PlayerAction } from './types/player-action';
 
 export class PlayerFrame {
   // loadImage(
