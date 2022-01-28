@@ -46,6 +46,7 @@
       <button
         death-control
         action="fullscreen"
+        aria-label="Tela cheia"
         (click)="toggleFullscreen()"
         [ngClass]="{ hidden: hideElement$ | async }"
       >
@@ -73,8 +74,9 @@
       <button
         death-control
         [size]="82"
-        class="only-mobile"
         action="jump"
+        class="only-mobile"
+        aria-label="Saltar"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"
       >
@@ -89,9 +91,10 @@
         death-control
         [size]="82"
         action="left"
+        aria-label="Ir para esquerda"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"
-      >
+        >
         <svg>
           <use xlink:href="#left"></use>
         </svg>
@@ -100,6 +103,7 @@
         death-control
         [size]="78"
         action="right"
+        aria-label="Ir para direita"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"
       >

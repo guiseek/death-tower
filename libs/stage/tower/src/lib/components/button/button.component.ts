@@ -27,7 +27,7 @@ import {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        border: 1.6px dashed rgba(255, 255, 255, 0.5);
+        border: 1.6px dashed rgba(var(--color-text), 0.5);
         background-color: transparent;
       }
 
@@ -38,7 +38,7 @@ import {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #000;
+        background-color: rgba(var(--color-bg), 0.78);
       }
     `,
   ],
