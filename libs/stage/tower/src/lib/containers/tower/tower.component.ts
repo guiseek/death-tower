@@ -154,9 +154,10 @@ ${location.origin}/?${params}
         this.player.restart();
       });
 
-    this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-      if (paused) {
-        this.player.gameover();
+      this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
+        if (paused) {
+        this.player.restart();
+
         scream.play();
       }
     });
@@ -322,13 +323,17 @@ ${location.origin}/?${params}
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
         this.player.patchValue(this.config.state);
-        this.config.state.lastPlatform = null;
-        this.config.state.touched = false;
       }
     }
 
     if (this.config.state.paused) {
       drawTitles(this.config);
+
+      if (this.config.state.titles.ready && this.config.input.jump) {
+        this.config.state = parsify(this.config.savedState);
+        this.player.patchValue(this.config.state);
+      }
+
     }
 
     requestAnimationFrame(() => this.drawCanvas());
@@ -433,7 +438,7 @@ ${location.origin}/?${params}
       this.config.state.paused = true;
       this.player.pause();
 
-      this.config.state = parsify(this.config.savedState);
+      // this.config.state = parsify(this.config.savedState);
     }
 
     if (this.isTheLastPlatform()) {

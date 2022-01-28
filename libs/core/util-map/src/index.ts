@@ -11,6 +11,7 @@ export * from './lib/draw/platforms';
 export * from './lib/draw/tower-shadow';
 export * from './lib/draw/shadows';
 export * from './lib/draw/titles';
+export * from './lib/draw/text';
 export * from './lib/draw/winner';
 export * from './lib/draw/loser';
 export * from './lib/draw/player';
