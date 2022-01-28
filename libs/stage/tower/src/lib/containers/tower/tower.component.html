@@ -40,7 +40,7 @@
 <footer [class.is-mobile]="mobileQuery.matches">
   <nav>
     <div class="flex flex-column gap-16">
-      <button death-control action="fullscreen" (touch)="toggleFullscreen()">
+      <button death-control action="fullscreen" (click)="toggleFullscreen($event)">
         <svg>
           <use
             [ngClass]="{ hidden: inFullscreen }"

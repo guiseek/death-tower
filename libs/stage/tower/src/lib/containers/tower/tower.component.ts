@@ -41,6 +41,7 @@ import {
   drawPlatforms,
   drawWinner,
   getParamsCoords,
+  drawText,
 } from '@death-tower/core/util-map';
 
 import { GameState, PlayerState } from '../../+state';
@@ -154,8 +155,8 @@ ${location.origin}/?${params}
         this.player.restart();
       });
 
-      this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-        if (paused) {
+    this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
+      if (paused) {
         this.player.restart();
 
         scream.play();
@@ -281,7 +282,9 @@ ${location.origin}/?${params}
     this.config.input[action] = false;
   }
 
-  toggleFullscreen() {
+  toggleFullscreen(event: Event) {
+    (event.target as HTMLButtonElement).blur();
+
     if (!this.inFullscreen) {
       document.documentElement.requestFullscreen();
     } else {
@@ -327,13 +330,12 @@ ${location.origin}/?${params}
     }
 
     if (this.config.state.paused) {
-      drawTitles(this.config);
+      drawText(this.config, 'Xiiii, perdeu preibói');
 
       if (this.config.state.titles.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
         this.player.patchValue(this.config.state);
       }
-
     }
 
     requestAnimationFrame(() => this.drawCanvas());
