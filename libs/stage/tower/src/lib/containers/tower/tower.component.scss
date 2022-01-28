@@ -81,14 +81,6 @@
     }
   }
 
-  svg {
-    display: inline-flex;
-    height: 100%;
-    use {
-      fill: #fff;
-    }
-  }
-
   footer {
     bottom: 0;
     position: fixed;
@@ -98,6 +90,15 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
+    }
+  }
+
+  svg {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    use {
+      fill: #fff;
     }
   }
 
@@ -116,5 +117,11 @@
   &.hidden {
     opacity: 0;
     visibility: hidden;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  :host nav > span {
+    display: none;
   }
 }

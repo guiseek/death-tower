@@ -27,6 +27,23 @@ import { Component, Input } from '@angular/core';
           color: rgba(var(--color-text), .6);
         }
       }
+
+      @media (max-width: 1024px) and (orientation: portrait) {
+        :host {
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          gap: 2px;
+
+          h3 {
+            font-size: 24px;
+          }
+          span {
+            font-size: 16px;
+          }
+        }
+      }
     `
   ],
 })

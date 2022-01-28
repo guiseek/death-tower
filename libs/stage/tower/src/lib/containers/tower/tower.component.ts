@@ -55,6 +55,7 @@ import {
   PLAYER_FRAMES_CONFIG,
 } from '../../state-tower.config';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TipsService } from '../../components/tips/tips.service';
 
 const dir = '/assets/sounds';
 
@@ -125,6 +126,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
     private router: Router,
+    private tips: TipsService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
@@ -136,7 +138,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
 
-    const idleTime$ = timer(0, 1000);
+    const idleTime$ = timer(0, 5000);
     const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
     this.hideElement$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
   }
@@ -549,7 +551,9 @@ ${pos}`
       }
 
       if (!groundToStandOnFound) {
-        this.player.jump('up');
+        if (this.config.state.touched) {
+          this.player.jump('up');
+        }
 
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;

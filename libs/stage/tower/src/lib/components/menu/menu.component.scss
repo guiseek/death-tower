@@ -15,14 +15,19 @@ death-menu {
   .dropdown-content {
     display: none;
     position: absolute;
-    min-width: 160px;
+    min-width: 120px;
     box-shadow: 0px 8px 16px 0px rgba(230, 230, 230, 0.2);
     z-index: 1;
   }
 
   &[right] .dropdown-content {
     right: 0;
+
+    a[death-menu-item] {
+      text-align: right;
+    }
   }
+
 
   /* Links dentro do menu dropdown */
   .dropdown-content a[death-menu-item] {

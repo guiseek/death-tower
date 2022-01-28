@@ -1,6 +1,5 @@
 import { Coord, Platform } from '@death-tower/core/util-map';
 import { Level } from '@death-tower/core/interfaces';
-import { Injectable } from '@angular/core';
 import { State } from './state';
 
 interface Game {
@@ -48,7 +47,6 @@ const initialState: Game = {
   ],
 };
 
-@Injectable({ providedIn: 'platform' })
 export class GameState extends State<Game> {
   public platforms$ = this.select((state) => state.platforms);
   public coords$ = this.select((state) => state.coords);

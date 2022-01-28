@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 
 import { MatSliderModule } from '@angular/material/slider';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { TowerComponent } from './containers/tower/tower.component';
@@ -14,11 +15,14 @@ import { MenuItemComponent } from './components/menu/menu-item.component';
 import { ButtonComponent } from './components/button/button.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { SliderComponent } from './components/slider/slider.component';
+import { TipsComponent } from './components/tips/tips.component';
+import { TipsService } from './components/tips/tips.service';
 
 @NgModule({
   imports: [
     CommonModule,
     MatSliderModule,
+    MatDialogModule,
     MatSnackBarModule,
     ReactiveFormsModule,
     RouterModule.forChild([
@@ -40,10 +44,14 @@ import { SliderComponent } from './components/slider/slider.component';
     MenuComponent,
     MenuItemComponent,
     SliderComponent,
+    TipsComponent,
   ],
-  providers: [],
+  providers: [
+    TipsService
+  ],
   exports: [
-    SliderComponent
+    SliderComponent,
+    TipsComponent
   ]
 })
 export class StageTowerModule { }

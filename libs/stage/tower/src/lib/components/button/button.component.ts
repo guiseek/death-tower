@@ -15,20 +15,30 @@ import {
 
 @Component({
   selector: 'button[death-control],death-control',
-  template: `<ng-content></ng-content>`,
+  template: `<span><ng-content></ng-content></span>`,
   styles: [
     `
     :host {
         width: var(--button-size);
         height: var(--button-size);
-        padding: 16px;
         border-radius: 50%;
         cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1.6px dashed rgba(255, 255, 255, 0.5);
+        background-color: transparent;
+      }
+
+      :host > span {
+        width: calc(var(--button-size) - 8px);
+        height: calc(var(--button-size) - 8px);
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #000;
-        border: 2px solid #f1f1f1;
       }
     `,
   ],

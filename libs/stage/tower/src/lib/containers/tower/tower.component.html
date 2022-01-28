@@ -12,8 +12,18 @@
       />
     </svg>
   </a>
+
+
+  <section id="player">
+    <death-timer [value]="player.seconds$ | async"></death-timer>
+    <death-score [value]="player.score$ | async"></death-score>
+  </section>
+
+  <span class="spacer"></span>
+
   <nav>
-    <death-menu>
+    <span>{{ (game.level$ | async)?.name }}</span>
+    <death-menu right>
       <button>Dificuldade</button>
       <a death-menu-item routerLink="/easy" routerLinkActive="active">fácil</a>
       <a death-menu-item routerLink="/medium" routerLinkActive="active"
@@ -23,15 +33,7 @@
         >difícil</a
       >
     </death-menu>
-    <span>{{ (game.level$ | async)?.name }}</span>
   </nav>
-
-  <span class="spacer"></span>
-
-  <section id="player">
-    <death-timer [value]="player.seconds$ | async"></death-timer>
-    <death-score [value]="player.score$ | async"></death-score>
-  </section>
 </header>
 
 <main #container>
@@ -96,7 +98,7 @@
       </button>
       <button
         death-control
-        [size]="74"
+        [size]="78"
         action="right"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"
@@ -121,19 +123,13 @@
     />
   </symbol>
   <symbol id="jump" viewBox="0 0 24 24">
-    <path
-      d="M1 16.1911L2.93875 17.9873L12 9.6051L21.0475 18L23 16.1911L12 6L1 16.1911Z"
-    />
+    <path d="M12 6C12 6 -0.90827 11.3049 2.00002 16C2.68346 17.1033 4.35002 18.35 4.35002 18.35C4.35002 18.35 7.77964 10.7167 12 10.7167C16.2204 10.7167 19.65 18.35 19.65 18.35C19.65 18.35 21.3166 17.1033 22 16C24.9083 11.3049 12 6 12 6Z" />
   </symbol>
   <symbol id="left" viewBox="0 0 24 24">
-    <path
-      d="M16.1911 23L17.9873 21.0612L9.6051 12L18 2.9525L16.1911 1L6 12L16.1911 23Z"
-    />
+    <path d="M18.35 4.35002C18.35 4.35002 17.1033 2.68346 16 2.00002C11.3049 -0.90827 6 12 6 12C6 12 11.3049 24.9083 16 22C17.1033 21.3166 18.35 19.65 18.35 19.65C18.35 19.65 10.7167 16.2204 10.7167 12C10.7167 7.77964 18.35 4.35002 18.35 4.35002Z" />
   </symbol>
   <symbol id="right" viewBox="0 0 24 24">
-    <path
-      d="M7.80892 1L6.01274 2.93875L14.3949 12L6 21.0475L7.80892 23L18 12L7.80892 1Z"
-    />
+    <path d="M8.35 2.00002C7.24666 2.68346 6 4.35002 6 4.35002C6 4.35002 13.6333 7.77964 13.6333 12C13.6333 16.2204 6 19.65 6 19.65C6 19.65 7.24666 21.3166 8.35 22C13.0451 24.9083 18.35 12 18.35 12C18.35 12 13.0451 -0.908269 8.35 2.00002Z" />
   </symbol>
   <symbol id="share" viewBox="0 0 24 24">
     <path d="M0 0h24v24H0V0z" fill="none" />
