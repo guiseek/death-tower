@@ -1,5 +1,10 @@
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  NavigationEnd,
+  Router,
+} from '@angular/router';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import {
@@ -13,6 +18,7 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Inject,
+  TemplateRef,
 } from '@angular/core';
 
 import {
@@ -36,11 +42,9 @@ import {
   OffScreen,
   drawBricks,
   drawPlayer,
-  drawTitles,
   drawShadows,
   drawPlatforms,
   drawWinner,
-  getParamsCoords,
   drawText,
 } from '@death-tower/core/util-map';
 
@@ -50,6 +54,7 @@ import {
   PlayerFramesConfig,
   PLAYER_FRAMES_CONFIG,
 } from '../../state-tower.config';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const dir = '/assets/sounds';
 
@@ -59,6 +64,19 @@ const jumpingUp = new Audio(`${dir}/jump-spring-up.mp3`);
 const thunder = new Audio(`${dir}/thunder-rumble.mp3`);
 const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
 const scream = new Audio(`${dir}/scream.mp3`);
+
+const DEATH_MESSAGES = [
+  'Não foi desta vez..',
+  '+ sorte na próxima!',
+  'gRrr... agora vai!!',
+  'Meu deus! de novo?!',
+  'Vai na humildade...',
+  'Faltou disciplina..',
+  'Vai fica morrendo?!',
+  'Já é hora de passar',
+  'PQP, ta me tirando.',
+  'MANO!! CÉLOKO TRUTA',
+];
 
 @Component({
   selector: 'death-tower',
@@ -96,56 +114,85 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
+  level = '';
+
   readonly game = new GameState();
   readonly player = new PlayerState();
 
-  readonly displayHeader$;
+  readonly hideElement$;
 
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
     private router: Router,
+    private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
 
     @Inject(PLAYER_FRAMES_CONFIG)
     readonly playerFrames: PlayerFramesConfig
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => cdr.detectChanges();
+    this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
 
     const idleTime$ = timer(0, 1000);
     const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
-    this.displayHeader$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
+    this.hideElement$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
   }
 
-  share() {
-    const params = getParamsCoords(this.config.platforms);
+  async share() {
+    const pre = `Opa, a torre está ${this.level} hoje! como andam suas habilidades?
 
-    const message = `Opa 👍 %0a %0a
-Como andam suas habilidades motoras? %0a %0a
-*Mostre-me enviando o código que está na última porta deste mapa.* %0a %0a
+*Mostra aí, me manda o código da última porta neste mapa.*`;
+    const pos = `Death Tower Games`;
 
-${location.origin}/?${params}
+    const coords = this.mapToHexa(this.config.platforms);
 
-%0a %0a 🔥 💀 Death Tower 🗼 🚧
-`;
-    open(
-      `https://api.whatsapp.com/send?text=${message}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
+    if (!this.route.snapshot.queryParamMap.has('coords')) {
+      await this.router.navigate(['/challenge'], { queryParams: { coords } });
+    }
+
+    this.snackBar
+      .open('Compartilhar via WhatsApp?', 'Sim')
+      .afterDismissed()
+      .subscribe(() => {
+        const url = `https://wa.me/?text=${encodeURIComponent(
+          `${pre}
+
+${window.location.href}
+
+${pos}`
+        )}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+      });
+  }
+
+  mapToHexa(platforms: Platform[]) {
+    return platforms
+      .map(({ x, y }) => `${x.toString(16)},${y.toString(16)}`)
+      .join(';');
+  }
+
+  onRouting({ params, queryParams }: ActivatedRouteSnapshot) {
+    const { level } = params;
+    const { coords } = queryParams;
+
+    this.level = level;
+
+    this.game.loadLevel(level, coords);
   }
 
   ngOnInit(): void {
-    this.route.params
+    this.onRouting(this.route.snapshot);
+
+    this.router.events
       .pipe(
-        filter((level) => !!level),
+        filter((event) => event instanceof NavigationEnd),
         takeUntil(this.destroy)
       )
-      .subscribe(({ level }) => {
-        this.game.loadLevel(level);
+      .subscribe(() => {
+        this.onRouting(this.route.snapshot);
       });
 
     this.player.gameover$
@@ -282,9 +329,7 @@ ${location.origin}/?${params}
     this.config.input[action] = false;
   }
 
-  toggleFullscreen(event: Event) {
-    (event.target as HTMLButtonElement).blur();
-
+  toggleFullscreen() {
     if (!this.inFullscreen) {
       document.documentElement.requestFullscreen();
     } else {
@@ -330,7 +375,7 @@ ${location.origin}/?${params}
     }
 
     if (this.config.state.paused) {
-      drawText(this.config, 'Xiiii, perdeu preibói');
+      drawText(this.config, 'Não foi desta vez...');
 
       if (this.config.state.titles.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);

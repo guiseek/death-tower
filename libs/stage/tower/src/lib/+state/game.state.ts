@@ -1,7 +1,7 @@
 import { Coord, Platform } from '@death-tower/core/util-map';
 import { Level } from '@death-tower/core/interfaces';
-import { State } from './state';
 import { Injectable } from '@angular/core';
+import { State } from './state';
 
 interface Game {
   platforms: Platform[];
@@ -39,6 +39,12 @@ const initialState: Game = {
       x: { min: 15, max: 58 },
       y: { min: 15, max: 40 },
     },
+    {
+      id: 'challenge',
+      name: 'Desafio',
+      x: { min: 0, max: 0 },
+      y: { min: 0, max: 0 },
+    },
   ],
 };
 
@@ -49,23 +55,38 @@ export class GameState extends State<Game> {
   public levels$ = this.select((state) => state.levels);
   public level$ = this.select((state) => state.level);
 
+  challengeCoords: Coord[] = [];
+
   constructor() {
     super(initialState);
   }
 
-  loadLevel(levelId: Level['id']) {
+  loadLevel(levelId: Level['id'], query = '') {
     const predicate = (level: Level) => level.id === levelId;
     let level = this.state.levels.find(predicate);
 
     if (!level) level = this.state.levels[0];
 
-    const length = ((level.x.min + level.x.max) / 2) | 0;
-    const coords = this.getRandomCoords(level, length);
+    this.challengeCoords = query ? this.loadChallenge(query) : [];
 
-    const mapper = ({ x, y }: Coord, i: number) => new Platform(x, y, i);
-    const platforms = coords.map(mapper)
+    const coords =
+      level.id === 'challenge' && this.challengeCoords.length > 0
+        ? this.loadChallenge(query)
+        : this.getRandomCoords(level, 36);
 
-    this.setState({ level, coords, platforms });
+    this.setState({ level, coords, platforms: this.mapFromCoords(coords) });
+  }
+
+  private loadChallenge(queryParams: string) {
+    return queryParams.split(';').map((point) => {
+      const [x, y] = point.split(',');
+      // Converte hexadecimais para decimais
+      return { x: parseInt(x, 16), y: parseInt(y, 16) };
+    });
+  }
+
+  private mapFromCoords(coords: Coord[]) {
+    return coords.map(({ x, y }: Coord, i: number) => new Platform(x, y, i));
   }
 
   private getRandomCoords(level: Level, length = 40) {
@@ -79,7 +100,8 @@ export class GameState extends State<Game> {
     return new Array(length).fill({ x, y }).map(() => {
       x = x === 0 ? 1600 : between(x - level.x.min, x - level.x.max);
 
-      y = y === 0 ? 600 : between(y - (level.y.min - 20), y - level.y.max * 2.5);
+      y =
+        y === 0 ? 600 : between(y - (level.y.min - 20), y - level.y.max * 2.5);
 
       return { x, y };
     });

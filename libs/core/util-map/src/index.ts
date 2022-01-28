@@ -23,4 +23,5 @@ export * from './lib/points/get-circle-point';
 export * from './lib/get-box';
 export * from './lib/offscreen';
 export * from './lib/platform';
+export * from './lib/random';
 export * from './lib/door';

@@ -1,6 +1,6 @@
-<header [ngClass]="{ hidden: displayHeader$ | async }">
-  <a title="Death Tower" class="death-tower-icon">
-    <svg height="32" viewBox="0 0 29 39" xmlns="http://www.w3.org/2000/svg">
+<header [ngClass]="{ hidden: hideElement$ | async }">
+  <a title="Death Tower" routerLink="/" class="death-tower-icon">
+    <svg viewBox="0 0 29 39" xmlns="http://www.w3.org/2000/svg">
       <title>Death Tower</title>
       <path
         d="M26.6734 17.8201L26.6536 18.7212C26.5825 19.7289 26.3256 21.4797 25.4364 23.4518C25.717 22.1358 25.8672 20.7723 25.8672 19.3732C25.8672 18.3259 25.7842 17.3023 25.6261 16.2985C24.8993 11.7265 22.5759 7.68827 19.2473 4.77551C16.6028 2.4613 13.3237 0.857513 9.70695 0.260839C8.73077 0.0276648 8.15772 0 8.15772 0L8.217 0.071138C9.82935 1.99922 10.7696 3.97147 11.2548 5.83673C11.796 7.91716 11.7711 9.86449 11.4814 11.469C11.2838 12.5598 10.9637 13.4925 10.6159 14.1999C10.6159 14.1999 10.9044 12.9985 10.8768 11.6311C10.8531 10.402 10.5685 9.03848 9.58048 8.29943C9.88479 9.88818 9.51725 11.1963 8.79006 12.4254C8.11428 13.5746 7.12779 14.6334 6.08091 15.757C3.81555 18.1884 1.26739 20.9233 0.972763 25.5346V25.8666C0.972763 30.5103 3.1899 34.4229 6.9128 36.6756C6.31998 35.6085 5.62046 33.6325 6.15794 31.4746C6.50178 33.5218 7.01951 34.5889 7.96406 35.9484C8.66754 36.9601 9.61605 37.6162 10.8254 38.1023C12.0347 38.5924 13.335 38.7267 14.7973 38.7267C19.6228 38.7267 23.8951 36.2567 26.3691 32.5061L26.3928 32.5101C27.776 30.3285 28.6495 27.7122 28.6495 24.9023C28.6455 22.3176 27.9104 19.8949 26.6734 17.8201Z"
@@ -23,9 +23,10 @@
         >difícil</a
       >
     </death-menu>
-
-    <span class="level">{{ (game.level$ | async)?.name }}</span>
+    <span>{{ (game.level$ | async)?.name }}</span>
   </nav>
+
+  <span class="spacer"></span>
 
   <section id="player">
     <death-timer [value]="player.seconds$ | async"></death-timer>
@@ -40,7 +41,12 @@
 <footer [class.is-mobile]="mobileQuery.matches">
   <nav>
     <div class="flex flex-column gap-16">
-      <button death-control action="fullscreen" (click)="toggleFullscreen($event)">
+      <button
+        death-control
+        action="fullscreen"
+        (click)="toggleFullscreen()"
+        [ngClass]="{ hidden: hideElement$ | async }"
+      >
         <svg>
           <use
             [ngClass]="{ hidden: inFullscreen }"
@@ -52,13 +58,19 @@
           ></use>
         </svg>
       </button>
-      <button death-control (click)="share()">
+      <button
+        death-control
+        (click)="share()"
+        [ngClass]="{ hidden: hideElement$ | async }"
+      >
         <svg>
           <use xlink:href="#share"></use>
         </svg>
       </button>
+
       <button
         death-control
+        [size]="82"
         class="only-mobile"
         action="jump"
         (touchStart)="onTouchStart($event)"
@@ -84,6 +96,7 @@
       </button>
       <button
         death-control
+        [size]="74"
         action="right"
         (touchStart)="onTouchStart($event)"
         (touchEnd)="onTouchEnd($event)"

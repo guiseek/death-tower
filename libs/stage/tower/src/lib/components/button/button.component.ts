@@ -6,6 +6,7 @@ import {
   HostListener,
   ChangeDetectionStrategy,
   HostBinding,
+  ElementRef,
 } from '@angular/core';
 import {
   ControlAction,
@@ -58,10 +59,13 @@ export class ButtonComponent {
   @HostListener('click', ['$event'])
   onClick(event: PointerEvent): void {
     this.touch.emit({ event, action: this.action, time: 'press' });
+    this.elRef.nativeElement.blur();
   }
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent): void {
     this.touchEnd.emit({ event, action: this.action, time: 'hold' });
   }
+
+  constructor(private elRef: ElementRef<HTMLButtonElement>) {}
 }
