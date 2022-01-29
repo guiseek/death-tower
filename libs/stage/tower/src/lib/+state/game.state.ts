@@ -7,12 +7,14 @@ interface Game {
   coords: Coord[];
   levels: Level[];
   level: Level | null;
+  code: number | null;
 }
 
 const initialState: Game = {
   platforms: [],
   coords: [],
   level: null,
+  code: null,
   levels: [
     {
       id: 'training',
@@ -52,8 +54,9 @@ export class GameState extends State<Game> {
   public coords$ = this.select((state) => state.coords);
   public levels$ = this.select((state) => state.levels);
   public level$ = this.select((state) => state.level);
+  public code$ = this.select((state) => state.code);
 
-  challengeCoords: Coord[] = [];
+  challengeCoords: Coord[] = []
 
   constructor() {
     super(initialState);
@@ -73,6 +76,31 @@ export class GameState extends State<Game> {
         : this.getRandomCoords(level, 36);
 
     this.setState({ level, coords, platforms: this.mapFromCoords(coords) });
+    // const predicate = (level: Level) => level.id === levelId;
+    // let level = this.state.levels.find(predicate);
+
+    // if (!level) level = this.state.levels[0];
+
+    // let code;
+    // let coords: Coord[] = [];
+
+    // if (level.id === 'challenge') {
+    //   coords = this.loadChallenge(query);
+
+    //   const reduced = coords.reduce((prev, curr) => {
+    //     return { y: (prev.y += curr.y), x: (prev.x += curr.x) };
+    //   });
+
+    //   code = reduced.x - reduced.y;
+    // } else {
+    //   coords = this.getRandomCoords(level, 36);
+
+    //   code = null;
+    // }
+
+    // const platforms = this.mapFromCoords(coords);
+
+    // this.setState({ level, coords, code, platforms });
   }
 
   private loadChallenge(queryParams: string) {
