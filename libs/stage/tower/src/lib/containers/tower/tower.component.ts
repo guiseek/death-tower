@@ -1,7 +1,9 @@
 import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
-import { GameState, PlayerState } from '../../+state';
 import { MediaMatcher } from '@angular/cdk/layout';
+
+import { GameState, PlayerState } from '@death-tower/stage/state';
+
 import {
   Router,
   NavigationEnd,
@@ -53,30 +55,12 @@ import {
   PLAYER_FRAMES_CONFIG,
 } from '../../state-tower.config';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TipsService } from '../../components/tips/tips.service';
-import { SettingsService } from '../../components/settings/settings.service';
 
-const dir = '/assets/sounds';
-
-// const clockTicking = new Audio(`${dir}/ambient/clock-ticking.mp3`);
-const jumpingDown = new Audio(`${dir}/jump-spring-down.mp3`);
-const jumpingUp = new Audio(`${dir}/jump-spring-up.mp3`);
-const thunder = new Audio(`${dir}/thunder-rumble.mp3`);
-const yeaah = new Audio(`${dir}/zumbi/yeaah.mp3`);
-const scream = new Audio(`${dir}/scream.mp3`);
-
-const DEATH_MESSAGES = [
-  'Não foi desta vez..',
-  '+ sorte na próxima!',
-  'gRrr... agora vai!!',
-  'Meu deus! de novo?!',
-  'Vai na humildade...',
-  'Faltou disciplina..',
-  'Vai fica morrendo?!',
-  'Já é hora de passar',
-  'PQP, ta me tirando.',
-  'MANO!! CÉLOKO TRUTA',
-];
+const jumpingDown = new Audio(`/assets/sounds/jump-spring-down.mp3`);
+const jumpingUp = new Audio(`/assets/sounds/jump-spring-up.mp3`);
+const thunder = new Audio(`/assets/sounds/thunder-rumble.mp3`);
+const yeaah = new Audio(`/assets/sounds/zumbi/yeaah.mp3`);
+const scream = new Audio(`/assets/sounds/scream.mp3`);
 
 @Component({
   selector: 'death-tower',
@@ -117,17 +101,14 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   level = '';
   code: number | null = null;
 
-  readonly game = new GameState();
-  readonly player = new PlayerState();
-
   readonly hideElement$;
 
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
     private router: Router,
-    private tips: TipsService,
-    private settings: SettingsService,
+    readonly game: GameState,
+    readonly player: PlayerState,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
@@ -454,8 +435,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.landedOut()) {
       this.config.state.paused = true;
       this.player.pause();
-
-      // this.config.state = parsify(this.config.savedState);
     }
 
     if (this.isTheLastPlatform()) {

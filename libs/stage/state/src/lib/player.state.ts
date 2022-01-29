@@ -11,6 +11,16 @@ interface Player {
   gameover: boolean;
 }
 
+const initialState: Player = Object.freeze({
+  score: 0,
+  seconds: 60,
+  paused: false,
+  jumpingUp: false,
+  jumpingDown: false,
+  finished: false,
+  gameover: false,
+})
+
 export class PlayerState extends State<Player> {
   state$ = this.select((state) => state);
   score$ = this.select((state) => state.score);
@@ -23,21 +33,11 @@ export class PlayerState extends State<Player> {
 
   private _timerInterval: Subscription | null = null;
 
-  constructor(
-    private initialState: Player = Object.freeze({
-      score: 0,
-      seconds: 60,
-      paused: false,
-      jumpingUp: false,
-      jumpingDown: false,
-      finished: false,
-      gameover: false,
-    })
-  ) {
+  constructor() {
     super(initialState);
   }
 
-  start(time = this.initialState.seconds) {
+  start(time = initialState.seconds) {
     if (this._timerInterval) {
       this._timerInterval.unsubscribe();
     }
@@ -54,7 +54,7 @@ export class PlayerState extends State<Player> {
   }
 
   restart() {
-    this.setState(this.initialState);
+    this.setState(initialState);
   }
 
   pause() {
@@ -90,7 +90,7 @@ export class PlayerState extends State<Player> {
     }
   }
 
-  reset(seconds = this.initialState.seconds) {
+  reset(seconds = initialState.seconds) {
     this.setState({ seconds, gameover: false });
   }
 

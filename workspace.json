@@ -6,7 +6,9 @@
     "core-util-map": "libs/core/util-map",
     "game": "apps/game",
     "ranking": "apps/ranking",
+    "stage-data-access": "libs/stage/data-access",
     "stage-domain": "libs/stage/domain",
+    "stage-state": "libs/stage/state",
     "stage-tower": "libs/stage/tower"
   }
 }
