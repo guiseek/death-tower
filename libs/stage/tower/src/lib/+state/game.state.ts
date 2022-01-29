@@ -56,8 +56,6 @@ export class GameState extends State<Game> {
   public level$ = this.select((state) => state.level);
   public code$ = this.select((state) => state.code);
 
-  challengeCoords: Coord[] = []
-
   constructor() {
     super(initialState);
   }
@@ -65,42 +63,23 @@ export class GameState extends State<Game> {
   loadLevel(levelId: Level['id'], query = '') {
     const predicate = (level: Level) => level.id === levelId;
     let level = this.state.levels.find(predicate);
-
     if (!level) level = this.state.levels[0];
 
-    this.challengeCoords = query ? this.loadChallenge(query) : [];
+    const challengeCoords = query ? this.loadChallenge(query) : [];
 
-    const coords =
-      level.id === 'challenge' && this.challengeCoords.length > 0
-        ? this.loadChallenge(query)
-        : this.getRandomCoords(level, 36);
+    let code = null;
+    let coords: Coord[] = [];
 
-    this.setState({ level, coords, platforms: this.mapFromCoords(coords) });
-    // const predicate = (level: Level) => level.id === levelId;
-    // let level = this.state.levels.find(predicate);
+    if (level.id === 'challenge' && challengeCoords.length > 0) {
+      coords = this.loadChallenge(query);
+      code = this.getCodeCoords(coords);
+    } else {
+      coords = this.getRandomCoords(level, 36);
+    }
 
-    // if (!level) level = this.state.levels[0];
+    const platforms = this.mapFromCoords(coords);
 
-    // let code;
-    // let coords: Coord[] = [];
-
-    // if (level.id === 'challenge') {
-    //   coords = this.loadChallenge(query);
-
-    //   const reduced = coords.reduce((prev, curr) => {
-    //     return { y: (prev.y += curr.y), x: (prev.x += curr.x) };
-    //   });
-
-    //   code = reduced.x - reduced.y;
-    // } else {
-    //   coords = this.getRandomCoords(level, 36);
-
-    //   code = null;
-    // }
-
-    // const platforms = this.mapFromCoords(coords);
-
-    // this.setState({ level, coords, code, platforms });
+    this.setState({ level, coords, code, platforms });
   }
 
   private loadChallenge(queryParams: string) {
@@ -113,6 +92,14 @@ export class GameState extends State<Game> {
 
   private mapFromCoords(coords: Coord[]) {
     return coords.map(({ x, y }: Coord, i: number) => new Platform(x, y, i));
+  }
+
+  private getCodeCoords(coords: Coord[]) {
+    const coord = coords.reduce((prev, curr) => {
+      return { y: (prev.y += curr.y), x: (prev.x += curr.x) }
+    }, { x: 0, y: 0 });
+
+    return coord.x - coord.y
   }
 
   private getRandomCoords(level: Level, length = 40) {

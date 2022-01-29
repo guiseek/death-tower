@@ -1,14 +1,16 @@
+import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
+import { GameState, PlayerState } from '../../+state';
+import { MediaMatcher } from '@angular/cdk/layout';
 import {
+  Router,
+  NavigationEnd,
   ActivatedRoute,
   ActivatedRouteSnapshot,
-  NavigationEnd,
-  Router,
 } from '@angular/router';
-import { MediaMatcher } from '@angular/cdk/layout';
-import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import {
   OnInit,
+  Inject,
   Component,
   OnDestroy,
   ViewChild,
@@ -17,8 +19,6 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
-  Inject,
-  TemplateRef,
 } from '@angular/core';
 
 import {
@@ -28,27 +28,25 @@ import {
 } from '@death-tower/core/interfaces';
 
 import {
+  parsify,
+  loadImage,
+  loadDomConfig,
   loadCustomConfig,
   loadDefaultConfig,
-  loadDomConfig,
-  loadImage,
-  parsify,
 } from '@death-tower/core/util-config';
 
 import {
   Door,
   drawSky,
+  drawText,
   drawDoors,
   OffScreen,
+  drawWinner,
   drawBricks,
   drawPlayer,
   drawShadows,
   drawPlatforms,
-  drawWinner,
-  drawText,
 } from '@death-tower/core/util-map';
-
-import { GameState, PlayerState } from '../../+state';
 
 import {
   PlayerFramesConfig,
@@ -146,39 +144,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.hideElement$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
   }
 
-  async share() {
-    const pre = `Opa, a torre está ${this.level} hoje! como andam suas habilidades?
-
-*Mostra aí, me manda o código da última porta neste mapa.*`;
-    const pos = `Death Tower Games`;
-
-    const coords = this.mapToHexa(this.config.platforms);
-
-    if (!this.route.snapshot.queryParamMap.has('coords')) {
-      await this.router.navigate(['/challenge'], { queryParams: { coords } });
-    }
-
-    this.snackBar
-      .open('Compartilhar via WhatsApp?', 'Sim', { duration: 6 * 1000 })
-      .afterDismissed()
-      .subscribe(() => {
-        const url = `https://wa.me/?text=${encodeURIComponent(
-          `${pre}
-
-${window.location.href}
-
-${pos}`
-        )}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-      });
-  }
-
-  mapToHexa(platforms: Platform[]) {
-    return platforms
-      .map(({ x, y }) => `${x.toString(16)},${y.toString(16)}`)
-      .join(';');
-  }
-
   onRouting({ params, queryParams }: ActivatedRouteSnapshot) {
     const { level } = params;
     const { coords } = queryParams;
@@ -202,22 +167,15 @@ ${pos}`
 
     this.player.gameover$
       .pipe(takeUntil(this.destroy))
-      .subscribe((gameover) => {
-        console.log('gameover: ', gameover);
-        this.player.restart();
-      });
+      .subscribe(() => this.player.restart());
 
     this.game.code$
       .pipe(takeUntil(this.destroy))
-      .subscribe((code) => {
-        console.log('code: ', code);
-        this.code = code;
-      });
+      .subscribe((code) => (this.code = code));
 
     this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
       if (paused) {
         this.player.restart();
-
         scream.play();
       }
     });
@@ -589,6 +547,41 @@ ${pos}`
 
     this.config.state.score = score;
     this.player.patchValue({ score });
+  }
+
+  async share() {
+    const pre = `Opa, a torre está ${this.level} hoje! como andam suas habilidades?
+
+*Mostra aí, me manda o código da última porta neste mapa.*`;
+    const pos = `Death Tower Games`;
+
+    const coords = this.mapToHexa(this.config.platforms);
+
+    if (!this.route.snapshot.queryParamMap.has('coords')) {
+      await this.router.navigate(['/challenge'], { queryParams: { coords } });
+    }
+
+    this.snackBar
+      .open('Compartilhar via WhatsApp?', 'Sim', { duration: 6 * 1000 })
+      .afterDismissed()
+      .subscribe((result) => {
+        if (result) {
+          const url = `https://wa.me/?text=${encodeURIComponent(
+            `${pre}
+
+${window.location.href}
+
+${pos}`
+          )}`;
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+      });
+  }
+
+  mapToHexa(platforms: Platform[]) {
+    return platforms
+      .map(({ x, y }) => `${x.toString(16)},${y.toString(16)}`)
+      .join(';');
   }
 
   ngOnDestroy(): void {
