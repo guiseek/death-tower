@@ -56,6 +56,7 @@ import {
 } from '../../state-tower.config';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TipsService } from '../../components/tips/tips.service';
+import { SettingsService } from '../../components/settings/settings.service';
 
 const dir = '/assets/sounds';
 
@@ -116,6 +117,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   level = '';
+  code: number | null = null;
 
   readonly game = new GameState();
   readonly player = new PlayerState();
@@ -127,6 +129,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     cdr: ChangeDetectorRef,
     private router: Router,
     private tips: TipsService,
+    private settings: SettingsService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
@@ -156,7 +159,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.snackBar
-      .open('Compartilhar via WhatsApp?', 'Sim')
+      .open('Compartilhar via WhatsApp?', 'Sim', { duration: 6 * 1000 })
       .afterDismissed()
       .subscribe(() => {
         const url = `https://wa.me/?text=${encodeURIComponent(
@@ -202,6 +205,13 @@ ${pos}`
       .subscribe((gameover) => {
         console.log('gameover: ', gameover);
         this.player.restart();
+      });
+
+    this.game.code$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((code) => {
+        console.log('code: ', code);
+        this.code = code;
       });
 
     this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
@@ -368,7 +378,7 @@ ${pos}`
     }
 
     if (!this.config.state.paused && this.config.state.finished) {
-      drawWinner(this.config);
+      drawWinner(this.config, this.code);
 
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);

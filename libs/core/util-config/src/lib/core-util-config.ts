@@ -39,22 +39,6 @@ export const defaultConfig: DefaultConfig = {
     wood4: '#6A503E',
     wood5: '#B46736',
   },
-  settings: {
-    maxSpeed: 0.09,
-    minSpeed: 0.01,
-    friction: 0.7,
-    acceleration: 0.02,
-    jump: {
-      gravity: {
-        boost: 0.0014,
-        normal: 0.003,
-        down: 0.004,
-      },
-      maxSpeed: 0.6,
-      fallStartSpeed: 0.07,
-      friction: 0.98,
-    },
-  },
   storage: {
     bricks: null,
     sky: null,
@@ -72,6 +56,22 @@ export const customConfig: CustomConfig = {
   platforms: [],
   doors: [new Door(1600, 350), new Door(1205, -1160)],
   savedState: null,
+  settings: {
+    maxSpeed: 0.09,
+    minSpeed: 0.01,
+    friction: 0.7,
+    acceleration: 0.02,
+    jump: {
+      gravity: {
+        boost: 0.0014,
+        normal: 0.003,
+        down: 0.004,
+      },
+      maxSpeed: 0.6,
+      fallStartSpeed: 0.07,
+      friction: 0.98,
+    },
+  },
   state: {
     paused: false,
     touched: false,

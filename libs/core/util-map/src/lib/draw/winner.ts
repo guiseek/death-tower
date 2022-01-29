@@ -1,7 +1,7 @@
 import { Config } from '@death-tower/core/interfaces';
 import { easing } from '../effects/easing';
 
-export function drawWinner(config: Config, code?: number) {
+export function drawWinner(config: Config, code: number | null = null) {
   if (config.state.dt && config.state.winner.opacity < 100) {
     config.state.winner.opacity += Math.floor(config.state.dt * 0.2);
   }

@@ -16,7 +16,10 @@ import { ButtonComponent } from './components/button/button.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { TipsComponent } from './components/tips/tips.component';
+import { SettingsComponent } from './components/settings/settings.component';
+
 import { TipsService } from './components/tips/tips.service';
+import { SettingsService } from './components/settings/settings.service';
 
 @NgModule({
   imports: [
@@ -45,13 +48,11 @@ import { TipsService } from './components/tips/tips.service';
     MenuItemComponent,
     SliderComponent,
     TipsComponent,
+    SettingsComponent,
   ],
   providers: [
+    SettingsService,
     TipsService
-  ],
-  exports: [
-    SliderComponent,
-    TipsComponent
   ]
 })
 export class StageTowerModule { }

@@ -1,0 +1,28 @@
+<p>settings works!</p>
+
+<form [formGroup]="form">
+  <div>
+    <section>
+      <label>Velocidade mínima</label>
+      <input type="number" formControlName="mainpeed" aria-label="Velocidade mínima">
+      <output>Obrigatório</output>
+    </section>
+    <section>
+      <label>Velocidade máxima</label>
+      <input type="number" formControlName="maxSpeed" aria-label="Velocidade máxima">
+      <output>Obrigatório</output>
+    </section>
+  </div>
+  <div>
+    <section>
+      <label>Fricção</label>
+      <input type="number" formControlName="friction" aria-label="Fricção">
+      <output>Obrigatório</output>
+    </section>
+    <section>
+      <label>Aceleração</label>
+      <input type="number" formControlName="acceleration" aria-label="Aceleração">
+      <output>Obrigatório</output>
+    </section>
+  </div>
+</form>
