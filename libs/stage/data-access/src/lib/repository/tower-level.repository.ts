@@ -44,7 +44,7 @@ export class TowerLevelRepository {
 
   get(id: string) {
     return this.levels$.pipe(
-      map((levels) => levels.find((level) => level.id === id)),
+      map((levels) => levels.find((level) => level.id === id))
     );
   }
 }

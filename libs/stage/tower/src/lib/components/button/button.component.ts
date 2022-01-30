@@ -18,7 +18,7 @@ import {
   template: `<span><ng-content></ng-content></span>`,
   styles: [
     `
-    :host {
+      :host {
         width: var(--button-size);
         height: var(--button-size);
         border-radius: 50%;
@@ -45,14 +45,14 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
-  private _size = 64
+  private _size = 64;
 
   @Input() set size(value: number) {
     this._size = value;
   }
 
   @HostBinding('attr.style') get buttonSize() {
-    return `--button-size: ${this._size}px;`
+    return `--button-size: ${this._size}px;`;
   }
 
   @Input() action: ControlAction = 'jump';

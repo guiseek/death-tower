@@ -32,7 +32,7 @@ import { AppComponent } from './app.component';
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     {
       provide: PLAYER_FRAMES_CONFIG,
-      useValue: FRAMES_CONFIG_VALUE
+      useValue: FRAMES_CONFIG_VALUE,
     },
   ],
   bootstrap: [AppComponent],

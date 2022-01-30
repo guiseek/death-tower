@@ -1,3 +1,1 @@
-export class PlayerStorage {
-
-}
+export class PlayerStorage {}

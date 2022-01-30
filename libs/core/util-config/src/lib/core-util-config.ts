@@ -147,7 +147,6 @@ function createFallbackCanvas() {
   return fallback.canvas;
 }
 
-
 export function loadDomConfig(
   container = createContainer(),
   canvas = createCanvas(),

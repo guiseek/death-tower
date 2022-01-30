@@ -1,7 +1,7 @@
-import { SettingsConfig } from "@death-tower/core/interfaces";
-import { SettingsComponent } from "./settings.component";
-import { MatDialog } from "@angular/material/dialog";
-import { Injectable } from "@angular/core";
+import { SettingsConfig } from '@death-tower/core/interfaces';
+import { SettingsComponent } from './settings.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'platform' })
 export class SettingsService {
@@ -11,9 +11,9 @@ export class SettingsService {
     const ref = this.dialog.open(SettingsComponent, { data });
     // ref.afterClosed().subscribe(() => {});
     ref.componentInstance.form.valueChanges.subscribe((settings) => {
-      data = settings
-    })
+      data = settings;
+    });
 
-    return ref.afterClosed()
+    return ref.afterClosed();
   }
 }

@@ -24,7 +24,7 @@ import { Component, Input } from '@angular/core';
         }
 
         span {
-          color: rgba(var(--color-text), .6);
+          color: rgba(var(--color-text), 0.6);
         }
       }
 
@@ -44,9 +44,9 @@ import { Component, Input } from '@angular/core';
           }
         }
       }
-    `
+    `,
   ],
 })
-export class ScoreComponent  {
+export class ScoreComponent {
   @Input() value: number | null = 0;
 }

@@ -1,4 +1,3 @@
-
 export interface InputConfig {
   left: boolean;
   right: boolean;

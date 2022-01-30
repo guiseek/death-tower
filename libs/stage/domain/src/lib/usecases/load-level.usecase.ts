@@ -25,35 +25,33 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
   execute({ id, queryParams = '' }: LevelInput) {
     const predicate = (l: Level) => l.id === id;
 
-    return this.repository
-      .getAll()
-      .pipe(
-        take(1),
-        map((levels) => {
-          let level = levels.find(predicate);
-          if (!level) level = levels[0];
+    return this.repository.getAll().pipe(
+      take(1),
+      map((levels) => {
+        let level = levels.find(predicate);
+        if (!level) level = levels[0];
 
-          const challengeCoords = queryParams
-            ? this.challengeMapper.mapFrom(queryParams)
-            : [];
+        const challengeCoords = queryParams
+          ? this.challengeMapper.mapFrom(queryParams)
+          : [];
 
-          let code = null;
-          let coords: Coord[] = [];
+        let code = null;
+        let coords: Coord[] = [];
 
-          if (id === 'challenge' && challengeCoords.length > 0) {
-            coords = this.challengeMapper.mapFrom(queryParams);
-            code = this.getCodeCoords(coords);
-          } else {
-            coords = this.getRandomCoords(level, 36);
-          }
+        if (id === 'challenge' && challengeCoords.length > 0) {
+          coords = this.challengeMapper.mapFrom(queryParams);
+          code = this.getCodeCoords(coords);
+        } else {
+          coords = this.getRandomCoords(level, 36);
+        }
 
-          const platforms = coords.map(
-            ({ x, y }: Coord, i: number) => new Platform(x, y, i)
-          );
+        const platforms = coords.map(
+          ({ x, y }: Coord, i: number) => new Platform(x, y, i)
+        );
 
-          return { coords, level, platforms, code };
-        })
-      )
+        return { coords, level, platforms, code };
+      })
+    );
   }
 
   private getCodeCoords(coords: Coord[]) {

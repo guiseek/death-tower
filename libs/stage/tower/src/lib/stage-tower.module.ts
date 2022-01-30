@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -38,7 +37,7 @@ import { GameState, PlayerState } from '@death-tower/stage/state';
       {
         path: '**',
         redirectTo: 'training',
-      }
+      },
     ]),
   ],
   declarations: [
@@ -64,12 +63,12 @@ import { GameState, PlayerState } from '@death-tower/stage/state';
     {
       provide: GameState,
       useFactory: (repo: TowerLevelRepository) => {
-        return new GameState(repo)
+        return new GameState(repo);
       },
       deps: [TowerLevelRepository],
     },
     SettingsService,
-    TipsService
-  ]
+    TipsService,
+  ],
 })
-export class StageTowerModule { }
+export class StageTowerModule {}

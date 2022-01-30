@@ -5,7 +5,6 @@ import { Level } from '@death-tower/core/interfaces';
 import { State } from './state';
 import { take } from 'rxjs';
 
-
 interface Game {
   platforms: Platform[];
   coords: Coord[];
@@ -19,7 +18,7 @@ const initialState: Game = Object.freeze({
   coords: [],
   level: null,
   code: null,
-  levels: []
+  levels: [],
 });
 
 export class GameState extends State<Game> {
@@ -29,7 +28,7 @@ export class GameState extends State<Game> {
   public level$ = this.select((state) => state.level);
   public code$ = this.select((state) => state.code);
 
-  loadLevelUseCase: LoadLevelUseCase
+  loadLevelUseCase: LoadLevelUseCase;
 
   constructor(repository: TowerLevelRepository) {
     super(initialState);
@@ -38,7 +37,7 @@ export class GameState extends State<Game> {
   }
 
   loadLevel(id: string, queryParams = '') {
-    const level$ = this.loadLevelUseCase.execute({ id, queryParams })
+    const level$ = this.loadLevelUseCase.execute({ id, queryParams });
 
     level$.pipe(take(1)).subscribe((level) => this.setState(level));
   }

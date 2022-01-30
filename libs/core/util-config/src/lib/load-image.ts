@@ -13,20 +13,20 @@ export function loadImage(
 
   image.onload = function () {
     if (flipped) {
-      temp.ctx.save()
-      temp.ctx.scale(-1, 1)
+      temp.ctx.save();
+      temp.ctx.scale(-1, 1);
     }
 
-    temp.ctx.drawImage(image, 0, 0, 317 * (flipped ? -1 : 1), 300)
+    temp.ctx.drawImage(image, 0, 0, 317 * (flipped ? -1 : 1), 300);
 
     if (flipped) {
-      temp.ctx.restore()
+      temp.ctx.restore();
     }
 
-    config.animationFrames[type][index] = temp.canvas
-  }
+    config.animationFrames[type][index] = temp.canvas;
+  };
 
-  image.src = src
+  image.src = src;
 
-  return temp.canvas
+  return temp.canvas;
 }

@@ -5,19 +5,18 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'death-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent {
-
   form = this.builder.group({
     maxSpeed: [0.09, [Validators.required]],
     minSpeed: [0.01, [Validators.required]],
     friction: [0.7, [Validators.required]],
     acceleration: [0.02, [Validators.required]],
     jump: this.createJump(),
-  })
+  });
 
-  constructor(private builder: FormBuilder) { }
+  constructor(private builder: FormBuilder) {}
 
   createJump({
     maxSpeed = 0.6,

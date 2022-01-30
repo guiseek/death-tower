@@ -4,7 +4,6 @@ const jumpingdown = '../assets/player/burn/state=jumping-down.png';
 const running = '../assets/player/burn/state=running.png';
 const walking = '../assets/player/burn/state=walking.png';
 
-
 export const FRAMES_CONFIG_VALUE = [
   [standing, 'standing', 0, false],
   [standing, 'standing', 1, true],
@@ -22,4 +21,4 @@ export const FRAMES_CONFIG_VALUE = [
   [walking, 'runningLeft', 2, false],
   [walking, 'runningLeft', 3, false],
   [walking, 'runningRight', 3, true],
-]
+];

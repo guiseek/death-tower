@@ -41,9 +41,7 @@ export class PlayerState extends State<Player> {
     this._subscribers.push(timerInterval$.subscribe(() => this.update()));
 
     const timer$ = timer(time * 1000);
-    this._subscribers.push(
-      timer$.pipe(take(1)).subscribe(() => this.pause())
-    );
+    this._subscribers.push(timer$.pipe(take(1)).subscribe(() => this.pause()));
   }
 
   restart() {

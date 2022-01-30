@@ -147,12 +147,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((code) => (this.code = code));
 
     this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-      console.log( 'paused', paused);
-
-      if (paused) {
-        // this.player.restart();
-        scream.play();
-      }
+      if (paused) scream.play();
     });
 
     this.player.seconds$
@@ -315,7 +310,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    if (this.config.state.paused) {
+    if (!this.config.state.finished && this.config.state.paused) {
       drawText(this.config, 'Não foi desta vez...');
 
       if (this.config.state.titles.ready && this.config.input.jump) {
