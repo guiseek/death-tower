@@ -28,7 +28,6 @@ death-menu {
     }
   }
 
-
   /* Links dentro do menu dropdown */
   .dropdown-content a[death-menu-item] {
     color: var(--color-text);
@@ -40,7 +39,7 @@ death-menu {
   /* Efeitos de hover dos links */
   .dropdown-content a[death-menu-item] {
     text-decoration: none;
-    background-color: rgba(var(--color-bg), 0.9);
+    background-color: rgba(var(--color-bg), 0.8);
 
     &.active,
     &:hover {
@@ -53,8 +52,22 @@ death-menu {
     display: block;
   }
 
+  .dropbtn {
+    display: flex;
+    align-items: center;
+    svg {
+      fill: #ccc;
+      transform: rotate(180deg);
+      transition: transform 0.2s ease-in-out;
+    }
+  }
+
   /* Muda a cor de background do botão quando o dropdown é apresentado */
   &:hover .dropbtn {
     background-color: transparent;
+
+    svg {
+      fill: white;
+    }
   }
 }
