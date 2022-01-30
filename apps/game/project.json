@@ -15,7 +15,7 @@
         "tsConfig": "apps/game/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/game/src/favicon.ico",
+          "apps/game/src/manifest.webmanifest",
           "apps/game/src/assets",
           "apps/game/src/CNAME"
         ],

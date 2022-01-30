@@ -80,8 +80,8 @@ export class PlayerState extends State<Player> {
     }
   }
 
-  up(value: number) {
-    this.setState({ score: this.state.score + value });
+  check(score: number) {
+    this.setState({ score });
   }
 
   update() {
@@ -94,7 +94,7 @@ export class PlayerState extends State<Player> {
     this.setState({ seconds, gameover: false });
   }
 
-  patchValue(state: Partial<Player>) {
+  patch(state: Partial<Player>) {
     this.setState(state);
   }
 

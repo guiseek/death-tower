@@ -180,9 +180,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.loadMap();
 
-    /**
-     * Atualiza plataformas na torre
-     */
+    /* Atualiza plataformas na torre */
     this.game.platforms$
       .pipe(takeUntil(this.destroy))
       .subscribe((platforms) => {
@@ -190,10 +188,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
           if (!this.config.platforms.length) {
             this.config.state.lastPlatform = platforms[0];
 
-            /**
-             * Como ainda não haviam plataformas
-             * inicializa processo de renderização
-             */
+            /** Como ainda não haviam plataformas
+             * inicializa processo de renderização */
             this.drawCanvas();
           }
 
@@ -218,18 +214,14 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       loadCustomConfig({ doors: [] })
     );
 
-    /**
-     * Reinicia o jogo e coloca o player
-     * novamente na primeira plataforma
-     */
+    /** Reinicia o jogo e coloca o player
+     * novamente na primeira plataforma */
     if (!this.config.savedState) {
       this.config.savedState = parsify(this.config.state);
     }
 
-    /**
-     * Carrega as imagens como frames
-     * sequenciais com estados do player
-     */
+    /** Carrega as imagens como frames
+     * sequenciais com estados do player */
     this.playerFrames.forEach(([src, type, index, flipped]) => {
       loadImage(this.config, src, type, index, flipped);
     });
@@ -316,7 +308,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
-        this.player.patchValue(this.config.state);
+        this.player.patch(this.config.state);
       }
     }
 
@@ -325,7 +317,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.config.state.titles.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
-        this.player.patchValue(this.config.state);
+        this.player.patch(this.config.state);
       }
     }
 
@@ -333,6 +325,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doCalculations() {
+
     if (this.config.input.left) {
       this.config.state.player.speed += this.config.settings.acceleration;
     } else if (this.config.input.right) {
@@ -518,9 +511,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   updateScore(platform: Platform) {
     const speed = this.config.state.player.speed * -1 * 1000;
     const score = parseInt(`${platform.n * speed}`, 10);
-
-    this.config.state.score = score;
-    this.player.patchValue({ score });
+    this.player.check(score);
   }
 
   async share() {
