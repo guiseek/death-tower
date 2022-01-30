@@ -1,4 +1,4 @@
-import { Coord, Level } from '@death-tower/core/interfaces';
+import { Coord, Level, Range } from '@death-tower/core/interfaces';
 import { Platform } from '@death-tower/core/util-map';
 import { UseCase } from './usecase';
 import { TowerLevelRepository } from '@death-tower/stage/data-access';
@@ -13,6 +13,9 @@ interface LevelInput {
 interface LevelOutput {
   coords: Coord[];
   level: string;
+  speed: Range;
+  jump: number;
+  acceleration: number;
   platforms: Platform[];
   code: number | null;
 }
@@ -30,6 +33,10 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
       map((levels) => {
         let level = levels.find(predicate);
         if (!level) level = levels[0];
+
+        const speed = level.speed;
+        const jump = level.jump;
+        const acceleration = level.acceleration;
 
         const challengeCoords = queryParams
           ? this.challengeMapper.mapFrom(queryParams)
@@ -49,7 +56,7 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
           ({ x, y }: Coord, i: number) => new Platform(x, y, i)
         );
 
-        return { coords, level, platforms, code };
+        return { coords, speed, jump, acceleration, level, platforms, code };
       })
     );
   }
@@ -74,10 +81,18 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
     };
 
     return new Array(length).fill({ x, y }).map(() => {
-      x = x === 0 ? 1600 : between(x - level.x.min, x - level.x.max);
+      x =
+        x === 0
+          ? 1600
+          : between(x - level.platforms.x.min, x - level.platforms.x.max);
 
       y =
-        y === 0 ? 600 : between(y - (level.y.min - 20), y - level.y.max * 2.5);
+        y === 0
+          ? 600
+          : between(
+              y - (level.platforms.y.min - 20),
+              y - level.platforms.y.max * 2.5
+            );
 
       return { x, y };
     });

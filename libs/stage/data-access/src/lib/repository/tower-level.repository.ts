@@ -5,32 +5,57 @@ const LEVELS: Level[] = [
   {
     id: 'training',
     name: 'Treino',
-    x: { min: 15, max: 20 },
-    y: { min: 15, max: 20 },
+    platforms: {
+      x: { min: 15, max: 20 },
+      y: { min: 15, max: 20 },
+    },
+    jump: 0.6,
+    acceleration: 0.02,
+    speed: { min: 0.01, max: 0.06 },
   },
   {
     id: 'easy',
     name: 'Fácil',
-    x: { min: 30, max: 40 },
-    y: { min: 30, max: 30 },
+    platforms: {
+      x: { min: 30, max: 40 },
+      y: { min: 30, max: 30 },
+    },
+    jump: 0.7,
+    acceleration: 0.03,
+    speed: { min: 0.01, max: 0.09 },
   },
   {
     id: 'medium',
     name: 'Médio',
-    x: { min: 20, max: 45 },
-    y: { min: 20, max: 35 },
+    platforms: {
+      x: { min: 20, max: 45 },
+      y: { min: 20, max: 35 },
+    },
+    jump: 0.8,
+    acceleration: 0.04,
+    speed: { min: 0.01, max: 0.12 },
   },
   {
     id: 'hard',
     name: 'Difícil',
-    x: { min: 15, max: 58 },
-    y: { min: 15, max: 40 },
+    platforms: {
+      x: { min: 15, max: 58 },
+      y: { min: 15, max: 40 },
+    },
+    jump: 0.9,
+    acceleration: 0.05,
+    speed: { min: 0.01, max: 0.15 },
   },
   {
     id: 'challenge',
     name: 'Desafio',
-    x: { min: 0, max: 0 },
-    y: { min: 0, max: 0 },
+    platforms: {
+      x: { min: 0, max: 0 },
+      y: { min: 0, max: 0 },
+    },
+    jump: 1,
+    acceleration: 0.06,
+    speed: { min: 0.01, max: 0.18 },
   },
 ];
 

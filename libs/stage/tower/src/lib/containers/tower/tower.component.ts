@@ -178,6 +178,17 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.loadMap();
 
+    this.game.level$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((level) => {
+        if (this.config.settings && level) {
+          this.config.settings.minSpeed = level.speed.min;
+          this.config.settings.maxSpeed = level.speed.max;
+          this.config.settings.jump.maxSpeed = level.jump;
+          this.config.settings.acceleration = level.acceleration;
+        }
+      });
+
     /* Atualiza plataformas na torre */
     this.game.platforms$
       .pipe(takeUntil(this.destroy))

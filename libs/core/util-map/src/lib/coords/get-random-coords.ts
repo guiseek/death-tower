@@ -9,9 +9,9 @@ export function getRandomCoords(level: Level, length = 80) {
   };
 
   return new Array(length).fill({ x, y }).map(() => {
-    x = x === 0 ? 1600 : between(x - level.x.min, x - level.x.max);
+    x = x === 0 ? 1600 : between(x - level.platforms.x.min, x - level.platforms.x.max);
 
-    y = y === 0 ? 600 : between(y - (level.y.min - 20), y - level.y.max * 2.5);
+    y = y === 0 ? 600 : between(y - (level.platforms.y.min - 20), y - level.platforms.y.max * 2.5);
 
     return { x, y };
   });
