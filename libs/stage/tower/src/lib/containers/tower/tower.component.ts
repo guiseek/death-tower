@@ -181,6 +181,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.game.level$
       .pipe(takeUntil(this.destroy))
       .subscribe((level) => {
+
         if (this.config.settings && level) {
           this.config.settings.minSpeed = level.speed.min;
           this.config.settings.maxSpeed = level.speed.max;
