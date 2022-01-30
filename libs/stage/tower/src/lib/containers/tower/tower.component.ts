@@ -40,11 +40,11 @@ import {
   drawText,
   drawDoors,
   OffScreen,
-  drawWinner,
   drawBricks,
   drawPlayer,
   drawShadows,
   drawPlatforms,
+  drawScore,
 } from '@death-tower/core/util-map';
 
 import { GameState, PlayerState } from '@death-tower/stage/state';
@@ -93,6 +93,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
+  time = 0;
   level = '';
   code: number | null = null;
 
@@ -141,20 +142,22 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.onRouting(this.route.snapshot);
       });
 
-    this.player.gameover$
-      .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.player.restart());
-
     this.game.code$
       .pipe(takeUntil(this.destroy))
       .subscribe((code) => (this.code = code));
 
     this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
+      console.log( 'paused', paused);
+
       if (paused) {
-        this.player.restart();
+        // this.player.restart();
         scream.play();
       }
     });
+
+    this.player.seconds$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((seconds) => (this.time = seconds));
 
     this.player.finished$
       .pipe(takeUntil(this.destroy))
@@ -280,7 +283,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.config.state.dt = now - (this.config.state.time || now);
     this.config.state.time = now;
 
-    if (!this.config.state.paused) {
+    if (!this.config.state.paused && !this.config.state.finished) {
       this.doCalculations();
     }
 
@@ -304,7 +307,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!this.config.state.paused && this.config.state.finished) {
-      drawWinner(this.config, this.code);
+      drawScore(this.config, this.time);
 
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
@@ -325,7 +328,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doCalculations() {
-
     if (this.config.input.left) {
       this.config.state.player.speed += this.config.settings.acceleration;
     } else if (this.config.input.right) {

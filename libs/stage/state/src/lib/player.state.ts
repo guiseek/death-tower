@@ -8,7 +8,6 @@ interface Player {
   jumpingUp: boolean;
   jumpingDown: boolean;
   finished: boolean;
-  gameover: boolean;
 }
 
 const initialState: Player = Object.freeze({
@@ -18,8 +17,7 @@ const initialState: Player = Object.freeze({
   jumpingUp: false,
   jumpingDown: false,
   finished: false,
-  gameover: false,
-})
+});
 
 export class PlayerState extends State<Player> {
   state$ = this.select((state) => state);
@@ -29,40 +27,35 @@ export class PlayerState extends State<Player> {
   jumpingUp$ = this.select((state) => state.jumpingUp);
   jumpingDown$ = this.select((state) => state.jumpingDown);
   finished$ = this.select((state) => state.finished);
-  gameover$ = this.select((state) => state.gameover);
 
-  private _timerInterval: Subscription | null = null;
+  private _subscribers: Subscription[] = [];
 
   constructor() {
     super(initialState);
   }
 
   start(time = initialState.seconds) {
-    if (this._timerInterval) {
-      this._timerInterval.unsubscribe();
-    }
+    this.unsubscribe();
 
     const timerInterval$ = interval(1000).pipe(take(time));
-    this._timerInterval = timerInterval$.subscribe(() => this.update());
+    this._subscribers.push(timerInterval$.subscribe(() => this.update()));
 
     const timer$ = timer(time * 1000);
-    timer$.pipe(take(1)).subscribe(() => this.gameover());
-  }
-
-  continue() {
-    this.setState({ paused: false, gameover: false });
+    this._subscribers.push(
+      timer$.pipe(take(1)).subscribe(() => this.pause())
+    );
   }
 
   restart() {
+    this.unsubscribe();
+
     this.setState(initialState);
   }
 
   pause() {
     this.setState({ paused: true });
 
-    if (this._timerInterval) {
-      this._timerInterval.unsubscribe();
-    }
+    this.unsubscribe();
   }
 
   jump(dir: 'up' | 'down' = 'up') {
@@ -75,9 +68,7 @@ export class PlayerState extends State<Player> {
   finish() {
     this.setState({ finished: true });
 
-    if (this._timerInterval) {
-      this._timerInterval.unsubscribe();
-    }
+    this.unsubscribe();
   }
 
   check(score: number) {
@@ -91,14 +82,17 @@ export class PlayerState extends State<Player> {
   }
 
   reset(seconds = initialState.seconds) {
-    this.setState({ seconds, gameover: false });
+    this.setState({ seconds });
   }
 
   patch(state: Partial<Player>) {
     this.setState(state);
   }
 
-  gameover() {
-    this.setState({ gameover: true });
+  private unsubscribe() {
+    while (this._subscribers.length) {
+      const sub = this._subscribers.pop();
+      if (sub) sub.unsubscribe();
+    }
   }
 }

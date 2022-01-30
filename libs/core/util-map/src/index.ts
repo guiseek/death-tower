@@ -13,6 +13,7 @@ export * from './lib/draw/shadows';
 export * from './lib/draw/titles';
 export * from './lib/draw/text';
 export * from './lib/draw/winner';
+export * from './lib/draw/score';
 export * from './lib/draw/loser';
 export * from './lib/draw/player';
 export * from './lib/draw/polygon';

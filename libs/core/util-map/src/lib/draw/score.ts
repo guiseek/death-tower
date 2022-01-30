@@ -1,0 +1,39 @@
+import { Config } from '@death-tower/core/interfaces';
+import { easing } from '../effects/easing';
+
+export function drawScore(config: Config, time: number) {
+  if (config.state.dt && config.state.winner.opacity < 100) {
+    config.state.winner.opacity += Math.floor(config.state.dt * 0.2);
+  }
+
+  if (config.state.winner.opacity > 100) config.state.winner.opacity = 100;
+
+  if (config.ctx && config.canvas) {
+    config.ctx.fillStyle =
+      'rgba(10, 10, 10, ' + config.state.winner.opacity / 100 + ')';
+    config.ctx.rect(0, 0, config.canvas.width, config.canvas.height);
+    config.ctx.fill();
+
+    config.ctx.fillStyle =
+      'rgba(6, 231, 65, ' + config.state.winner.opacity / 100 + ')';
+    config.ctx.font = "64px 'Germania One', cursive";
+    config.ctx.fillText(
+      config.state.winner.text,
+      600,
+      440 - easing(config.state.winner.opacity / 100) * 40
+    );
+
+    config.ctx.fillStyle =
+      'rgba(255, 255, 255, ' + config.state.winner.opacity / 100 + ')';
+    config.ctx.font = "36px 'Germania One', cursive";
+    config.ctx.fillText(
+      `Restando ${time} segundos...`,
+      600,
+      520 - easing(config.state.winner.opacity / 100) * 40
+    );
+  }
+
+  if (config.state.winner.opacity == 100 && config.input.jump) {
+    config.state.winner.ready = true;
+  }
+}
