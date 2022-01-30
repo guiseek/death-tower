@@ -1,8 +1,6 @@
-import { PlayerAction } from '@death-tower/core/util-config';
+import { PlayerFrames } from '@death-tower/core/interfaces';
 import { InjectionToken } from '@angular/core';
 
-export type PlayerFramesConfig = [string, PlayerAction, number, boolean][];
-
-export const PLAYER_FRAMES_CONFIG = new InjectionToken<PlayerFramesConfig>(
+export const PLAYER_FRAMES_CONFIG = new InjectionToken<PlayerFrames>(
   'player-frames.config'
 );

@@ -1,9 +1,7 @@
 import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaMatcher } from '@angular/cdk/layout';
-
-import { GameState, PlayerState } from '@death-tower/stage/state';
-
 import {
   Router,
   NavigationEnd,
@@ -27,8 +25,8 @@ import {
   Config,
   Platform,
   ControlActionEvent,
+  PlayerFrames,
 } from '@death-tower/core/interfaces';
-
 import {
   parsify,
   loadImage,
@@ -36,7 +34,6 @@ import {
   loadCustomConfig,
   loadDefaultConfig,
 } from '@death-tower/core/util-config';
-
 import {
   Door,
   drawSky,
@@ -50,11 +47,9 @@ import {
   drawPlatforms,
 } from '@death-tower/core/util-map';
 
-import {
-  PlayerFramesConfig,
-  PLAYER_FRAMES_CONFIG,
-} from '../../state-tower.config';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { GameState, PlayerState } from '@death-tower/stage/state';
+
+import { PLAYER_FRAMES_CONFIG } from '../../state-tower.config';
 
 const jumpingDown = new Audio(`/assets/sounds/jump-spring-down.mp3`);
 const jumpingUp = new Audio(`/assets/sounds/jump-spring-up.mp3`);
@@ -114,7 +109,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdkPlatform: CdkPlatform,
 
     @Inject(PLAYER_FRAMES_CONFIG)
-    readonly playerFrames: PlayerFramesConfig
+    readonly playerFrames: PlayerFrames
   ) {
     this._mobileQueryListener = () => cdr.detectChanges();
     this.mobileQuery = media.matchMedia('(max-width: 900px)');

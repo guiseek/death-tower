@@ -10,7 +10,7 @@
         "outputPath": "dist/apps/ranking",
         "main": "apps/ranking/src/main.ts",
         "tsConfig": "apps/ranking/tsconfig.app.json",
-        "assets": ["apps/ranking/src/assets"]
+        "assets": []
       },
       "configurations": {
         "production": {

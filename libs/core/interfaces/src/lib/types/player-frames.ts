@@ -1,3 +1,3 @@
-import { PlayerFrame } from '@death-tower/core/interfaces';
+import { PlayerFrame } from './player-frame';
 
 export type PlayerFrames = [string, PlayerFrame, number, boolean][];

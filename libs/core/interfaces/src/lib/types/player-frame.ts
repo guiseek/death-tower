@@ -1,4 +1,4 @@
-export type PlayerAction =
+export type PlayerFrame =
   | 'standing'
   | 'jumpingUp'
   | 'jumpingDown'

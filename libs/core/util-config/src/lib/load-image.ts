@@ -1,11 +1,10 @@
+import { Config, PlayerFrame } from '@death-tower/core/interfaces';
 import { OffScreen } from '@death-tower/core/util-map';
-import { Config } from '@death-tower/core/interfaces';
-import { PlayerAction } from './types/player-action';
 
 export function loadImage(
   config: Config,
   src: string,
-  type: PlayerAction,
+  type: PlayerFrame,
   index: number,
   flipped: boolean
 ) {

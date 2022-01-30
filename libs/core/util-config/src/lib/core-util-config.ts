@@ -1,9 +1,9 @@
 import { OffScreen, Door } from '@death-tower/core/util-map';
 import {
   DOMConfig,
+  PlayerFrame,
   CustomConfig,
   DefaultConfig,
-  AnimationFramesConfig,
 } from '@death-tower/core/interfaces';
 
 export const defaultConfig: DefaultConfig = {
@@ -152,7 +152,7 @@ export function loadDomConfig(
   container = createContainer(),
   canvas = createCanvas(),
   fallbackCanvas = createFallbackCanvas(),
-  animationFrames?: AnimationFramesConfig
+  animationFrames?: Record<PlayerFrame, HTMLCanvasElement[]>
 ): DOMConfig {
   const ctx = canvas.getContext('2d');
 
