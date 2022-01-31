@@ -1,7 +1,7 @@
 import { Config, PlayerFrame } from '@death-tower/core/interfaces';
-import { OffScreen } from '@death-tower/core/util-map';
+import { OffScreen } from '../offscreen';
 
-export function loadImage(
+export function loadPlayer(
   config: Config,
   src: string,
   type: PlayerFrame,

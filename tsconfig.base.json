@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@death-tower/core/interfaces": ["libs/core/interfaces/src/index.ts"],
-      "@death-tower/core/util-config": ["libs/core/util-config/src/index.ts"],
       "@death-tower/core/util-map": ["libs/core/util-map/src/index.ts"],
       "@death-tower/stage/data-access": ["libs/stage/data-access/src/index.ts"],
       "@death-tower/stage/domain": ["libs/stage/domain/src/index.ts"],

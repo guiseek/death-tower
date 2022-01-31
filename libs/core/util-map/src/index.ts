@@ -21,6 +21,8 @@ export * from './lib/draw/sky';
 export * from './lib/effects/easing';
 export * from './lib/factories/brick';
 export * from './lib/points/get-circle-point';
+export * from './lib/utilities/parsify';
+export * from './lib/images/load-player';
 export * from './lib/get-box';
 export * from './lib/offscreen';
 export * from './lib/platform';
