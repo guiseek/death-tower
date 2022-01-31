@@ -1,4 +1,4 @@
-import { TowerLevelRepository } from '@death-tower/stage/data-access';
+import { TowerLevelRepository } from '../repository/tower-level.repository';
 import { Coord, Platform } from '@death-tower/core/util-map';
 import { LoadLevelUseCase } from '@death-tower/stage/domain';
 import { Level, Range } from '@death-tower/core/interfaces';

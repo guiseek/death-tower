@@ -45,7 +45,7 @@ import {
   drawScore,
 } from '@death-tower/core/util-map';
 
-import { GameState, PlayerState } from '@death-tower/stage/state';
+import { GameState, PlayerState } from '@death-tower/stage/data-access';
 
 import {
   DEFAULT_CONFIG,
