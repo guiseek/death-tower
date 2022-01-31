@@ -4,9 +4,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
-import { PLAYER_FRAMES_CONFIG } from '@death-tower/stage/tower';
+import {
+  CUSTOM_CONFIG,
+  DEFAULT_CONFIG,
+  PLAYER_FRAMES_CONFIG,
+} from '@death-tower/stage/tower';
 
-import { FRAMES_CONFIG_VALUE } from './config/animation-frames';
+import {
+  CUSTOM_CONFIG_VALUE,
+  DEFAULT_CONFIG_VALUE,
+  FRAMES_CONFIG_VALUE,
+} from './config/animation-frames';
 
 import { AppComponent } from './app.component';
 
@@ -30,6 +38,14 @@ import { AppComponent } from './app.component';
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    {
+      provide: DEFAULT_CONFIG,
+      useValue: DEFAULT_CONFIG_VALUE,
+    },
+    {
+      provide: CUSTOM_CONFIG,
+      useValue: CUSTOM_CONFIG_VALUE,
+    },
     {
       provide: PLAYER_FRAMES_CONFIG,
       useValue: FRAMES_CONFIG_VALUE,

@@ -26,20 +26,18 @@ import {
   Platform,
   ControlActionEvent,
   PlayerFrames,
+  DefaultConfig,
+  CustomConfig,
+  DOMConfig,
 } from '@death-tower/core/interfaces';
 import {
-  parsify,
-  loadImage,
-  loadDomConfig,
-  loadCustomConfig,
-  loadDefaultConfig,
-} from '@death-tower/core/util-config';
-import {
   Door,
+  parsify,
   drawSky,
   drawText,
   drawDoors,
   OffScreen,
+  loadPlayer,
   drawBricks,
   drawPlayer,
   drawShadows,
@@ -47,9 +45,13 @@ import {
   drawScore,
 } from '@death-tower/core/util-map';
 
-import { GameState, PlayerState } from '@death-tower/stage/state';
+import { GameState, PlayerState } from '@death-tower/stage/data-access';
 
-import { PLAYER_FRAMES_CONFIG } from '../../state-tower.config';
+import {
+  DEFAULT_CONFIG,
+  CUSTOM_CONFIG,
+  PLAYER_FRAMES_CONFIG,
+} from '../../state-tower.config';
 
 const jumpingDown = new Audio(`/assets/sounds/jump-spring-down.mp3`);
 const jumpingUp = new Audio(`/assets/sounds/jump-spring-up.mp3`);
@@ -108,6 +110,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
+
+    @Inject(DEFAULT_CONFIG)
+    readonly defaultConfig: DefaultConfig,
+
+    @Inject(CUSTOM_CONFIG)
+    readonly customConfig: CustomConfig,
 
     @Inject(PLAYER_FRAMES_CONFIG)
     readonly playerFrames: PlayerFrames
@@ -178,17 +186,14 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.loadMap();
 
-    this.game.level$
-      .pipe(takeUntil(this.destroy))
-      .subscribe((level) => {
-
-        if (this.config.settings && level) {
-          this.config.settings.minSpeed = level.speed.min;
-          this.config.settings.maxSpeed = level.speed.max;
-          this.config.settings.jump.maxSpeed = level.jump;
-          this.config.settings.acceleration = level.acceleration;
-        }
-      });
+    this.game.level$.pipe(takeUntil(this.destroy)).subscribe((level) => {
+      if (this.config.settings && level) {
+        this.config.settings.minSpeed = level.speed.min;
+        this.config.settings.maxSpeed = level.speed.max;
+        this.config.settings.jump.maxSpeed = level.jump;
+        this.config.settings.acceleration = level.acceleration;
+      }
+    });
 
     /* Atualiza plataformas na torre */
     this.game.platforms$
@@ -216,13 +221,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     const container = this.container.nativeElement;
     const game = this.canvas.nativeElement;
 
-    const { canvas } = new OffScreen(10, 10);
-
-    this.config = Object.assign(
-      loadDefaultConfig(),
-      loadDomConfig(container, game, canvas),
-      loadCustomConfig({ doors: [] })
-    );
+    this.config = this.loadConfig(container, game);
 
     /** Reinicia o jogo e coloca o player
      * novamente na primeira plataforma */
@@ -233,8 +232,53 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     /** Carrega as imagens como frames
      * sequenciais com estados do player */
     this.playerFrames.forEach(([src, type, index, flipped]) => {
-      loadImage(this.config, src, type, index, flipped);
+      loadPlayer(this.config, src, type, index, flipped);
     });
+  }
+
+  loadConfig(container: HTMLElement, game: HTMLCanvasElement) {
+    const { canvas } = new OffScreen(10, 10);
+
+    const initialDomConfig = this.loadDomConfig(container, game, canvas);
+
+    return Object.assign(
+      this.defaultConfig,
+      this.customConfig,
+      initialDomConfig
+    );
+  }
+
+  loadDomConfig(
+    container: HTMLElement,
+    canvas: HTMLCanvasElement,
+    fallbackCanvas: HTMLCanvasElement
+  ): DOMConfig {
+    const ctx = canvas.getContext('2d');
+    const rect = container.getBoundingClientRect();
+
+    return {
+      container,
+      canvas,
+      ctx,
+      rect,
+      animationFrames: {
+        standing: [fallbackCanvas, fallbackCanvas],
+        jumpingUp: [fallbackCanvas, fallbackCanvas],
+        jumpingDown: [fallbackCanvas, fallbackCanvas],
+        runningLeft: [
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+        ],
+        runningRight: [
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+        ],
+      },
+    };
   }
 
   addDoors(lastPlatform: Platform) {

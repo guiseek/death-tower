@@ -2,13 +2,11 @@
   "version": 2,
   "projects": {
     "core-interfaces": "libs/core/interfaces",
-    "core-util-config": "libs/core/util-config",
     "core-util-map": "libs/core/util-map",
     "game": "apps/game",
     "ranking": "apps/ranking",
     "stage-data-access": "libs/stage/data-access",
     "stage-domain": "libs/stage/domain",
-    "stage-state": "libs/stage/state",
     "stage-tower": "libs/stage/tower"
   }
 }
