@@ -19,8 +19,9 @@ import { SettingsComponent } from './components/settings/settings.component';
 
 import { TipsService } from './components/tips/tips.service';
 import { SettingsService } from './components/settings/settings.service';
-import { TowerLevelRepository } from '@death-tower/stage/data-access';
 import { GameState, PlayerState } from '@death-tower/stage/data-access';
+import { LevelDataRepository } from '@death-tower/stage/data-access';
+import { LevelRepository } from '@death-tower/stage/domain';
 
 @NgModule({
   imports: [
@@ -53,8 +54,8 @@ import { GameState, PlayerState } from '@death-tower/stage/data-access';
   ],
   providers: [
     {
-      provide: TowerLevelRepository,
-      useClass: TowerLevelRepository,
+      provide: LevelRepository,
+      useClass: LevelDataRepository,
     },
     {
       provide: PlayerState,
@@ -62,10 +63,10 @@ import { GameState, PlayerState } from '@death-tower/stage/data-access';
     },
     {
       provide: GameState,
-      useFactory: (repo: TowerLevelRepository) => {
+      useFactory: (repo: LevelRepository) => {
         return new GameState(repo);
       },
-      deps: [TowerLevelRepository],
+      deps: [LevelRepository],
     },
     SettingsService,
     TipsService,

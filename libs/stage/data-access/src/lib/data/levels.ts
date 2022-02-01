@@ -1,7 +1,6 @@
 import { Level } from '@death-tower/core/interfaces';
-import { BehaviorSubject, map } from 'rxjs';
 
-const LEVELS: Level[] = [
+export const LEVELS: Level[] = [
   {
     id: 'training',
     name: 'Treino',
@@ -58,18 +57,3 @@ const LEVELS: Level[] = [
     speed: { min: 0.01, max: 0.15 },
   },
 ];
-
-export class TowerLevelRepository {
-  private _levels = new BehaviorSubject<Level[]>(LEVELS);
-  private levels$ = this._levels.asObservable();
-
-  getAll() {
-    return this.levels$;
-  }
-
-  get(id: string) {
-    return this.levels$.pipe(
-      map((levels) => levels.find((level) => level.id === id))
-    );
-  }
-}
