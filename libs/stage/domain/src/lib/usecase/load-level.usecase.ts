@@ -1,8 +1,8 @@
 import { Coord, Level, Range } from '@death-tower/core/interfaces';
+import { LevelRepository } from '../repository/level.repository';
+import { ChallengeMapper } from '../mapper/challenge.mapper';
 import { Platform } from '@death-tower/core/util-map';
 import { UseCase } from './usecase';
-import { TowerLevelRepository } from '@death-tower/stage/data-access';
-import { ChallengeMapper } from '../mapper/challenge.mapper';
 import { map, take } from 'rxjs';
 
 interface LevelInput {
@@ -23,17 +23,12 @@ interface LevelOutput {
 export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
   challengeMapper = new ChallengeMapper();
 
-  constructor(private repository: TowerLevelRepository) {}
+  constructor(private repository: LevelRepository) {}
 
   execute({ id, queryParams = '' }: LevelInput) {
-    const predicate = (l: Level) => l.id === id;
-
-    return this.repository.getAll().pipe(
+    return this.repository.getLevel(id).pipe(
       take(1),
-      map((levels) => {
-        let level = levels.find(predicate);
-        if (!level) level = levels[0];
-
+      map((level) => {
         const speed = level.speed;
         const jump = level.jump;
         const acceleration = level.acceleration;
