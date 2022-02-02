@@ -322,6 +322,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onTouchStart({ action }: ControlActionEvent): void {
     this.config.input[action] = true;
+    this.onKeyPress();
   }
 
   onTouchEnd({ action }: ControlActionEvent): void {
