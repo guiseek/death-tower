@@ -95,7 +95,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._config;
   }
 
-  time = 0;
+  timer = 0;
+  seconds = 0;
   level = '';
   code: number | null = null;
 
@@ -158,9 +159,13 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       if (paused) scream.play();
     });
 
-    this.player.seconds$
+    this.game.seconds$
       .pipe(takeUntil(this.destroy))
-      .subscribe((seconds) => (this.time = seconds));
+      .subscribe((seconds) => (this.seconds = seconds));
+
+    this.game.timer$
+      .pipe(takeUntil(this.destroy))
+      .subscribe((timer) => (this.timer = timer));
 
     this.player.finished$
       .pipe(takeUntil(this.destroy))
@@ -187,6 +192,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadMap();
 
     this.game.level$.pipe(takeUntil(this.destroy)).subscribe((level) => {
+      console.log('level: ', level);
+
       if (this.config.settings && level) {
         this.config.settings.minSpeed = level.speed.min;
         this.config.settings.maxSpeed = level.speed.max;
@@ -302,7 +309,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   onKeyPress() {
     if (!this.config.state.touched) {
       this.config.state.touched = true;
-      this.player.start();
+      this.game.start();
       thunder.play();
     }
   }
@@ -340,7 +347,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.config.state.lastPlatform) {
       this.config.state.lastPlatform = this.config.platforms[0];
-      this.player.reset();
     }
 
     if (
@@ -358,11 +364,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!this.config.state.paused && this.config.state.finished) {
-      drawScore(this.config, this.time);
+      drawScore(this.config, this.seconds - this.timer);
 
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
         this.player.patch(this.config.state);
+        this.config.state.touched = false;
       }
     }
 
@@ -372,6 +379,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.config.state.titles.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);
         this.player.patch(this.config.state);
+        this.config.state.touched = false;
       }
     }
 
@@ -475,11 +483,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.landedOut()) {
       this.config.state.paused = true;
-      this.player.pause();
+      this.game.unsubscribe();
     }
 
     if (this.isTheLastPlatform()) {
       this.config.state.finished = true;
+      this.game.unsubscribe();
       this.player.finish();
     }
   }

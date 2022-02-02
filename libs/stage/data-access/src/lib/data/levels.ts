@@ -11,6 +11,7 @@ export const LEVELS: Level[] = [
     jump: 0.6,
     acceleration: 0.04,
     speed: { min: 0.01, max: 0.12 },
+    seconds: 60,
   },
   {
     id: 'easy',
@@ -22,6 +23,7 @@ export const LEVELS: Level[] = [
     jump: 0.6,
     acceleration: 0.04,
     speed: { min: 0.01, max: 0.12 },
+    seconds: 60,
   },
   {
     id: 'medium',
@@ -33,6 +35,7 @@ export const LEVELS: Level[] = [
     jump: 0.7,
     acceleration: 0.04,
     speed: { min: 0.01, max: 0.12 },
+    seconds: 40,
   },
   {
     id: 'hard',
@@ -44,6 +47,7 @@ export const LEVELS: Level[] = [
     jump: 0.8,
     acceleration: 0.05,
     speed: { min: 0.01, max: 0.15 },
+    seconds: 20,
   },
   {
     id: 'challenge',
@@ -55,5 +59,6 @@ export const LEVELS: Level[] = [
     jump: 0.8,
     acceleration: 0.05,
     speed: { min: 0.01, max: 0.15 },
+    seconds: 0,
   },
 ];

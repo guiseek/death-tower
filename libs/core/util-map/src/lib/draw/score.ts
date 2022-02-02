@@ -20,7 +20,7 @@ export function drawScore(config: Config, time: number) {
     config.ctx.fillText(
       config.state.winner.text,
       600,
-      440 - easing(config.state.winner.opacity / 100) * 40
+      390 - easing(config.state.winner.opacity / 100) * 40
     );
 
     config.ctx.fillStyle =
@@ -29,7 +29,7 @@ export function drawScore(config: Config, time: number) {
     config.ctx.fillText(
       `Restando ${time} segundos...`,
       600,
-      520 - easing(config.state.winner.opacity / 100) * 40
+      470 - easing(config.state.winner.opacity / 100) * 40
     );
   }
 

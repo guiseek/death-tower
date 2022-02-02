@@ -7,6 +7,7 @@ export interface Level {
     x: Range;
     y: Range;
   }
+  seconds: number;
   speed: Range;
   jump: number;
   acceleration: number;

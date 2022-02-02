@@ -8,8 +8,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { TowerComponent } from './containers/tower/tower.component';
-import { ScoreComponent } from './components/score/score.component';
-import { TimerComponent } from './components/timer/timer.component';
 import { MenuItemComponent } from './components/menu/menu-item.component';
 import { ButtonComponent } from './components/button/button.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -22,6 +20,7 @@ import { SettingsService } from './components/settings/settings.service';
 import { GameState, PlayerState } from '@death-tower/stage/data-access';
 import { LevelDataRepository } from '@death-tower/stage/data-access';
 import { LevelRepository } from '@death-tower/stage/domain';
+import { ValueComponent } from './components/value/value.component';
 
 @NgModule({
   imports: [
@@ -44,13 +43,12 @@ import { LevelRepository } from '@death-tower/stage/domain';
   declarations: [
     TowerComponent,
     ButtonComponent,
-    TimerComponent,
-    ScoreComponent,
     MenuComponent,
     MenuItemComponent,
     SliderComponent,
     TipsComponent,
     SettingsComponent,
+    ValueComponent,
   ],
   providers: [
     {
