@@ -1,5 +1,6 @@
 export * from './lib/climp-speed';
 export * from './lib/coord';
+export * from './lib/sound-config';
 export * from './lib/custom-config';
 export * from './lib/default-config';
 export * from './lib/dom-config';

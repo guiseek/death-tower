@@ -25,11 +25,12 @@ import {
 import {
   Config,
   Platform,
-  ControlActionEvent,
+  SoundConfig,
   PlayerFrames,
+  DOMConfig,
   DefaultConfig,
   CustomConfig,
-  DOMConfig,
+  ControlActionEvent,
 } from '@death-tower/core/interfaces';
 import {
   Door,
@@ -49,16 +50,11 @@ import {
 import { GameState, PlayerState } from '@death-tower/stage/data-access';
 
 import {
+  SOUND_CONFIG,
   DEFAULT_CONFIG,
   CUSTOM_CONFIG,
   PLAYER_FRAMES_CONFIG,
-} from '../../state-tower.config';
-
-const jumpingDown = new Audio(`/assets/sounds/jump-spring-down.mp3`);
-const jumpingUp = new Audio(`/assets/sounds/jump-spring-up.mp3`);
-const thunder = new Audio(`/assets/sounds/thunder-rumble.mp3`);
-const yeaah = new Audio(`/assets/sounds/zumbi/yeaah.mp3`);
-const scream = new Audio(`/assets/sounds/scream.mp3`);
+} from '../../stage-tower.config';
 
 @Component({
   selector: 'death-tower',
@@ -115,6 +111,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly game: GameState,
     readonly player: PlayerState,
 
+    @Inject(SOUND_CONFIG)
+    readonly soundConfig: SoundConfig,
 
     @Inject(DEFAULT_CONFIG)
     readonly defaultConfig: DefaultConfig,
@@ -151,16 +149,14 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
         filter((event) => event instanceof NavigationEnd),
         takeUntil(this.destroy)
       )
-      .subscribe(() => {
-        this.onRouting(this.route.snapshot);
-      });
+      .subscribe(() => this.onRouting(this.route.snapshot));
 
     this.game.code$
       .pipe(takeUntil(this.destroy))
       .subscribe((code) => (this.code = code));
 
     this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-      if (paused) scream.play();
+      if (paused) this.soundConfig.scream.play();
     });
 
     this.game.seconds$
@@ -175,19 +171,25 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((finished) => {
         if (finished) {
-          yeaah.play();
+          this.soundConfig.yeaah.play();
+          if (this.level === 'training') {
+            const $timer = timer(2000).subscribe(() => {
+              this.router.navigate(['/easy'])
+              $timer.unsubscribe();
+            });
+          }
         }
       });
 
     this.player.jumpingUp$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-      if (jump && jumpingUp.paused) {
-        jumpingUp.play();
+      if (jump && this.soundConfig.jumpingUp.paused) {
+        this.soundConfig.jumpingUp.play();
       }
     });
 
     this.player.jumpingDown$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-      if (jump && jumpingDown.paused) {
-        jumpingDown.play();
+      if (jump && this.soundConfig.jumpingDown.paused) {
+        this.soundConfig.jumpingDown.play();
       }
     });
   }
@@ -196,7 +198,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadMap();
 
     this.game.level$.pipe(takeUntil(this.destroy)).subscribe((level) => {
-
       if (this.config.settings && level) {
         this.title.setTitle(`${level.name} - Death Tower`);
 
@@ -314,8 +315,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   onKeyPress() {
     if (!this.config.state.touched) {
       this.config.state.touched = true;
+      this.soundConfig.thunder.play();
       this.game.start();
-      thunder.play();
     }
   }
 
@@ -370,7 +371,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!this.config.state.paused && this.config.state.finished) {
-      drawScore(this.config, this.seconds - this.timer);
+      if (this.level === 'training') {
+        const color = { start: { r: 10, g: 10, b: 10 }, end: { r: 255, g: 255, b: 255 } }
+        drawText(this.config, 'Treino concluído!', color);
+      } else {
+        drawScore(this.config, this.seconds - this.timer, this.code);
+      }
 
       if (this.config.state.winner.ready && this.config.input.jump) {
         this.config.state = parsify(this.config.savedState);

@@ -1,7 +1,7 @@
 import { Config } from '@death-tower/core/interfaces';
 import { easing } from '../effects/easing';
 
-export function drawScore(config: Config, time: number) {
+export function drawScore(config: Config, time: number, code: number | null = null) {
   if (config.state.dt && config.state.winner.opacity < 100) {
     config.state.winner.opacity += Math.floor(config.state.dt * 0.2);
   }
@@ -31,6 +31,18 @@ export function drawScore(config: Config, time: number) {
       600,
       470 - easing(config.state.winner.opacity / 100) * 40
     );
+
+
+    if (code) {
+      config.ctx.fillStyle =
+        'rgba(255, 255, 255, ' + config.state.winner.opacity / 100 + ')';
+      config.ctx.font = "48px 'Germania One', cursive";
+      config.ctx.fillText(
+        `Desafio: #${code}`,
+        600,
+        550 - easing(config.state.winner.opacity / 100) * 40
+      );
+    }
   }
 
   if (config.state.winner.opacity == 100 && config.input.jump) {

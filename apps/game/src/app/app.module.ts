@@ -1,10 +1,11 @@
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import {
+  SOUND_CONFIG,
   CUSTOM_CONFIG,
   DEFAULT_CONFIG,
   PLAYER_FRAMES_CONFIG,
@@ -15,6 +16,8 @@ import {
   DEFAULT_CONFIG_VALUE,
   FRAMES_CONFIG_VALUE,
 } from './config/animation-frames';
+
+import { SOUND_CONFIG_VALUE } from './config/sound';
 
 import { AppComponent } from './app.component';
 
@@ -45,6 +48,10 @@ import { AppComponent } from './app.component';
     {
       provide: CUSTOM_CONFIG,
       useValue: CUSTOM_CONFIG_VALUE,
+    },
+    {
+      provide: SOUND_CONFIG,
+      useValue: SOUND_CONFIG_VALUE,
     },
     {
       provide: PLAYER_FRAMES_CONFIG,

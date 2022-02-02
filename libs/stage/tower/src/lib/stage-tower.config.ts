@@ -1,4 +1,5 @@
 import {
+  SoundConfig,
   CustomConfig,
   DefaultConfig,
   PlayerFrames,
@@ -9,6 +10,10 @@ export const CUSTOM_CONFIG = new InjectionToken<CustomConfig>('custom.config');
 
 export const DEFAULT_CONFIG = new InjectionToken<DefaultConfig>(
   'default.config'
+);
+
+export const SOUND_CONFIG = new InjectionToken<SoundConfig>(
+  'sound.config'
 );
 
 export const PLAYER_FRAMES_CONFIG = new InjectionToken<PlayerFrames>(
