@@ -2,6 +2,7 @@ import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { Title } from '@angular/platform-browser';
 import {
   Router,
   NavigationEnd,
@@ -105,12 +106,15 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
+    private title: Title,
     private router: Router,
-    readonly game: GameState,
-    readonly player: PlayerState,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdkPlatform: CdkPlatform,
+
+    readonly game: GameState,
+    readonly player: PlayerState,
+
 
     @Inject(DEFAULT_CONFIG)
     readonly defaultConfig: DefaultConfig,
@@ -192,9 +196,10 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadMap();
 
     this.game.level$.pipe(takeUntil(this.destroy)).subscribe((level) => {
-      console.log('level: ', level);
 
       if (this.config.settings && level) {
+        this.title.setTitle(`${level.name} - Death Tower`);
+
         this.config.settings.minSpeed = level.speed.min;
         this.config.settings.maxSpeed = level.speed.max;
         this.config.settings.jump.maxSpeed = level.jump;
