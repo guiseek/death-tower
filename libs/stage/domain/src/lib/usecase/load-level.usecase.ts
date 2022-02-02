@@ -11,14 +11,17 @@ interface LevelInput {
 }
 
 interface LevelOutput {
+  level: Level;
+  platforms: Platform[];
   coords: Coord[];
-  level: string;
   speed: Range;
   jump: number;
+  seconds: number;
   acceleration: number;
-  platforms: Platform[];
   code: number | null;
 }
+
+
 
 export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
   challengeMapper = new ChallengeMapper();
@@ -31,6 +34,7 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
       map((level) => {
         const speed = level.speed;
         const jump = level.jump;
+        const seconds = level.seconds;
         const acceleration = level.acceleration;
 
         const challengeCoords = queryParams
@@ -51,7 +55,7 @@ export class LoadLevelUseCase implements UseCase<LevelInput, LevelOutput> {
           ({ x, y }: Coord, i: number) => new Platform(x, y, i)
         );
 
-        return { coords, speed, jump, acceleration, level, platforms, code };
+        return { coords, speed, seconds, jump, acceleration, level, platforms, code };
       })
     );
   }

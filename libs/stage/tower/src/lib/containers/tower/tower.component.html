@@ -14,8 +14,9 @@
   </a>
 
   <section id="player">
-    <death-timer [value]="player.seconds$ | async"></death-timer>
-    <death-score [value]="player.score$ | async"></death-score>
+    <death-value [value]="game.timer$ | async" text="passados"></death-value>
+    <death-value [value]="game.seconds$ | async" text="totais"></death-value>
+    <death-value [value]="player.score$ | async" text="pontos"></death-value>
   </section>
 
   <span class="spacer"></span>
