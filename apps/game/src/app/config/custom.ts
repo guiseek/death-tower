@@ -60,6 +60,7 @@
       isGrounded: true,
       isJumping: false,
       isBoosting: false,
+      isFlipping: false,
       speed: 0,
       nextY: 0,
     },

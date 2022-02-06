@@ -104,9 +104,11 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   } = {
     last: null,
     current: null,
-  }
+  };
 
   readonly hideElement$;
+
+  lastUp = Date.now();
 
   constructor(
     media: MediaMatcher,
@@ -275,8 +277,25 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
         standing: [fallbackCanvas, fallbackCanvas],
         jumpingUp: [fallbackCanvas, fallbackCanvas],
         jumpingDown: [fallbackCanvas, fallbackCanvas],
+        jumpingTrick: [fallbackCanvas, fallbackCanvas],
         fall1: [fallbackCanvas, fallbackCanvas],
         fall2: [fallbackCanvas, fallbackCanvas],
+        frontFlip: [
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+          fallbackCanvas,
+        ],
         runningLeft: [
           fallbackCanvas,
           fallbackCanvas,
@@ -458,6 +477,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.config.input.jump || this.config.state.jump.isJumping) {
       if (this.config.state.jump.isGrounded) {
         this.player.jump('up');
+
+        if ((Date.now() - this.lastUp) < 6000) {
+          // console.log('isFlipping', Date.now() - this.lastUp);
+
+          this.config.state.jump.isFlipping = true;
+        }
 
         this.config.state.jump.isGrounded = false;
         this.config.state.jump.isJumping = true;

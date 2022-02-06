@@ -7,13 +7,20 @@ export function drawPlayer(config: Config) {
 
   if (config.ctx) {
     if (config.state.jump.isJumping) {
-
       if (config.state.jump.speed > 0) {
-        config.ctx.drawImage(
-          config.animationFrames.jumpingUp[config.state.player.dir],
-          drawX,
-          drawY
-        );
+        if (posY > 300 && posY < 900) {
+          config.ctx.drawImage(
+            config.animationFrames.jumpingUp[config.state.player.dir],
+            drawX,
+            drawY
+          );
+        } else {
+          config.ctx.drawImage(
+            config.animationFrames.jumpingTrick[config.state.player.dir],
+            drawX,
+            drawY
+          );
+        }
       } else if (posY > 450) {
         config.ctx.drawImage(
           config.animationFrames.fall1[config.state.player.dir],
