@@ -1,14 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
 import { ButtonComponent } from './button/button.component';
+import { MenuComponent } from './menu/menu.component';
+import { MenuItemComponent } from './menu/menu-item.component';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterModule
+  ],
   declarations: [
-    ButtonComponent
+    ButtonComponent,
+    MenuItemComponent,
+    MenuComponent
   ],
   exports: [
-    ButtonComponent
+    ButtonComponent,
+    MenuItemComponent,
+    MenuComponent
   ],
 })
 export class StageUiMapModule {}
