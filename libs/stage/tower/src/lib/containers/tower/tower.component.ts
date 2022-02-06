@@ -150,11 +150,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.level = level;
 
-    if (level !== '') {
-      this.radio.last = this.radio.current;
-      this.radio.current = this.radioConfig[level];
-    }
-
     this.game.loadLevel(level, coords);
   }
 
@@ -322,8 +317,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (!this.player.muted) {
         this.soundConfig.thunder.play();
-
-        this.handleRadio();
       }
     }
   }
@@ -343,17 +336,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.config.input[action] = false;
   }
 
-  handleRadio() {
-    if (this.radio) {
-      if (this.radio.last) {
-        this.radio.last.pause();
-      }
-      if (this.radio.current) {
-        this.radio.current.play();
-      }
-    }
-  }
-
   toggleFullscreen() {
     if (!this.inFullscreen) {
       document.documentElement.requestFullscreen();
@@ -365,16 +347,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleVolume() {
     if (!this.player.muted) {
       this.player.mute();
-
-      if (this.radio.current) {
-        this.radio.current.pause();
-      }
     } else {
       this.player.unmute();
-
-      if (this.radio.current) {
-        this.radio.current.play();
-      }
     }
   }
 

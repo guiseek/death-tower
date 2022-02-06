@@ -20,7 +20,8 @@
       "@death-tower/stage/data-access": ["libs/stage/data-access/src/index.ts"],
       "@death-tower/stage/domain": ["libs/stage/domain/src/index.ts"],
       "@death-tower/stage/tower": ["libs/stage/tower/src/index.ts"],
-      "@death-tower/stage/ui-map": ["libs/stage/ui-map/src/index.ts"]
+      "@death-tower/stage/ui-map": ["libs/stage/ui-map/src/index.ts"],
+      "@death-tower/stage/ui-radio": ["libs/stage/ui-radio/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

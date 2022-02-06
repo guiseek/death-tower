@@ -12,6 +12,7 @@ import {
 } from '@death-tower/stage/data-access';
 import { LevelRepository } from '@death-tower/stage/domain';
 import { StageUiMapModule } from '@death-tower/stage/ui-map';
+import { StageUiRadioModule } from '@death-tower/stage/ui-radio';
 
 import { TowerComponent } from './containers/tower/tower.component';
 
@@ -21,6 +22,7 @@ import { TowerComponent } from './containers/tower/tower.component';
     MatSnackBarModule,
 
     StageUiMapModule,
+    StageUiRadioModule,
 
     CommonModule,
     ReactiveFormsModule,
