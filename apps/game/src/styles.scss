@@ -25,10 +25,11 @@ $dark-theme: mat.define-dark-theme(
 
 :root {
   --font-heading: 'Germania One', cursive;
-  --font-body: 'Walter Turncoat', cursive;
+  --font-body: 'Roboto', sans-serif;
   --font-size: 1.6rem;
   --color-bg: 18, 18, 18;
   --color-text: 241, 241, 241;
+  --color-accent: 255, 255, 255;
   --color-active: 255, 255, 255;
 }
 

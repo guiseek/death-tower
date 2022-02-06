@@ -1,0 +1,40 @@
+:host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  section {
+    gap: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .mat-slider {
+      flex: 1;
+    }
+  }
+
+  .mat-fab,
+  .mat-mini-fab {
+    transition: opacity 200ms ease-in-out;
+  }
+
+  .mat-fab {
+    opacity: .4;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .mat-mini-fab {
+    opacity: .4;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    background-color: transparent;
+  }
+}
