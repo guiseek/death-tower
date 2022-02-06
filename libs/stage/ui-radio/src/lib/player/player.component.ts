@@ -72,8 +72,14 @@ export class PlayerComponent implements AfterViewInit {
     this.audio.src = this.songList[0].src;
     this.audio.dataset['id'] = `1`;
 
+    const prevRef = this.prevRef._elementRef;
+    this.prev = prevRef.nativeElement;
+
     const playRef = this.playRef._elementRef;
     this.play = playRef.nativeElement;
+
+    const nextRef = this.nextRef._elementRef;
+    this.next = nextRef.nativeElement;
 
     const muteRef = this.muteRef._elementRef;
     this.mute = muteRef.nativeElement;
@@ -96,6 +102,16 @@ export class PlayerComponent implements AfterViewInit {
     this.audio.dataset['id'] = `${nextSong.id}`;
     this.audio.src = nextSong.src;
     this.audio.play();
+    this.prev.blur();
+  }
+
+  onPlay() {
+    if (this.audio.paused) {
+      this.audio.play();
+    } else {
+      this.audio.pause();
+    }
+    this.play.blur();
   }
 
   onNext() {
@@ -113,29 +129,15 @@ export class PlayerComponent implements AfterViewInit {
     this.audio.dataset['id'] = `${nextSong.id}`;
     this.audio.src = nextSong.src;
     this.audio.play();
-  }
-
-  onChange(value: number | null) {
-    if (value) {
-      this.audio.currentTime = value;
-    } else {
-      this.audio.currentTime = 0;
-    }
-  }
-
-  onPlay() {
-    if (this.audio.paused) {
-      this.audio.play();
-    } else {
-      this.audio.pause();
-    }
-
-    this.play.blur();
+    this.next.blur();
   }
 
   onMute() {
-    this.mute.blur();
-
     this.audio.muted = !this.audio.muted;
+    this.mute.blur();
+  }
+
+  onChange(value: number | null) {
+    this.audio.currentTime = value ?? 0;
   }
 }

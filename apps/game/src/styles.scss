@@ -85,6 +85,10 @@ a.active {
     &.end {
       justify-content: flex-end;
     }
+
+    &.align-center {
+      align-items: center;
+    }
   }
 
   &-column {
@@ -92,6 +96,10 @@ a.active {
 
     &.end {
       align-items: flex-end;
+    }
+
+    &.align-center {
+      justify-content: center;
     }
   }
 

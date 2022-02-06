@@ -45,7 +45,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
-  private _size = 64;
+  private _size = 52;
 
   @Input() set size(value: number) {
     this._size = value;
