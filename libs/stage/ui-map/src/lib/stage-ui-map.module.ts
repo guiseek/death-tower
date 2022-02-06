@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from './button/button.component';
 import { MenuComponent } from './menu/menu.component';
 import { MenuItemComponent } from './menu/menu-item.component';
+import { ValueComponent } from './value/value.component';
 
 @NgModule({
   imports: [
@@ -14,12 +15,14 @@ import { MenuItemComponent } from './menu/menu-item.component';
   declarations: [
     ButtonComponent,
     MenuItemComponent,
-    MenuComponent
+    MenuComponent,
+    ValueComponent
   ],
   exports: [
     ButtonComponent,
     MenuItemComponent,
-    MenuComponent
+    MenuComponent,
+    ValueComponent
   ],
 })
 export class StageUiMapModule {}
