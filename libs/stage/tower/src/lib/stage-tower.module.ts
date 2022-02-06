@@ -3,31 +3,26 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { MatSliderModule } from '@angular/material/slider';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { TowerComponent } from './containers/tower/tower.component';
-import { MenuItemComponent } from './components/menu/menu-item.component';
-import { ButtonComponent } from './components/button/button.component';
-import { MenuComponent } from './components/menu/menu.component';
-import { SliderComponent } from './components/slider/slider.component';
-import { TipsComponent } from './components/tips/tips.component';
-import { SettingsComponent } from './components/settings/settings.component';
-
-import { TipsService } from './components/tips/tips.service';
-import { SettingsService } from './components/settings/settings.service';
-import { GameState, PlayerState } from '@death-tower/stage/data-access';
-import { LevelDataRepository } from '@death-tower/stage/data-access';
+import {
+  GameState,
+  PlayerState,
+  LevelDataRepository,
+} from '@death-tower/stage/data-access';
 import { LevelRepository } from '@death-tower/stage/domain';
-import { ValueComponent } from './components/value/value.component';
+import { StageUiMapModule } from '@death-tower/stage/ui-map';
+
+import { TowerComponent } from './containers/tower/tower.component';
+
 
 @NgModule({
   imports: [
-    CommonModule,
-    MatSliderModule,
-    MatDialogModule,
     MatSnackBarModule,
+
+    StageUiMapModule,
+
+    CommonModule,
     ReactiveFormsModule,
     RouterModule.forChild([
       {
@@ -42,13 +37,6 @@ import { ValueComponent } from './components/value/value.component';
   ],
   declarations: [
     TowerComponent,
-    ButtonComponent,
-    MenuComponent,
-    MenuItemComponent,
-    SliderComponent,
-    TipsComponent,
-    SettingsComponent,
-    ValueComponent,
   ],
   providers: [
     {
@@ -66,8 +54,6 @@ import { ValueComponent } from './components/value/value.component';
       },
       deps: [LevelRepository],
     },
-    SettingsService,
-    TipsService,
   ],
 })
 export class StageTowerModule {}

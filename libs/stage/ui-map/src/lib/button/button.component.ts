@@ -14,7 +14,7 @@ import {
 } from '@death-tower/core/interfaces';
 
 @Component({
-  selector: 'button[death-control],death-control',
+  selector: 'button[map-control],map-control',
   template: `<span><ng-content></ng-content></span>`,
   styles: [
     `
@@ -69,7 +69,7 @@ export class ButtonComponent {
   @HostListener('click', ['$event'])
   onClick(event: PointerEvent): void {
     this.touch.emit({ event, action: this.action, time: 'press' });
-    this.elRef.nativeElement.blur();
+    this._elRef.nativeElement.blur();
   }
 
   @HostListener('touchend', ['$event'])
@@ -77,5 +77,5 @@ export class ButtonComponent {
     this.touchEnd.emit({ event, action: this.action, time: 'hold' });
   }
 
-  constructor(private elRef: ElementRef<HTMLButtonElement>) {}
+  constructor(private _elRef: ElementRef<HTMLButtonElement>) {}
 }

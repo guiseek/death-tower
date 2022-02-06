@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'death-value',
+  selector: 'map-value',
   template: `
-    <h3>{{ value }}<small>s</small></h3>
+    <h3>{{ value }}<small *ngIf="withS">s</small></h3>
     <span>{{ text }}</span>
   `,
   styles: [
@@ -48,5 +48,6 @@ import { Component, Input } from '@angular/core';
 })
 export class ValueComponent {
   @Input() value: number | null = 0;
+  @Input() withS = false;
   @Input() text = '';
 }

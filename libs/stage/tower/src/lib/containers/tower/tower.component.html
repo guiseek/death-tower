@@ -14,26 +14,26 @@
   </a>
 
   <section id="player">
-    <death-value [value]="game.timer$ | async" text="passados"></death-value>
-    <death-value [value]="game.seconds$ | async" text="totais"></death-value>
-    <death-value [value]="player.score$ | async" text="pontos"></death-value>
+    <map-value [value]="game.timer$ | async" text="passados" [withS]="true"></map-value>
+    <map-value [value]="game.seconds$ | async" text="totais" [withS]="true"></map-value>
+    <map-value [value]="player.score$ | async" text="pontos"></map-value>
   </section>
 
   <span class="spacer"></span>
 
   <nav>
     <span>{{ (game.level$ | async)?.name }}</span>
-    <death-menu right>
+    <map-menu right>
       <button>Dificuldade</button>
-      <a death-menu-item routerLink="/training" routerLinkActive="active">treino</a>
-      <a death-menu-item routerLink="/easy" routerLinkActive="active">fácil</a>
-      <a death-menu-item routerLink="/medium" routerLinkActive="active"
+      <a map-menu-item routerLink="/training" routerLinkActive="active">treino</a>
+      <a map-menu-item routerLink="/easy" routerLinkActive="active">fácil</a>
+      <a map-menu-item routerLink="/medium" routerLinkActive="active"
         >médio</a
       >
-      <a death-menu-item routerLink="/hard" routerLinkActive="active"
+      <a map-menu-item routerLink="/hard" routerLinkActive="active"
         >difícil</a
       >
-    </death-menu>
+    </map-menu>
   </nav>
 </header>
 
@@ -45,7 +45,7 @@
   <nav>
     <div class="flex flex-column gap-16">
       <button
-        death-control
+        map-control
         action="fullscreen"
         aria-label="Tela cheia"
         (click)="toggleFullscreen()"
@@ -63,7 +63,7 @@
         </svg>
       </button>
       <button
-        death-control
+        map-control
         (click)="share()"
         [ngClass]="{ hidden: hideElement$ | async }"
       >
@@ -73,7 +73,7 @@
       </button>
 
       <button
-        death-control
+        map-control
         [size]="82"
         action="jump"
         class="only-mobile"
@@ -89,7 +89,7 @@
 
     <div class="only-mobile flex flex-row gap-16">
       <button
-        death-control
+        map-control
         [size]="82"
         action="left"
         aria-label="Ir para esquerda"
@@ -101,7 +101,7 @@
         </svg>
       </button>
       <button
-        death-control
+        map-control
         [size]="78"
         action="right"
         aria-label="Ir para direita"

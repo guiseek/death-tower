@@ -1,4 +1,4 @@
-death-menu {
+map-menu {
   .dropbtn button {
     background-color: transparent;
     padding: 16px;
@@ -23,13 +23,13 @@ death-menu {
   &[right] .dropdown-content {
     right: 0;
 
-    a[death-menu-item] {
+    a[map-menu-item] {
       text-align: right;
     }
   }
 
   /* Links dentro do menu dropdown */
-  .dropdown-content a[death-menu-item] {
+  .dropdown-content a[map-menu-item] {
     color: var(--color-text);
     padding: 12px 16px;
     text-decoration: none;
@@ -37,7 +37,7 @@ death-menu {
   }
 
   /* Efeitos de hover dos links */
-  .dropdown-content a[death-menu-item] {
+  .dropdown-content a[map-menu-item] {
     text-decoration: none;
     background-color: rgba(var(--color-bg), 0.8);
 

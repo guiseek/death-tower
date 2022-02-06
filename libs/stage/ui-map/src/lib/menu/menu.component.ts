@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 @Component({
-  selector: 'death-menu',
+  selector: 'map-menu',
   template: `
     <div class="dropbtn">
       <ng-content select="button"></ng-content>
@@ -21,11 +21,11 @@ import {
       </svg>
     </div>
     <div class="dropdown-content">
-      <ng-content select="[death-menu-item]"></ng-content>
+      <ng-content select="[map-menu-item]"></ng-content>
     </div>
   `,
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class MenuComponent {}
+export class MenuComponent { }

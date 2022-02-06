@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 @Component({
-  selector: 'a[death-menu-item],death-menu-item',
+  selector: 'a[map-menu-item],map-menu-item',
   template: `<ng-content></ng-content>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
