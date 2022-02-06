@@ -38,6 +38,13 @@ export class PlayerState extends State<Player> {
   }
 
   jump(dir: 'up' | 'down' = 'up') {
+    if (this.state.finished) {
+      this.setState({ finished: false });
+    }
+    if (this.state.paused) {
+      this.setState({ paused: false });
+    }
+
     this.setState({
       jumpingUp: dir === 'up',
       jumpingDown: dir === 'down',
@@ -46,6 +53,10 @@ export class PlayerState extends State<Player> {
 
   finish() {
     this.setState({ finished: true });
+  }
+
+  pause() {
+    this.setState({ paused: true });
   }
 
   check(score: number) {

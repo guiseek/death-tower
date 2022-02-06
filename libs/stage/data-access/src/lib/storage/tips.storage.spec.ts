@@ -1,7 +1,7 @@
-import { Tips } from './tips.storage';
+import { TipsStorage } from './tips.storage';
 
-describe('Tips', () => {
+describe('TipsStorage', () => {
   it('should create an instance', () => {
-    expect(new Tips()).toBeTruthy();
+    expect(new TipsStorage()).toBeTruthy();
   });
 });

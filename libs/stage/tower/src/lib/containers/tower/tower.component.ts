@@ -125,7 +125,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this._mobileQueryListener = () => cdr.detectChanges();
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
-    this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+    this.mobileQuery.addListener(this._mobileQueryListener);
 
     const idleTime$ = timer(0, 5000);
     const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
@@ -167,7 +167,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((finished) => {
         if (finished) {
-          // this.soundConfig.yeaah.play();
           if (this.level === 'training') {
             const $timer = timer(2000).subscribe(() => {
               this.router.navigate(['/easy']);
@@ -178,22 +177,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.player.listen(this.soundConfig, this.destroy);
-
-    // this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-    //   if (paused) this.soundConfig.scream.play();
-    // });
-
-    // this.player.jumpingUp$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-    //   if (jump && this.soundConfig.jumpingUp.paused) {
-    //     this.soundConfig.jumpingUp.play();
-    //   }
-    // });
-
-    // this.player.jumpingDown$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-    //   if (jump && this.soundConfig.jumpingDown.paused) {
-    //     this.soundConfig.jumpingDown.play();
-    //   }
-    // });
   }
 
   ngAfterViewInit(): void {
@@ -513,6 +496,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.landedOut()) {
       this.config.state.paused = true;
       this.game.unsubscribe();
+      this.player.pause();
     }
 
     if (this.isTheLastPlatform()) {
@@ -643,6 +627,6 @@ ${pos}`
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
-    this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
+    this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 }

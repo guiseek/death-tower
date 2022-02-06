@@ -1,8 +1,11 @@
 import {
   Component,
+  QueryList,
+  ContentChildren,
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { MenuItemComponent } from './menu-item.component';
 
 @Component({
   selector: 'map-menu',
@@ -28,4 +31,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class MenuComponent { }
+export class MenuComponent {
+  @ContentChildren(MenuItemComponent) items!: QueryList<MenuItemComponent>;
+}
