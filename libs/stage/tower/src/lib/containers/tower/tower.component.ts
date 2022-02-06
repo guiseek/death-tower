@@ -275,6 +275,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
         standing: [fallbackCanvas, fallbackCanvas],
         jumpingUp: [fallbackCanvas, fallbackCanvas],
         jumpingDown: [fallbackCanvas, fallbackCanvas],
+        fall1: [fallbackCanvas, fallbackCanvas],
+        fall2: [fallbackCanvas, fallbackCanvas],
         runningLeft: [
           fallbackCanvas,
           fallbackCanvas,

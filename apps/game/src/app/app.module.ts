@@ -13,13 +13,13 @@ import {
 } from '@death-tower/stage/tower';
 
 import {
+  SOUND_CONFIG_VALUE,
+  RADIO_CONFIG_VALUE,
   CUSTOM_CONFIG_VALUE,
   DEFAULT_CONFIG_VALUE,
   FRAMES_CONFIG_VALUE,
-} from './config/animation-frames';
+} from './config';
 
-import { SOUND_CONFIG_VALUE } from './config/sound';
-import { RADIO_CONFIG_VALUE } from './config/radio';
 
 import { AppComponent } from './app.component';
 

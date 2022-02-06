@@ -6,5 +6,4 @@ export interface DOMConfig {
   ctx: CanvasRenderingContext2D | null;
   rect: DOMRect | null;
   animationFrames: Record<PlayerFrame, HTMLCanvasElement[]>;
-  // animationFrames: AnimationFramesConfig;
 }

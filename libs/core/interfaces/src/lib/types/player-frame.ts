@@ -3,4 +3,6 @@ export type PlayerFrame =
   | 'jumpingUp'
   | 'jumpingDown'
   | 'runningLeft'
-  | 'runningRight';
+  | 'runningRight'
+  | 'fall1'
+  | 'fall2';
