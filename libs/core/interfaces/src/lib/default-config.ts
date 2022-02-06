@@ -1,4 +1,4 @@
-export type ControlAction = 'left' | 'right' | 'jump' | 'fullscreen';
+export type ControlAction = 'left' | 'right' | 'jump' | 'fullscreen' | 'volume';
 
 export type ControlType = 'button' | 'joystick' | 'keyboard';
 

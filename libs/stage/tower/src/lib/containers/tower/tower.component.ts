@@ -155,10 +155,6 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((code) => (this.code = code));
 
-    this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
-      if (paused) this.soundConfig.scream.play();
-    });
-
     this.game.seconds$
       .pipe(takeUntil(this.destroy))
       .subscribe((seconds) => (this.seconds = seconds));
@@ -171,27 +167,33 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((finished) => {
         if (finished) {
-          this.soundConfig.yeaah.play();
+          // this.soundConfig.yeaah.play();
           if (this.level === 'training') {
             const $timer = timer(2000).subscribe(() => {
-              this.router.navigate(['/easy'])
+              this.router.navigate(['/easy']);
               $timer.unsubscribe();
             });
           }
         }
       });
 
-    this.player.jumpingUp$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-      if (jump && this.soundConfig.jumpingUp.paused) {
-        this.soundConfig.jumpingUp.play();
-      }
-    });
+    this.player.listen(this.soundConfig, this.destroy);
 
-    this.player.jumpingDown$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
-      if (jump && this.soundConfig.jumpingDown.paused) {
-        this.soundConfig.jumpingDown.play();
-      }
-    });
+    // this.player.paused$.pipe(takeUntil(this.destroy)).subscribe((paused) => {
+    //   if (paused) this.soundConfig.scream.play();
+    // });
+
+    // this.player.jumpingUp$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
+    //   if (jump && this.soundConfig.jumpingUp.paused) {
+    //     this.soundConfig.jumpingUp.play();
+    //   }
+    // });
+
+    // this.player.jumpingDown$.pipe(takeUntil(this.destroy)).subscribe((jump) => {
+    //   if (jump && this.soundConfig.jumpingDown.paused) {
+    //     this.soundConfig.jumpingDown.play();
+    //   }
+    // });
   }
 
   ngAfterViewInit(): void {
@@ -315,8 +317,12 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   onKeyPress() {
     if (!this.config.state.touched) {
       this.config.state.touched = true;
-      this.soundConfig.thunder.play();
+
       this.game.start();
+
+      if (!this.player.muted) {
+        this.soundConfig.thunder.play();
+      }
     }
   }
 
@@ -340,6 +346,14 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       document.documentElement.requestFullscreen();
     } else {
       document.exitFullscreen();
+    }
+  }
+
+  toggleVolume() {
+    if (!this.player.muted) {
+      this.player.mute()
+    } else {
+      this.player.unmute()
     }
   }
 
@@ -372,7 +386,10 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.config.state.paused && this.config.state.finished) {
       if (this.level === 'training') {
-        const color = { start: { r: 10, g: 10, b: 10 }, end: { r: 255, g: 255, b: 255 } }
+        const color = {
+          start: { r: 10, g: 10, b: 10 },
+          end: { r: 255, g: 255, b: 255 },
+        };
         drawText(this.config, 'Treino concluído!', color);
       } else {
         drawScore(this.config, this.seconds - this.timer, this.code);
