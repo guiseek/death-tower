@@ -7,6 +7,14 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+import {
+  GameState,
+  PlayerState,
+  LevelDataRepository,
+} from '@death-tower/stage/data-access';
+import { LevelRepository } from '@death-tower/stage/domain';
+import { StageUiMapModule } from '@death-tower/stage/ui-map';
+
 import { TowerComponent } from './containers/tower/tower.component';
 import { MenuItemComponent } from './components/menu/menu-item.component';
 import { ButtonComponent } from './components/button/button.component';
@@ -17,17 +25,17 @@ import { SettingsComponent } from './components/settings/settings.component';
 
 import { TipsService } from './components/tips/tips.service';
 import { SettingsService } from './components/settings/settings.service';
-import { GameState, PlayerState } from '@death-tower/stage/data-access';
-import { LevelDataRepository } from '@death-tower/stage/data-access';
-import { LevelRepository } from '@death-tower/stage/domain';
 import { ValueComponent } from './components/value/value.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     MatSliderModule,
     MatDialogModule,
     MatSnackBarModule,
+
+    StageUiMapModule,
+
+    CommonModule,
     ReactiveFormsModule,
     RouterModule.forChild([
       {
