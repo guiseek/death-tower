@@ -31,6 +31,7 @@ import {
   DefaultConfig,
   CustomConfig,
   ControlActionEvent,
+  RadioConfig,
 } from '@death-tower/core/interfaces';
 import {
   Door,
@@ -54,6 +55,7 @@ import {
   DEFAULT_CONFIG,
   CUSTOM_CONFIG,
   PLAYER_FRAMES_CONFIG,
+  RADIO_CONFIG,
 } from '../../stage-tower.config';
 
 @Component({
@@ -96,6 +98,13 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   seconds = 0;
   level = '';
   code: number | null = null;
+  radio: {
+    last: HTMLAudioElement | null;
+    current: HTMLAudioElement | null;
+  } = {
+    last: null,
+    current: null,
+  }
 
   readonly hideElement$;
 
@@ -110,6 +119,9 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     readonly game: GameState,
     readonly player: PlayerState,
+
+    @Inject(RADIO_CONFIG)
+    readonly radioConfig: RadioConfig,
 
     @Inject(SOUND_CONFIG)
     readonly soundConfig: SoundConfig,
@@ -137,6 +149,11 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     const { coords } = queryParams;
 
     this.level = level;
+
+    if (level !== '') {
+      this.radio.last = this.radio.current;
+      this.radio.current = this.radioConfig[level];
+    }
 
     this.game.loadLevel(level, coords);
   }
@@ -305,6 +322,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (!this.player.muted) {
         this.soundConfig.thunder.play();
+
+        this.handleRadio();
       }
     }
   }
@@ -324,6 +343,17 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.config.input[action] = false;
   }
 
+  handleRadio() {
+    if (this.radio) {
+      if (this.radio.last) {
+        this.radio.last.pause();
+      }
+      if (this.radio.current) {
+        this.radio.current.play();
+      }
+    }
+  }
+
   toggleFullscreen() {
     if (!this.inFullscreen) {
       document.documentElement.requestFullscreen();
@@ -334,9 +364,17 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleVolume() {
     if (!this.player.muted) {
-      this.player.mute()
+      this.player.mute();
+
+      if (this.radio.current) {
+        this.radio.current.pause();
+      }
     } else {
-      this.player.unmute()
+      this.player.unmute();
+
+      if (this.radio.current) {
+        this.radio.current.play();
+      }
     }
   }
 

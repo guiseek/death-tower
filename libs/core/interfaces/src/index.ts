@@ -16,6 +16,7 @@ export * from './lib/player';
 export * from './lib/range';
 export * from './lib/settings-config';
 export * from './lib/state-config';
+export * from './lib/radio-config';
 export * from './lib/text-message';
 export * from './lib/types/config';
 export * from './lib/types/callback';

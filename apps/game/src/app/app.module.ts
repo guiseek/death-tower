@@ -9,6 +9,7 @@ import {
   CUSTOM_CONFIG,
   DEFAULT_CONFIG,
   PLAYER_FRAMES_CONFIG,
+  RADIO_CONFIG,
 } from '@death-tower/stage/tower';
 
 import {
@@ -18,6 +19,7 @@ import {
 } from './config/animation-frames';
 
 import { SOUND_CONFIG_VALUE } from './config/sound';
+import { RADIO_CONFIG_VALUE } from './config/radio';
 
 import { AppComponent } from './app.component';
 
@@ -52,6 +54,10 @@ import { AppComponent } from './app.component';
     {
       provide: SOUND_CONFIG,
       useValue: SOUND_CONFIG_VALUE,
+    },
+    {
+      provide: RADIO_CONFIG,
+      useValue: RADIO_CONFIG_VALUE,
     },
     {
       provide: PLAYER_FRAMES_CONFIG,
