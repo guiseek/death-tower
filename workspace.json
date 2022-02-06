@@ -7,6 +7,7 @@
     "ranking": "apps/ranking",
     "stage-data-access": "libs/stage/data-access",
     "stage-domain": "libs/stage/domain",
-    "stage-tower": "libs/stage/tower"
+    "stage-tower": "libs/stage/tower",
+    "stage-ui-map": "libs/stage/ui-map"
   }
 }

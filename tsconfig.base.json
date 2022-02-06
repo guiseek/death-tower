@@ -19,7 +19,8 @@
       "@death-tower/core/util-map": ["libs/core/util-map/src/index.ts"],
       "@death-tower/stage/data-access": ["libs/stage/data-access/src/index.ts"],
       "@death-tower/stage/domain": ["libs/stage/domain/src/index.ts"],
-      "@death-tower/stage/tower": ["libs/stage/tower/src/index.ts"]
+      "@death-tower/stage/tower": ["libs/stage/tower/src/index.ts"],
+      "@death-tower/stage/ui-map": ["libs/stage/ui-map/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

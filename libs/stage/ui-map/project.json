@@ -1,0 +1,26 @@
+{
+  "projectType": "library",
+  "root": "libs/stage/ui-map",
+  "sourceRoot": "libs/stage/ui-map/src",
+  "prefix": "map",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/stage/ui-map"],
+      "options": {
+        "jestConfig": "libs/stage/ui-map/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/stage/ui-map/src/**/*.ts",
+          "libs/stage/ui-map/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": ["type:ui"]
+}
