@@ -80,11 +80,20 @@ a.active {
 
   &-row {
     flex-direction: row;
+
+    &.end {
+      justify-content: flex-end;
+    }
   }
 
   &-column {
     flex-direction: column;
+
+    &.end {
+      align-items: flex-end;
+    }
   }
+
 }
 
 .gap-8 {
@@ -92,6 +101,13 @@ a.active {
 }
 .gap-16 {
   gap: 16px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+.mb-16 {
+  margin-bottom: 16px;
 }
 
 .spacer {

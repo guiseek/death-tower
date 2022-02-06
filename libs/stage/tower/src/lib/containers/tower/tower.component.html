@@ -87,31 +87,54 @@
       </button>
     </div>
 
-    <div class="only-mobile flex flex-row gap-16">
-      <button
-        map-control
-        [size]="82"
-        action="left"
-        aria-label="Ir para esquerda"
-        (touchStart)="onTouchStart($event)"
-        (touchEnd)="onTouchEnd($event)"
-      >
-        <svg>
-          <use xlink:href="#left"></use>
-        </svg>
-      </button>
-      <button
-        map-control
-        [size]="78"
-        action="right"
-        aria-label="Ir para direita"
-        (touchStart)="onTouchStart($event)"
-        (touchEnd)="onTouchEnd($event)"
-      >
-        <svg>
-          <use xlink:href="#right"></use>
-        </svg>
-      </button>
+    <div>
+      <div class="flex flex-column end gap-16 mb-16">
+        <button
+          map-control
+          action="volume"
+          [attr.aria-label]="(player.muted$ | async) ? 'Mute' : 'Unmute'"
+          (click)="toggleVolume()"
+          [ngClass]="{ hidden: hideElement$ | async }"
+        >
+          <svg>
+            <use
+              [ngClass]="{ hidden: player.muted$ | async }"
+              xlink:href="#unmute"
+            ></use>
+            <use
+              [ngClass]="{ hidden: (player.muted$ | async) === false }"
+              xlink:href="#mute"
+            ></use>
+          </svg>
+        </button>
+      </div>
+      <div class="only-mobile flex flex-row gap-16">
+        <button
+          map-control
+          [size]="82"
+          action="left"
+          aria-label="Ir para esquerda"
+          (touchStart)="onTouchStart($event)"
+          (touchEnd)="onTouchEnd($event)"
+        >
+          <svg>
+            <use xlink:href="#left"></use>
+          </svg>
+        </button>
+        <button
+          map-control
+          [size]="78"
+          action="right"
+          aria-label="Ir para direita"
+          (touchStart)="onTouchStart($event)"
+          (touchEnd)="onTouchEnd($event)"
+        >
+          <svg>
+            <use xlink:href="#right"></use>
+          </svg>
+        </button>
+      </div>
+
     </div>
   </nav>
 </footer>
@@ -145,7 +168,13 @@
   <symbol id="share" viewBox="0 0 24 24">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path
-      d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"
+    d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"
     />
+  </symbol>
+  <symbol id="mute" viewBox="0 0 24 24">
+    <path d="M4.33969 2.93018L2.92969 4.34018L7.28969 8.70018L6.99969 9.00018H2.99969V15.0002H6.99969L11.9997 20.0002V13.4102L16.1797 17.5902C15.5297 18.0802 14.7997 18.4702 13.9997 18.7002V20.7602C15.3397 20.4602 16.5697 19.8402 17.6097 19.0102L19.6597 21.0602L21.0697 19.6502L4.33969 2.93018ZM9.99969 15.1702L7.82969 13.0002H4.99969V11.0002H7.82969L8.70969 10.1202L9.99969 11.4102V15.1702ZM18.9997 12.0002C18.9997 12.8202 18.8497 13.6102 18.5897 14.3402L20.1197 15.8702C20.6797 14.7002 20.9997 13.3902 20.9997 12.0002C20.9997 7.72018 18.0097 4.14018 13.9997 3.23018V5.29018C16.8897 6.15018 18.9997 8.83018 18.9997 12.0002ZM11.9997 4.00018L10.1197 5.88018L11.9997 7.76018V4.00018ZM16.4997 12.0002C16.4997 10.2302 15.4797 8.71018 13.9997 7.97018V9.76018L16.4797 12.2402C16.4897 12.1602 16.4997 12.0802 16.4997 12.0002Z" />
+  </symbol>
+  <symbol id="unmute" viewBox="0 0 24 24">
+    <path d="M3 8.99998V15H7L12 20V3.99998L7 8.99998H3ZM10 8.82998V15.17L7.83 13H5V11H7.83L10 8.82998ZM16.5 12C16.5 10.23 15.48 8.70998 14 7.96998V16.02C15.48 15.29 16.5 13.77 16.5 12ZM14 3.22998V5.28998C16.89 6.14998 19 8.82998 19 12C19 15.17 16.89 17.85 14 18.71V20.77C18.01 19.86 21 16.28 21 12C21 7.71998 18.01 4.13998 14 3.22998V3.22998Z" />
   </symbol>
 </svg>
