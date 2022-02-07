@@ -79,6 +79,10 @@ a.active {
 .flex {
   display: flex;
 
+  &-1 {
+    flex: 1;
+  }
+
   &-row {
     flex-direction: row;
 

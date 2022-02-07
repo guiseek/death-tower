@@ -13,6 +13,13 @@
     .mat-slider {
       flex: 1;
     }
+
+    marquee {
+      font-size: 80%;
+      margin-top: 16px;
+      color: rgba(var(--color-text), 0.4);
+      z-index: 1;
+    }
   }
 
   .mat-fab,
@@ -21,7 +28,7 @@
   }
 
   .mat-fab {
-    opacity: .4;
+    opacity: 0.4;
 
     &:hover {
       opacity: 1;
@@ -29,7 +36,7 @@
   }
 
   .mat-mini-fab {
-    opacity: .4;
+    opacity: 0.4;
 
     &:hover {
       opacity: 1;

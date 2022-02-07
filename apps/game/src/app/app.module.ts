@@ -5,12 +5,13 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import {
+  // RADIO_CONFIG,
   SOUND_CONFIG,
   CUSTOM_CONFIG,
   DEFAULT_CONFIG,
   PLAYER_FRAMES_CONFIG,
-  RADIO_CONFIG,
 } from '@death-tower/stage/tower';
+import { RADIO_CONFIG } from '@death-tower/stage/ui-radio';
 
 import {
   SOUND_CONFIG_VALUE,
@@ -19,7 +20,6 @@ import {
   DEFAULT_CONFIG_VALUE,
   FRAMES_CONFIG_VALUE,
 } from './config';
-
 
 import { AppComponent } from './app.component';
 

@@ -55,7 +55,6 @@ import {
   DEFAULT_CONFIG,
   CUSTOM_CONFIG,
   PLAYER_FRAMES_CONFIG,
-  RADIO_CONFIG,
 } from '../../stage-tower.config';
 
 @Component({
@@ -122,8 +121,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly game: GameState,
     readonly player: PlayerState,
 
-    @Inject(RADIO_CONFIG)
-    readonly radioConfig: RadioConfig,
+    // @Inject(RADIO_CONFIG)
+    // readonly radioConfig: RadioConfig,
 
     @Inject(SOUND_CONFIG)
     readonly soundConfig: SoundConfig,
