@@ -58,16 +58,4 @@
     <mat-icon>{{ audio.muted ? 'volume_off' : 'volume_up' }}</mat-icon>
   </button>
 
-  <button
-    #next
-    mat-mini-fab
-    type="button"
-    aria-label="Carregar música"
-    (click)="file.click()"
-  >
-    <mat-icon>library_music</mat-icon>
-  </button>
-
 </section>
-
-<input #file type="file" accept="audio/mp3,audio/*;capture=microphone" hidden aria-label="File">

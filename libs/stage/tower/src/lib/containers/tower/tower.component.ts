@@ -137,7 +137,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly playerFrames: PlayerFrames
   ) {
     this._mobileQueryListener = () => cdr.detectChanges();
-    this.mobileQuery = media.matchMedia('(max-width: 900px)');
+    this.mobileQuery = media.matchMedia('(max-width: 1024px) and (orientation: landscape)');
     this.mobileQuery.addListener(this._mobileQueryListener);
 
     const idleTime$ = timer(0, 5000);
