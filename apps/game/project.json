@@ -16,6 +16,8 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/game/src/manifest.webmanifest",
+          "apps/game/src/sitemap.xml",
+          "apps/game/src/robots.txt",
           "apps/game/src/assets",
           "apps/game/src/CNAME"
         ],
