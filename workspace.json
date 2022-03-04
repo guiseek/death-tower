@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
+    "core-gamepad": "libs/core/gamepad",
     "core-interfaces": "libs/core/interfaces",
     "core-util-map": "libs/core/util-map",
     "game": "apps/game",
