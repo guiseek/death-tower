@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@death-tower/core/gamepad": ["libs/core/gamepad/src/index.ts"],
       "@death-tower/core/interfaces": ["libs/core/interfaces/src/index.ts"],
       "@death-tower/core/util-map": ["libs/core/util-map/src/index.ts"],
       "@death-tower/stage/data-access": ["libs/stage/data-access/src/index.ts"],

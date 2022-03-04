@@ -31,7 +31,6 @@ import {
   DefaultConfig,
   CustomConfig,
   ControlActionEvent,
-  RadioConfig,
 } from '@death-tower/core/interfaces';
 import {
   Door,
@@ -56,6 +55,7 @@ import {
   CUSTOM_CONFIG,
   PLAYER_FRAMES_CONFIG,
 } from '../../stage-tower.config';
+import { coreGamepad } from '@death-tower/core/gamepad';
 
 @Component({
   selector: 'death-tower',
@@ -109,6 +109,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   lastUp = Date.now();
 
+  gamepad = 0;
+
   constructor(
     media: MediaMatcher,
     cdr: ChangeDetectorRef,
@@ -137,12 +139,38 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly playerFrames: PlayerFrames
   ) {
     this._mobileQueryListener = () => cdr.detectChanges();
-    this.mobileQuery = media.matchMedia('(max-width: 1024px) and (orientation: landscape)');
+    this.mobileQuery = media.matchMedia(
+      '(max-width: 1024px) and (orientation: landscape)'
+    );
     this.mobileQuery.addListener(this._mobileQueryListener);
 
     const idleTime$ = timer(0, 5000);
     const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
     this.hideElement$ = idleTime$.pipe(takeUntil(mouseMove$), repeat());
+
+    if ('getGamepads' in navigator) {
+      this.gamepad = coreGamepad((gamepad) => {
+        gamepad.buttons.forEach((button, index) => {
+          if (button.pressed && !this.config.state.touched) {
+            this.config.state.touched = true;
+
+            this.game.start();
+
+            if (!this.player.muted) {
+              this.soundConfig.thunder.play();
+            }
+          }
+
+          if (index === 4) this.config.input.left = button.pressed;
+          if (index === 5) this.config.input.right = button.pressed;
+          if (index === 2) this.config.input.jump = button.pressed;
+        });
+      });
+
+      window.ongamepaddisconnected = () => {
+        cancelAnimationFrame(this.gamepad);
+      };
+    }
   }
 
   onRouting({ params, queryParams }: ActivatedRouteSnapshot) {
@@ -477,7 +505,7 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.config.state.jump.isGrounded) {
         this.player.jump('up');
 
-        if ((Date.now() - this.lastUp) < 6000) {
+        if (Date.now() - this.lastUp < 6000) {
           // console.log('isFlipping', Date.now() - this.lastUp);
 
           this.config.state.jump.isFlipping = true;

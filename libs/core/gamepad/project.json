@@ -1,0 +1,23 @@
+{
+  "root": "libs/core/gamepad",
+  "sourceRoot": "libs/core/gamepad/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/core/gamepad/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/core/gamepad"],
+      "options": {
+        "jestConfig": "libs/core/gamepad/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
