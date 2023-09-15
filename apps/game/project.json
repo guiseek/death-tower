@@ -1,6 +1,7 @@
 {
+  "name": "game",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "apps/game",
   "sourceRoot": "apps/game/src",
   "prefix": "dt",
   "targets": {
@@ -79,14 +80,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/game/src/**/*.ts", "apps/game/src/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/game"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/game"],
       "options": {
         "jestConfig": "apps/game/jest.config.js",
         "passWithNoTests": true

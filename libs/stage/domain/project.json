@@ -1,18 +1,19 @@
 {
-  "root": "libs/stage/domain",
+  "name": "stage-domain",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/stage/domain/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/stage/domain/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/stage/domain"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/stage/domain"],
       "options": {
         "jestConfig": "libs/stage/domain/jest.config.js",
         "passWithNoTests": true

@@ -5,7 +5,7 @@ import {
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
 
 import { RADIO_CONFIG } from '../stage-ui-radio.config';
 import { FileSystem } from '../utilities/file-system';

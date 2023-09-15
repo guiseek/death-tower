@@ -1,28 +1,30 @@
 {
-  "root": "libs/core/interfaces",
+  "name": "core-interfaces",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/core/interfaces/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/core/interfaces",
         "main": "libs/core/interfaces/src/index.ts",
         "tsConfig": "libs/core/interfaces/tsconfig.lib.json",
-        "assets": ["libs/core/interfaces/*.md"]
+        "assets": ["libs/core/interfaces/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/core/interfaces/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/core/interfaces"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/core/interfaces"],
       "options": {
         "jestConfig": "libs/core/interfaces/jest.config.js",
         "passWithNoTests": true

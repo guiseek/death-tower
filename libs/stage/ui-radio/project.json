@@ -1,19 +1,20 @@
 {
+  "name": "stage-ui-radio",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "libs/stage/ui-radio",
   "sourceRoot": "libs/stage/ui-radio/src",
   "prefix": "radio",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/stage/ui-radio"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/stage/ui-radio"],
       "options": {
         "jestConfig": "libs/stage/ui-radio/jest.config.js",
         "passWithNoTests": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/stage/ui-radio/src/**/*.ts",

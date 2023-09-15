@@ -1,6 +1,6 @@
 import { filter, fromEvent, repeat, Subject, takeUntil, timer } from 'rxjs';
 import { Platform as CdkPlatform } from '@angular/cdk/platform';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Title } from '@angular/platform-browser';
 import {
@@ -401,8 +401,8 @@ export class TowerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   drawCanvas() {
-    const now = document.timeline.currentTime ?? 0;
-    this.config.state.dt = now - (this.config.state.time || now);
+    const now = +(document.timeline.currentTime ?? 0);
+    this.config.state.dt = now - +(this.config.state.time || now);
     this.config.state.time = now;
 
     if (!this.config.state.paused && !this.config.state.finished) {
