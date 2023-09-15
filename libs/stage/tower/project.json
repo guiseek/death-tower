@@ -1,19 +1,20 @@
 {
+  "name": "stage-tower",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "libs/stage/tower",
   "sourceRoot": "libs/stage/tower/src",
   "prefix": "death",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/stage/tower"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/stage/tower"],
       "options": {
         "jestConfig": "libs/stage/tower/jest.config.js",
         "passWithNoTests": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/stage/tower/src/**/*.ts",
