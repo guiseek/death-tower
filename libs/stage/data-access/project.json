@@ -5,18 +5,14 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/stage/data-access/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/stage/data-access"],
       "options": {
-        "jestConfig": "libs/stage/data-access/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/stage/data-access/jest.config.js"
       }
     }
   },

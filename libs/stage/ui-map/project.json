@@ -9,18 +9,11 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/stage/ui-map"],
       "options": {
-        "jestConfig": "libs/stage/ui-map/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/stage/ui-map/jest.config.js"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/stage/ui-map/src/**/*.ts",
-          "libs/stage/ui-map/src/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": ["type:ui"]

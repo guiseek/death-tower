@@ -9,18 +9,11 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/stage/tower"],
       "options": {
-        "jestConfig": "libs/stage/tower/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/stage/tower/jest.config.js"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/stage/tower/src/**/*.ts",
-          "libs/stage/tower/src/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": []

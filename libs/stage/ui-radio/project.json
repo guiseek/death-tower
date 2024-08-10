@@ -9,18 +9,11 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/stage/ui-radio"],
       "options": {
-        "jestConfig": "libs/stage/ui-radio/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/stage/ui-radio/jest.config.js"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/stage/ui-radio/src/**/*.ts",
-          "libs/stage/ui-radio/src/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": ["type:ui"]

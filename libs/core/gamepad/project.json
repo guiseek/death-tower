@@ -5,18 +5,14 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/core/gamepad/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/core/gamepad"],
       "options": {
-        "jestConfig": "libs/core/gamepad/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/core/gamepad/jest.config.js"
       }
     }
   },

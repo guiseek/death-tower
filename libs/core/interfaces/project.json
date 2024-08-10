@@ -16,18 +16,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/core/interfaces/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/core/interfaces"],
       "options": {
-        "jestConfig": "libs/core/interfaces/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/core/interfaces/jest.config.js"
       }
     }
   },
